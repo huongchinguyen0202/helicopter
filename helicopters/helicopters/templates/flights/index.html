@@ -1,0 +1,635 @@
+{% extends "base.html" %} 
+{% load static from staticfiles %}
+{% block title %}Flight log{% endblock %} 
+{% block content %}
+	<div class="main clearthis">
+		<div class="main_content clearthis">
+			<form method="post" action="/log/" id = "form_add">{% csrf_token %}
+				
+				{{form.is_submited}}
+				{% if form.is_submited.value == True %}
+				<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">View Flight Log</span></div>
+				<div class="block1">
+					{{errors}}
+					{% if messages %}
+						<ul class="messages">
+						    {% for message in messages %}
+						    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+						        	{{ message }}
+						    </li>
+						    {% endfor %}
+						</ul>
+					{% endif %}	
+					<div class="sub_form">
+						<div class="title title1">Daily Flight Log</div> 
+						<div class="clearthis min-32">
+							<div class="per33">
+								<span>Log Number</span>
+								<label id="number_sub" class = "submitted_value" ">{{id | stringformat:"06d"}}</label>
+								{{form.log_number}}{{form.id_log}}
+								<input id = "max_pax" type="hidden" name="max_pax" value="{{max_pax}}"/>
+							</div>
+							<div class="per33"><span>Date</span>
+							<span class = "submitted_value">{{form.log_date.value | date:"m/d/Y"}}</span>
+							</div> 
+							<div class="per33">
+								<span>Customer</span>
+								
+								{% for value, text in form.customer.field.choices %}
+							    {% if value == form.customer.value %}
+							        <span class = "submitted_value">{{ text }}</span>
+							    {% endif %}
+								{% endfor %}
+							</div>
+							
+						</div>
+						
+						<div class="clearthis min-32">
+							
+							<div class="per33">
+								<span>Contract/Charter#</span>
+								{% for value, text in form.contract1charter.field.choices %}
+							    {% if value == form.contract1charter.value %}
+							        <span class = "submitted_value">{{ text }}</span>
+							    {% endif %}
+								{% endfor %}
+							</div>
+						</div>
+						
+					</div>
+					<div class="sub_form">
+						<div class="title title1" style="width: 5.5%;">Aircraft</div>
+						<div class="clearthis min-32">
+							<div class="per33">
+								<span>Model</span>
+								{% for value, text in form.model.field.choices %}
+							    {% if value == form.model.value %}
+							        <span class = "submitted_value">{{ text }}</span>
+							    {% endif %}
+								{% endfor %}
+							</div>
+							<div class="per33">
+								<span>A/C#</span>
+								{% for value, text in form.a1c.field.choices %}
+							    {% if value == form.a1c.value %}
+							        <span class = "submitted_value">{{ text }}</span>
+							    {% endif %}
+								{% endfor %}
+							</div>
+							<div class="per33">
+								<span>Base</span>
+								{% for value, text in form.base.field.choices %}
+							    {% if value == form.base.value %}
+							        <span class = "submitted_value">{{ text }}</span>
+							    {% endif %}
+								{% endfor %}
+							</div>
+						</div>
+						
+						<div class="clearthis min-32">
+							<div class="per33">
+								<span>Fuel</span>
+								<span class = "submitted_value">{{form.fuel.value}}</span>
+							</div>
+							<div class="per33">
+								<span>A/C Empty Weight</span>
+								<span class = "submitted_value">{{form.a1c_empty_weight.value}}</span>
+							</div>
+							<div class="per33">
+								<span class = "middle">Pilot Employee Number</span>
+								<span class = "submitted_value">{{ emp_number }}</span>
+							</div>
+												
+						</div>
+					
+						<div class="clearthis min-32">
+							<div class="per33">
+								<span>Pilot Weight</span>
+								<span class = "submitted_value">{{form.pilot_weight.value}}</span>
+							</div>
+							<div class="per33">
+								<span class = "middle">Co-Pilot Employee Number</span>
+								{% for value, text in form.co_pilot_employee_number.field.choices %}
+							    {% if value == form.co_pilot_employee_number.value %}
+							        <span class = "submitted_value">{{ text }}</span>
+							    {% endif %}
+								{% endfor %}
+							</div>
+							<div class="per33">
+								<span>Co-Pilot Weight</span>
+								<span class = "submitted_value">{{form.co_pilot_weight.value}}</span>
+							</div>
+						</div>
+						<div class="clearthis min-32">
+							<div class="per33">
+								<span>Operational Weight</span>
+								<span class = "submitted_value">{{form.opterational_weight.value}}</span>
+							</div>	
+							<div class="per33">
+								<span>Max Gross Weight</span>
+								<label id="mass_gross">{{log_model.max_gross_weight}}</label>
+							</div>
+							<div class="per33">
+								<span>Allowable T/O Weight</span>
+								<span class = "submitted_value">{{form.allowable_takeoff_weight.value}}</span>
+							</div>
+							
+						</div>
+						<div class="clearthis min-46">
+							<div class="per33">
+								<span>Payload Available</span> 
+								<span class = "submitted_value">{{form.payload_available.value}}</span>
+							</div>						
+							<div class="per33">
+								<span style="width: 36%;margin-left: 4%;" class = "middle">Me Load Schedule CG. Range</span>
+								<span style="width: 13%;text-align: left;padding-left: 17px;"><label id="from">{{log_model.me_load_schedule_cg_range_from}}</label></span>
+								<span style="width: 5%;">To</span>
+								<span style="width: 15%;"><label id="to">{{log_model.me_load_schedule_cg_range_to}}</label></span>
+							</div>					
+						</div>
+					</div>
+					<div class="sub_form spicel_border">
+						<div class="title title1" style="margin: -10px 0px 0px 15px; width: 100px;">Flight Log</div>
+						<div id = "div_flight_log_table">
+							<table id="rs_flight_log_form">
+								<thead>
+									<th>FTL#</th>
+									<th>FROM</th>
+									<th>TO</th>
+									<th>PAX</th>
+									<th>OFF</th>
+									<th>ON</th>
+									<th>FLT.TIME</th>
+									<th style="padding: 0px 8px;">T/O W</th>
+									<th>CG</th>
+									<th>FUEL</th>
+									<th>CARGO</th>
+									<th>BLOCKTIME</th>
+									<th>PATIENTS</th>
+								</thead>
+								<tbody>
+									<tr></tr>
+									{% for form in forms%}
+										<tr class="{% cycle 'row_even' 'row_odd' %}" 
+											ondblclick="review_popup('#log-box', this)">
+											<td>{{ form.order|default_if_none:"" }}</td>
+											<td>{{ form.from_field|default_if_none:"" }}</td>
+											<td>{{ form.to|default_if_none:"" }}</td>
+											<td class = "cls_pas">{{ form.passenger|default_if_none:"" }}</td>
+											<td>{{ form.off|default_if_none:"" }}</td>
+											<td>{{ form.on|default_if_none:"" }}</td>
+											<td class = "cls_flight_time">{{ form.flight_time|default_if_none:"" }}</td>
+											<td>{{ form.flight_data_tlo_w|default_if_none:"" }}</td>
+											<td>{{ form.flight_data_cg|default_if_none:"" }}</td>
+											<td>{{ form.flight_data_fuel|default_if_none:"" }}</td>
+											<td class = "cls_cargo">{{ form.flight_data_cargo_weight|default_if_none:"" }}</td>
+											<td class = "cls_block_time">{{ form.flight_data_block_time|default_if_none:"" }}</td>
+											<td class = "patient">{{ form.flight_data_patient|default_if_none:"" }}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+								<tfoot>
+									<tr id = "total">
+										<td style="text-align: center;">Total</td>
+										<td></td>
+										<td></td>
+										<td id = "total_pas"></td>
+										<td></td>
+										<td></td>
+										<td id = "flight_time"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td id = "cargo"></td>
+										<td id = "block_time"></td>
+										<td id = "patient"></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				{% else %}
+				<div id = "div_error_passenger" style="color:red; text-align : left;
+						margin-top:6px; padding-left: 20">
+				</div>
+				<div id = "div_succ_passenger" style="color:blue; text-align : left;
+						margin-top:6px; padding-left: 20">
+				</div>
+				
+				{% if form.fuel.value %}
+					<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">Edit Flight Log</span></div>
+				
+				{% else %}
+				<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">Add Flight Leg Details</span></div>
+				{% endif %}
+				
+				<div class="block1">
+					<div class="sub_form">
+						<div class="title title1">Daily Flight Log</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<input id = "max_pax" type="hidden" name="max_pax" value="{{max_pax}}"/>
+								<span>Log Number</span>
+								<label id="number">{{id | stringformat:"06d"}}</label>{{form.log_number}}{{form.id_log}}{{form.user_id}}
+								
+							</div>
+							<div class="per333"><span>Date<span class = "star">*</span></span>
+								 <input  class = "req" type="text" id="id_log_date" name="log_date" value="{{form.log_date.value | date:"m/d/Y"}}" onchange="valid_date()"> 
+							</div> 
+							<div class="per333">
+								<span>Customer</span>
+								<div>{{form.customer}}</div>
+							</div>
+						</div>
+						
+						<div class="error-line">
+							<div class="per333 line1">
+								
+							</div>
+							<div class="per333 line2">
+								
+								<div id="err_id_log_date" class="err">{{form.log_date.errors}}</div>
+							</div>
+							<div class="per333 line3">
+								
+							</div>
+						</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<span>Contract/Charter#</span>
+								<div>{{form.contract1charter}}</div>
+							</div>
+						</div>
+						<div>
+							<div class="per33">
+								{{form.customer.errors}}
+							</div>
+							<div class="per33">
+								{{form.contract1charter.errors}}
+							</div>
+						</div>
+					</div>
+					<div class="sub_form">
+						<div class="title title1" style="width: 5.5%;">Aircraft</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<span>Model<span class = "star">*</span></span>
+								<div id="id_mode">{{form.model}}</div>
+							</div>
+							<div class="per333">
+								<span>A/C#<span class = "star">*</span></span>
+								<div id="id_a1" >{{form.a1c}}</div>
+							</div>
+							<div class="per333">
+								<span>Base<span class = "star">*</span></span>
+								<div id="id_bas" >{{form.base}}</div>
+							</div>
+						</div>
+						<div class="error-line">
+							<div class="per333 line1">
+								
+								<div id="err_id_model" class="err">{{form.model.errors}}</div>	
+							</div>
+							<div class="per333 line2">
+								
+								<div id="err_id_a1c" class="err">{{form.a1c.errors}}</div>
+							</div>
+							<div class="per333 line3">
+								
+								<div  id="err_id_base" class="err">{{form.base.errors}}</div>
+							</div>
+						</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<span>Fuel<span class = "star">*</span></span>
+								{{form.fuel}}
+							</div>
+							<div class="per333">
+								<span>A/C Empty Weight<span class = "star">*</span></span>
+								{{form.a1c_empty_weight|lower}}
+							</div>
+							<div class="per333">
+								<span>Pilot Employee Number</span>
+								<label id="emp_number">{{emp_number}}</label>
+							</div>						
+						</div>
+						<div class="error-line">
+							<div class="per333 line1">
+								
+								<div id="err_id_fuel" class="err">{{form.fuel.errors}}</div>
+							</div>
+							<div class="per333 line2">
+								
+								<div id="err_id_a1c_empty_weight" class="err">{{form.a1c_empty_weight.errors}}</div>
+							</div>
+							<div class="per333 line3">
+								
+								<div id="err_id_pilot_employee_number" class="err">{{form.pilot_employee_number.errors}}</div>
+							</div>						
+						</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<span>Pilot Weight<span class = "star">*</span></span>
+								{{form.pilot_weight}}
+							</div>
+							<div class="per333">
+								<span class = "middle">Co-Pilot Employee<span class = "star">*</span></br>Number</span>
+								<div>{{form.co_pilot_employee_number}}</div>
+							</div>
+							<div class="per333">
+								<span>Co-Pilot Weight<span class = "star">*</span></span>
+								{{form.co_pilot_weight}}
+							</div>						
+						</div>
+						<div class="error-line">
+							<div class="per333 line1">
+								
+								<div id="err_id_pilot_weight" class="err">{{form.pilot_weight.errors}}</div>
+							</div>
+							<div class="per333 line2">
+								
+								<div id="err_id_co_pilot_employee_number" class="err">{{form.co_pilot_employee_number.errors}}</div>
+							</div>
+							<div class="per333 line3">
+								
+								<div id="err_id_co_pilot_weight" class="err">{{form.co_pilot_weight.errors}}</div>
+							</div>						
+						</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<span>Operational Weight<span class = "star">*</span></span>
+								{{form.opterational_weight}}
+							</div>
+							<div class="per333">
+								<span >Max Gross Weight</span>
+								<label id="mass_gross" style="margin-left: 5px; padding-left: 0px;">{{log_model.max_gross_weight}}</label>
+							</div>
+							<div class="per333">
+								<span>Allowable T/O Weight<span class = "star">*</span></span>
+								{{form.allowable_takeoff_weight}}
+							</div>						
+						</div>
+						<div class="error-line">
+							<div class="per333 line1">
+								
+								<div id="err_id_opterational_weight" class="err">{{form.opterational_weight.errors}}</div>
+							</div>
+							<div class="per333 line2">
+								
+								<div></div>
+							</div>
+							<div class="per333 line3">
+								
+								<div id="err_id_allowable_takeoff_weight" class="err">{{form.allowable_takeoff_weight.errors}}</div>
+							</div>						
+						</div>
+						<div class="clearthis min-32">
+							<div class="per333">
+								<span>Payload Available<span class = "star">*</span></span>
+								{{form.payload_available}}
+							</div>
+							<div class="per333">
+								<span class = "middle">Me Load Scheduge</br> CG. Range</span>
+								<span style="width: 5%;margin-left: 5px;padding-left: 0px;">
+								<label id="from">{{log_model.me_load_schedule_cg_range_from}}</label>
+								</span>
+								<span style="width: 15%;">To</span>
+								<span style="width: 15%;"><label id="to">{{log_model.me_load_schedule_cg_range_to}}</label></span>
+							</div>	
+						</div>
+						<div class="error-line">
+							<div class="per333 line1">
+								
+								<div id="err_id_payload_available" class="err">{{form.payload_available.errors}}</div>
+							</div>
+							<div class="per333 line2">
+								
+								<div></div>
+							</div>
+							<div class="per333 line3">
+								
+								<div></div>
+							</div>						
+						</div>
+					</div>
+					<div class="sub_form spicel_border">
+						<div class="title title1" style="margin: -10px 0px 0px 15px; width: 80px;">Flight Log</div>
+						<div id = "div_flight_log_table">
+							<table id="rs_flight_log_form">
+								<thead>
+									<th>FTL#</th>
+									<th>FROM</th>
+									<th>TO</th>
+									<th>PAX</th>
+									<th>OFF</th>
+									<th>ON</th>
+									<th>FLT.TIME</th>
+									<th style="padding: 0px 8px;">T/O W</th>
+									<th>CG</th>
+									<th>FUEL</th>
+									<th>CARGO</th>
+									<th>BLOCKTIME</th>
+									<th>PATIENTS</th>
+									<th>ACTION</th>
+								</thead>
+								<tbody>
+									<tr></tr>
+									{% for form in forms%}
+										<tr class="{% cycle 'row_even' 'row_odd' %}" >
+											<td>{{ form.order|default_if_none:"" }}</td>
+											<td>{{ form.from_field|default_if_none:"" }}</td>
+											<td>{{ form.to|default_if_none:"" }}</td>
+											<td class = "cls_pas">{{ form.passenger|default_if_none:"" }}</td>
+											<td>{{ form.off|default_if_none:"" }}</td>
+											<td>{{ form.on|default_if_none:"" }}</td>
+											<td class = "cls_flight_time">{{ form.flight_time|default_if_none:"" }}</td>
+											<td>{{ form.flight_data_tlo_w|default_if_none:"" }}</td>
+											<td>{{ form.flight_data_cg|default_if_none:"" }}</td>
+											<td>{{ form.flight_data_fuel|default_if_none:"" }}</td>
+											<td class = "cls_cargo">{{ form.flight_data_cargo_weight|default_if_none:"" }}</td>
+											<td class = "cls_block_time">{{ form.flight_data_block_time|default_if_none:"" }}</td>
+											<td class = "patient">{{ form.flight_data_patient|default_if_none:"" }}</td>
+											<td style="text-align:center; padding: 0.5% 0% 0% 0%; border-right: 0 !important;">
+												<a href="#log-box" class = "edit_flight_log">
+													<img src="{% static "media/edit.png"%}" 
+														alt="add flight log"> 
+												</a>
+												<a href="#log-box" class = "delete_flight_log">
+													<img src="{% static "media/delete.png"%}" 
+														alt="delete flight log"> 
+												</a>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+								<tfoot>
+									<tr id = "total">
+										<td  style="text-align: center;">Total</td>
+										<td></td>
+										<td></td>
+										<td id = "total_pas"></td>
+										<td></td>
+										<td></td>
+										<td id = "flight_time"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td id = "cargo"></td>
+										<td id = "block_time"></td>
+										<td id = "patient"></td>
+										<td></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+					<div class="btn-bottom">
+						<button type="button" class="btn_default_flight_log last_margin add_flight_log">Add Flight Leg</button>
+		        	</div>
+				</div>
+				{% endif %}
+				<div class="block2">
+					<div class="sub_form_fuel">
+						<div class="title title2" style="margin-left: 15px">Fuel Expenses or Usage</div>
+						<div id = "div_fuel_cal">
+							<table id="rs_fuel_expenses_or_usage_form" style="display: none;"> 
+								<tbody id="log_location_grid">
+							    {% for log_loc in log_loc_list %}
+	    							<tr>
+	    								<td>{{ log_loc.location_id.location_name | default_if_none:""}}</td>
+										<td>{{ log_loc.gallons | default_if_none:""}}</td>
+										<td>{{ log_loc.owner | default_if_none:""}}</td>
+										<td>{{ log_loc.amount | default_if_none:""}}</td>
+										<td>{{ log_loc.pk}}</td>
+
+									</tr>
+							    {% endfor %}
+								</tbody>
+							</table>
+							<select id="hiddenff" hidden="true">
+								{% for loc in locations %}
+									<option value="{{loc.id_location}}">{{loc.location_name}}</option>
+								{% endfor %}
+							</select>
+							<table id="ff"></table>
+						</div>
+						
+					</div>
+					<div class="sub_form_pilot">
+						<table id="tt" style="width: 100%"></table>
+						<select id="test" hidden="true">
+						
+						{% for emp in list_emp %}
+							<option value="{{emp.id_employee}}">{{emp.first_name}}, {{emp.last_name}}</option>
+						{% endfor %}
+						</select>
+						<table id="temp" style="display: none;">
+							{% for obj in log_emp_list%}
+								<tr>
+								<td>{{obj.employee.id_employee}}</td>
+								<td>
+								{% if obj.pic %}
+									{{obj.pic}}
+								{% endif%}
+								</td>
+								<td>
+								{% if obj.sic %}
+									{{obj.sic}}
+								{% endif%}
+								</td>
+								<td>
+								{% if obj.day %}
+									{{obj.day}}
+								{% endif%}
+								</td>
+								<td>
+								{% if obj.night %}
+									{{obj.night}}
+								{% endif%}
+								</td>
+								<td>
+								{% if obj.ifr %}
+									{{obj.ifr}}
+								{% endif%}
+								</td>
+								<td>
+								{% if obj.nvg %}
+									{{obj.nvg}}
+								{% endif%}
+								</td>
+								<td>
+								{% if obj.long_in %}
+									{{obj.long_in}}
+								{% endif%}
+								</td>
+								<td>
+								{{obj.id_log_employee}}
+								</td>
+								</tr>
+							{% endfor%}
+						</table>
+						
+					</div>
+					<div class="min-32 div-bottom">
+					{% if form.is_submited.value == True %}
+						<input style="margin-right: 0px;" onclick="return val_print_pdf(true,'{{id}}')" class="btn_default_flight_log" type="button" value="Save as PDF" />
+						<input onclick="return val_send_email(true,'{{id}}')" class="btn_default_flight_log send_email" type="button" value="Email" />
+						<input class="btn_default_flight_log" type="button" value="Return to list" onclick="window.location='/search/'"/>					
+						
+					{% else %}
+						<input class="btn_default_flight_log last_margin" name="save" 
+								id = "add_flight_log_save"
+								type="submit" value="Save" />
+						<input class="btn_default_flight_log " name="submit" 
+								id = "add_flight_log_submit"
+								type="submit" value="Submit" />
+						<input class="btn_default_flight_log" type="submit" name="save"
+								id = "add_flight_log_cancel" 
+								value="Cancel" />					
+					{% endif %}					
+					</div>
+					
+				</div>
+				<div id="fuel" hidden="true">
+					{{ formset.management_form }}
+				    {% for form in formset.forms %}
+				    <div class="item">
+				      {{form.as_p}}
+				    </div>
+				    {% endfor %}
+				</div>
+			    
+			    <div id="pi" hidden="true">
+			    	{{ formset_pilot.management_form }}
+				    {% for form in formset_pilot.forms %}
+				    <div class="item1">
+				      {{form.as_p}}
+				    </div>
+				    {% endfor %}
+			    </div> 
+			</form>
+		</div>		
+	</div>
+				
+	
+	<div id="log-box" class="login-popup">
+         <form method="post" class="signin" 
+         action = "/save_fightlog/"
+         id = "popup_add_flight_log">{% csrf_token %}
+               <div id = "table_popup">
+               </div>
+         </form>
+         <div style="color: red;" id  = "display">{{ single_form.as_p }}</div>
+	</div>
+	<div id="send_email" class="login-popup">
+		<form method="post" class="" onsubmit="return validate_email_form()" action="/send_email/" id="form_email_popup">
+			{% csrf_token %}
+        </form>
+	</div>	
+<script type="text/javascript">
+	
+	set_tabindex_add_flight_log();
+</script>	
+{%endblock%}

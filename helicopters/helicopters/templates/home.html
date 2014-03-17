@@ -1,0 +1,114 @@
+{% extends "base.html" %} 
+{% block title %}Home page{% endblock %} 
+	{% block content %}
+	{% if request.session.usname %}
+	<div class="main clearthis">		
+		<div class="main_content clearthis">
+			<div class="form_title"><img src="/static/img/ico_-title.png" style="vertical-align: middle;">
+				<span style="margin-left: 10px;">Pending Flight Log</span>
+			</div>
+			<div class="his_content_center">
+			<div id = "dialog_confirm_del" style = "display:none;">Are you sure to delete this record? Yes/No</div>
+			<div id = "dialog_confirm_sub" style = "display:none;">Are you sure to submit this flight log? Yes/No</div>
+			<div  class="messages" id = "announce_success" style="text-align: left;
+																	margin-left: -2%">
+				{% if announce_mess %}
+					{{ announce_mess }}
+				{% endif %} 
+			</div>
+			{% if messages %}
+				<ul class="messages" style="text-align: left;">
+				    {% for message in messages %}
+				    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+			        	{{ message }}
+				    </li>
+				    {% endfor %}
+				</ul>
+			{% endif %}
+				<form action="/" method = "POST" id = "draft_form">
+				{% csrf_token %} 
+					<table id="history">
+						<thead>
+							<th style="width:5%"><input style="width: 30%" type="checkbox" name = "all_check"/></th>
+							<th style="width:10%">Log Number</th>
+							<th style="width:10%">Date</th>
+							<th style="width:25%">Customer</th>
+							<th style="width:25%">Contract/Charter#</th>
+							<th style="width:10%">Model</th>
+							<th style="width:10%">A/C#</th>
+						</thead>
+						<tbody>
+							{% for log in list_flight_log %}
+								<tr class="{% cycle 'row_odd' 'row_even' %}">
+									<input name = "flight_log_id" class = "log_id" type="hidden" value = "{{ log.id_log }}"/>
+									<td style="text-align: center;padding-left: 0px"><input  style="width: 30%" type="checkbox" name = "row_check_{{ log.id_log }}" /></td>
+									<td>{{ log.log_number | stringformat:"06d"}}</td>
+									<td>{{ log.log_date | date:"m/d/Y"}}</td>
+									<td>{{ log.customer | default_if_none:""}}</td>
+									<td>{{ log.contract1charter | default_if_none:""}}</td>
+									<td>{{ log.a1c.model }}</td>
+									<td>{{ log.a1c }}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					
+					<br/>
+					<div style="margin: 24px 0;">
+						<div><input class="btn_default_flight_log last_margin"	
+							type="submit" value="Submit" 
+							name = "submit_flight_log" id = "id_submit" {% if not list_flight_log %}disabled {% endif %}/>
+						</div>
+						<div><input class="btn_default_flight_log"
+							type="submit" value="Delete" 
+							name = "delete" id = "id_delete" {% if not list_flight_log %}disabled {% endif %}/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="pagging_bnt" style="margin: -60px 1px 72px 0px;">
+				<div class="pagging">	
+				{% if empty_flight_log %}			
+				<div class = "errorMessage" style="text-align: center;">
+					{{ empty_flight_log }}
+				</div>
+				{% else %}
+					<div class="pagination">
+					
+					{% if list_flight_log.paginator.page_range|length > 1%}
+					{% if list_flight_log.has_previous %}
+			            <input class="page first" type="submit" value="Previous" 
+						onclick="pagging_function({{ list_flight_log.previous_page_number }}, 0)">
+					{% else %}
+						<input class="page first first-black" type="submit" value="Previous" style="color: #464646">					
+			        {% endif %}
+			        {% endif %}
+			        <span id="pa_of">Page {{ list_flight_log.number }} / {{ list_flight_log.paginator.page_range|length }}</span>
+					{% for pg in list_flight_log.paginator.page_range %}
+						
+						{% if list_flight_log.number == pg %}
+						<input class="page active" class="page" type="submit" value="{{pg}}" 
+						onclick="pagging_function({{pg}}, 0)">					
+						{% else %}
+						<input class="page" type="submit" value="{{pg}}" 
+						onclick="pagging_function({{pg}}, 0)">					
+						{% endif %}
+				
+					{% endfor%}
+					{% if list_flight_log.paginator.page_range|length > 1%}
+					{% if list_flight_log.has_next %}
+			            <input class="page last" type="submit" value="Next" 
+						onclick="pagging_function({{ list_flight_log.next_page_number }}, 0)">		
+					{% else %}
+						<input class="page last last-black" type="submit" value="Next" style="color: black">				
+			        {% endif %}
+			        {% endif %}
+					</div> 
+					
+				{% endif %}
+			</div> 
+			</div>
+		</div>		
+	</div>
+{% endif %}
+	{% endblock %}

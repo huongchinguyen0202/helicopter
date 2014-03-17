@@ -1,0 +1,126 @@
+{% load dajaxice_templatetags %}
+{% load static from staticfiles %}
+<!DOCTYPE HTML>
+<html>
+<head>
+{% dajaxice_js_import %}
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<title>Login</title>
+
+<script type="text/javascript" src="{% static "js/jquery-2.0.3.min.js"%}"></script>
+<script type="text/javascript" src="{% static "js/main.js"%}"></script>
+<script type="text/javascript" src="{% static "js/dajax.js"%}"></script>
+<script type="text/javascript" src="{% static "js/flight_log.js"%}"></script>
+<link type="text/css" rel="stylesheet" href="{% static "css/flight_log.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/styles.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery-te-1.4.0.css"%}">
+
+<link type="text/css" rel="stylesheet" href="{% static "css/easyui.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui.css"%}"> 
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui_theme.css"%}">  
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui_icon.css"%}"> 
+
+<script type="text/javascript" src="{% static "js/ajax.js"%}"></script>
+<script type="text/javascript" src="{% static "js/jquery_ui103.js"%}"></script>
+<script type="text/javascript" src="{% static "js/jquery_ui.js"%}"></script>
+<script type="text/javascript" src="{% static "js/jquery_ui_min.js"%}"></script>
+
+<script src="{{ STATIC_URL }}js/jquery-te-1.4.0.min.js"></script>
+<script src="{{ STATIC_URL }}js/ajax.js"></script>
+<script src="{{ STATIC_URL }}js/validation.js"></script>
+<script src="{{ STATIC_URL }}js/datagrid.js"></script>
+<script src="{{ STATIC_URL }}js/paging.js"></script>
+
+</head>
+<body>
+	<!--<div class="header">
+		<div class="left"><a href="/"><img src="{% static 'media/logo.png'%}" alt="logo" /></a></div>
+		<div class="right">
+			<ul class="top_menu">
+				{% if request.session.usname %}
+				<li><a href="/account">Your are logged in King</a></li>
+				<li style="margin-top: -16px;"><img src="{% static 'media/space.png' %}" alt="" /></li>
+				<li><a href="/logout">Logout</a></li>
+				{% else %}
+				<li><a href="/login">Login</a></li>
+				<li style="margin-top: -16px;"><img src="{% static 'media/space.png' %}" alt="" /></li>
+				<li><a href="/register">Register</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>-->
+	<div class="center-logo"><img src="{% static 'img/logo.png' %}" alt="logo" /></div>
+	
+	<div class="account_main clearthis">
+		
+		
+		<div class="main_content clearthis">
+		<div class="title">Flight Log</div>
+			<form class="content_center register_form" id="login" name="login" action="" method="post"  onsubmit="return validateLoginForm();">
+				{% csrf_token %}
+				<div class="hiline">					
+					<input id="id_employee_number" type = "text" name = "employee_number"  maxlength="75" 
+						
+						{% if form.employee_number.errors %}
+							value="{% spaceless %}{% for error in form.employee_number.errors %}
+					        	{{ error }}
+					    	{% endfor %}{% endspaceless %}"
+					    	
+					    	style="color: #c2192a; border:1px solid red;"
+						{% elif form.employee_number.value %} 
+							value="{{ form.employee_number.value }}"
+						{% elif request.COOKIES.usname %}
+							value = "{{ request.COOKIES.usname }}"
+						{% endif %}  
+						 />
+						
+					<div id="over_id_employee_number" class="over_hidden"
+					{% if form.employee_number.errors or form.password.errors or request.COOKIES.usname %}
+							style="display:none;"
+						{% endif %}
+						>Employee Number</div>
+					<div class="icon_hiden_en" ></div>
+				</div>
+				<div class="hiline">
+					<input id="id_password"  maxlength="10" name = "password"
+						{% if form.password.errors %}
+							type="text"
+							value="{% spaceless %}{% for error in form.password.errors %}
+					        	{{ error }}
+					    	{% endfor %}{% endspaceless %}"
+					    	style="color: #c2192a; border:1px solid red;"
+					    {% elif request.COOKIES.password %}
+					    	type = "password"
+							value = "{{ request.COOKIES.password }}"
+					    {% else %}
+					    	type = "password"
+						{% endif %}  
+					/>
+					<div id="over_id_password" class="over_hidden"
+					{% if form.password.errors or request.COOKIES.password %}
+							style="display:none;"
+						{% endif %}
+					
+					>Password</div>
+					<div class="icon_hiden_pass"></div>
+				</div>				
+				<div style="float: left;">
+					<input class="remember" style="height:15px;margin-top: 3px;border-radius: 0;"  type = "checkbox" name = "remember"></input>
+					<label style="font-size: 15px;">Remember me</label>
+				</div>
+
+				<div class="line">
+						<button class="btn_default_flight_log last_margin btn_register" type="submit" >Login into Your Account</button>
+					</div>
+					
+					
+				
+			</form>	
+			<div class="login_footer"></div>
+		</div>	
+		
+	</div>
+	 <!--  end if not request.session.usname -->
+	
+</body>
+</html>

@@ -1,0 +1,99 @@
+{% load static from staticfiles %}
+<table id="rs_flight_log_form">
+	<thead>
+		<th>FTL#</th>
+		<th>FROM</th>
+		<th>TO</th>
+		<th>PAX</th>
+		<th>OFF</th>
+		<th>ON</th>
+		<th>FLT.TIME</th>
+		<th style="padding: 0px 8px;">T/O W</th>
+		<th>CG</th>
+		<th>FUEL</th>
+		<th>CARGO</th>
+		<th>BLOCKTIME</th>
+		<th>PATIENTS</th>
+		<th>ACTION</th>
+	</thead>
+	<tbody>
+		<tr></tr>
+		{% for form in forms%}
+			<tr class="{% cycle 'row_even' 'row_odd' %}" >
+				<td>{{ form.order|default_if_none:"" }}</td>
+				<td>{{ form.from_field|default_if_none:"" }}</td>
+				<td>{{ form.to }}</td>
+				<td class = "cls_pas">{{ form.passenger|default_if_none:"" }}</td>
+				<td>{{ form.off|default_if_none:"" }}</td>
+				<td>{{ form.on|default_if_none:"" }}</td>
+				<td class = "cls_flight_time">{{ form.flight_time }}</td>
+				<td>{{ form.flight_data_tlo_w|default_if_none:"" }}</td>
+				<td>{{ form.flight_data_cg|default_if_none:"" }}</td>
+				<td>{{ form.flight_data_fuel|default_if_none:"" }}</td>
+				<td class = "cls_cargo">{{ form.flight_data_cargo_weight|default_if_none:"" }}</td>
+				<td class = "cls_block_time">{{ form.flight_data_block_time|default_if_none:"" }}</td>
+				<td class = "patient">{{ form.flight_data_patient|default_if_none:"" }}</td>
+				<td style="text-align:center; padding: 0.5% 0% 0% 0%;">
+					<a href="#log-box" class = "edit_flight_log">
+						<img src="{% static "media/edit.png"%}" 
+							alt="add flight log"> 
+					</a>
+					<a href="#log-box" class = "delete_flight_log">
+						<img src="{% static "media/delete.png"%}" 
+							alt="delete flight log"> 
+					</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	<tfoot>
+		<tr id = "total">
+			<td style="text-align: center;">Total</td>
+			<td></td>
+			<td></td>
+			<td id = "total_pas"></td>
+			<td></td>
+			<td></td>
+			<td id = "flight_time"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td id = "cargo"></td>
+			<td id = "block_time"></td>
+			<td id = "patient"></td>
+			<td></td>
+		</tr>
+	</tfoot>
+</table>
+<script type="text/javascript">
+function colSum(subclass, totalclass) {
+	var sum=0;
+    $(subclass).each(function() { 
+    	if($(this).html())
+			sum = sum + parseFloat($(this).html());
+    });
+    if(totalclass == "#total_pas" 
+    	|| totalclass == "#flight_time" 
+    		|| totalclass == "#patient"){
+    	if(sum){
+    		$(totalclass).html(sum);
+    	}
+    	
+    }else{
+    	if(sum){
+    		$(totalclass).html(sum.toFixed(2));
+    	}
+    }
+}
+colSum(".cls_pas","#total_pas");
+colSum(".cls_flight_time","#flight_time");
+colSum(".cls_cargo","#cargo");
+colSum(".cls_block_time","#block_time");
+colSum(".patient","#patient");
+
+if ($("#total")[0].rowIndex % 2 == 0){
+	$("#total").attr("class", "row_even");
+}else{
+	$("#total").attr("class", "row_odd");
+}
+</script>

@@ -1,0 +1,1320 @@
+/* 
+ * Magrabbit - Lmkhoi - 30/12/2013
+ * Styles for FlightLog project
+ * Only one file for style 
+ */
+
+/* font face */
+@font-face {
+	font-family: 'segoeuibolditalic';
+	src: url('./font/segoeuibolditalic-webfont.eot');
+	/* IE9 Compat Modes */
+	src: url('./font/segoeuibolditalic-webfont.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */  
+	       url('./font/segoeuibolditalic-webfont.woff') format('woff'),
+		/* Modern Browsers */  
+	       url('./font/segoeuibolditalic-webfont.ttf') format('truetype'),
+		/* Safari, Android, iOS */  
+	       url('./font/segoeuibolditalic-webfont.svg#svgFontName')
+		format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+	font-family: 'segoeuibold';
+	src: url('./font/segoeuibold-webfont.eot'); /* IE9 Compat Modes */
+	src: url('./font/segoeuibold-webfont.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */  
+	       url('./font/segoeuibold-webfont.woff') format('woff'),
+		/* Modern Browsers */  
+	       url('./font/segoeuibold-webfont.ttf') format('truetype'),
+		/* Safari, Android, iOS */  
+	       url('./font/segoeuibold-webfont.svg#svgFontName') format('svg');
+	/* Legacy iOS */
+}
+
+@font-face {
+	font-family: 'segoeuiitalic';
+	src: url('./font/segoeuiitalic-webfont.eot'); /* IE9 Compat Modes */
+	src: url('./font/segoeuiitalic-webfont.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */  
+	       url('./font/segoeuiitalic-webfont.woff') format('woff'),
+		/* Modern Browsers */  
+	       url('./font/segoeuiitalic-webfont.ttf') format('truetype'),
+		/* Safari, Android, iOS */  
+	       url('./font/segoeuiitalic-webfont.svg#svgFontName')
+		format('svg');
+	/* Legacy iOS */
+}
+
+@font-face {
+	font-family: 'segoeuilight';
+	src: url('./font/segoeuilight-webfont.eot'); /* IE9 Compat Modes */
+	src: url('./font/segoeuilight-webfont.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */  
+	       url('./font/segoeuilight-webfont.woff') format('woff'),
+		/* Modern Browsers */  
+	       url('./font/segoeuilight-webfont.ttf') format('truetype'),
+		/* Safari, Android, iOS */  
+	       url('./font/segoeuilight-webfont.svg#svgFontName') format('svg');
+	/* Legacy iOS */
+}
+
+@font-face {
+	font-family: 'segoeui';
+	src: url('./font/segoeui-webfont.eot'); /* IE9 Compat Modes */
+	src: url('./font/segoeui-webfont.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */  
+	       url('./font/segoeui-webfont.woff') format('woff'),
+		/* Modern Browsers */  
+	       url('./font/segoeui-webfont.ttf') format('truetype'),
+		/* Safari, Android, iOS */  
+	       url('./font/segoeui-webfont.svg#svgFontName') format('svg');
+	/* Legacy iOS */
+}
+
+@font-face {
+	font-family: 'seguisemibold';
+	src: url('./font/seguisemibold-webfont.eot'); /* IE9 Compat Modes */
+	src: url('./font/seguisemibold-webfont.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */  
+	       url('./font/seguisemibold-webfont.woff') format('woff'),
+		/* Modern Browsers */  
+	       url('./font/seguisemibold-webfont.ttf') format('truetype'),
+		/* Safari, Android, iOS */  
+	       url('./font/seguisemibold-webfont.svg#svgFontName')
+		format('svg');
+	/* Legacy iOS */
+}
+/* end font face */
+body {
+	background: #f2f2f2;
+	font-size: 14px;
+	font-family: segoeui;
+	color: #464646 !important;
+}
+
+input {
+	color: #464646;
+}
+
+a, img {
+	border: none;
+	text-decoration: none;
+}
+
+a:active, a:focus, button:focus, button:active { outline: 0;  border: 0;}
+button::-moz-focus-inner, input::-moz-focus-inner { border: 0; outline: 0;}
+input,select {
+	min-height: 30px;
+	padding-left: 3%;
+	width: 48%;
+	border: 1px solid #C6C6C6;
+	border-radious: 3px;
+	outline: none;
+}
+
+/* table {border:1px solid #c6c6c6;border-collapse:collapse; width: auto;} */
+table td {
+	border: 1px solid #c6c6c6;
+	padding: 3px 0px;
+}
+
+table th {
+	font-family: seguisemibold;
+	font-size: 14px;
+}
+
+.right {
+	float: right !important;
+}
+
+.left {
+	float: left !important;
+}
+
+.clearthis {
+	clear: both;
+}
+
+/* top menu */
+.header {
+	background: url('../media/bg_header.png');
+	width: 100%;
+	height: 51px;
+}
+
+.top_menu {
+	float: right;
+	font-size: 12px;
+	color: #fff;
+	font-family: segoeuibold;
+}
+
+.top_menu a {
+	color: #fff;
+}
+
+.top_menu li {
+	float: left;
+	margin-right: 10px;
+	list-style: none;
+	margin-top: 20px;
+}
+
+.main_menu ul {
+	margin-left: -20px;
+	list-style-type: none;
+}
+
+.main_menu li {
+	float: left;
+	margin-right: 30px;
+	font-family: segoeuibold;
+	font-size: 15px;
+}
+
+.main_menu li.active_link,.main_menu li.active_link a {
+	color: #c2192b;
+}
+
+.mn_help {
+	background: url(../img/ic_help.png) no-repeat 6px 0px;
+	padding-top: 25px;
+}
+
+.mn_logout {
+	background: url(../img/ic_logout.png) no-repeat 5px 0px;
+	padding-top: 25px;
+}
+
+/* main content */
+.main {
+	margin: 10px auto;
+	width: 90%;
+}
+
+.main_menu {
+	float: left;
+	width: 100%;
+	border-bottom: 1px solid red;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+}
+
+.main_content {
+	border: 1px solid #c6c6c6;
+	background: #fff;
+	position: relative;
+	width: 100%;
+	height: auto;
+	border-radius: 5px;
+}
+
+.main_content .form_title {
+	color: #fff;
+	background: url('../img/bg-header.png') repeat-x;
+	padding: 10px 10px 10px 10px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	font-weight: bold;
+}
+
+.sub_form {
+	border: 1px solid #c6c6c6;
+	padding: 15px;
+	clear: both;
+	margin-bottom: 20px;
+}
+
+.sub_form .title {
+	margin: -25px 0px 10px 0px;
+	background: #fff;
+	padding-left: 10px;
+	color: #464646;
+	font-family: segoeui;
+}
+
+.sub_form .title1 {
+	width: 100px;
+}
+
+.sub_form .title2 {
+	width: 140px;
+}
+/* .sub_form input {padding-left: 5px;} */
+.popup_main .title1 {
+	width: 75px;
+}
+
+.sub_form .per33 {
+	float: left;
+	width: 33%;
+	text-align: right;
+	margin-bottom: 10px;
+}
+
+.sub_form .per33>span {
+	float: left;
+	width: 40%;
+	margin-top: 7px;
+	margin-right: 2%;
+}
+
+.sub_form .per33 input,.sub_form .per33 select {
+	float: left;
+	margin-left: 5px;
+}
+
+.sub_form .per333 {
+	float: left;
+	width: 33%;
+	text-align: right;
+	margin-bottom: 10px;
+}
+
+.sub_form .per333>span {
+	float: left;
+	width: 48%;
+	margin-top: 5px;
+	margin-right: 2%;
+}
+/* .sub_form .per333 > span > span { */
+/* 	width: 160px!important; */
+/* } */
+.popup_main select {
+	width: 100% !important;
+}
+
+.sub_form .per333 input,.sub_form .per33 select {
+	float: left;
+	margin-left: 5px;
+	padding-right: 5%;
+}
+
+.block1,.block2 {
+	padding: 20px;
+}
+
+.block1 .btn-bottom {
+	border-bottom: 1px solid #bfbfbf;
+	min-height: 50px;
+}
+
+.btn_add_flight_log {
+	color: #fff;
+	border-radius: 5px;
+	background: red;
+	border_button: 1px soloid #dadada;
+	float: right;
+	padding: 5px 10px;
+}
+
+.btn_add_flight_log:hover {
+	color: #dfdfdf;
+	background: #bfbfbf;
+}
+
+.btn_default_flight_log {
+	margin-right: 10px;
+	width: auto !important;
+	color: #464646;
+	border-radius: 3px;
+	background: #bfbfbf;
+	float: right;
+	font-family: segoeui;
+	font-size: 14px;
+	border: 0 !important;
+	padding: 3px 25px !important;
+	border-bottom: 2px solid #9d9d9d !important;
+	outline: none;
+}
+
+.btn_default_flight_log:hover:enabled {
+	color: #fff;
+	background: #d86767;
+	border-bottom: 2px solid #be3636 !important;
+}
+.btn_default_flight_log:focus:enabled {
+	color: #fff;
+	background: #d86767;
+	border-bottom: 2px solid #be3636!important;
+}
+.last_margin {
+	margin-right: 0px;
+}
+
+.spicel_border {
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+	padding: 0px;
+}
+
+.min-32 {
+	min-height: 29px;
+}
+
+.min-46 {
+	min-height: 46px;
+}
+/* form*/
+#div_flight_log_table {
+	margin-top: 10px;
+}
+
+#rs_flight_log_form thead th,#rs_flight_log_form tfoot tr,#rs_fuel_expenses_or_usage_form thead th,#rs_sub_form thead th
+	{
+	background: #e8eaed;;
+	border: 1px solid #c6c6c6;
+	text-align: center;
+}
+
+#rs_sub_form tr td {
+	text-align: center;
+}
+
+#rs_sub_form input {
+	width: 80%;
+	text-align: center;
+}
+
+#rs_fuel_expenses_or_usage_form tr td {
+	text-align: center;
+}
+
+#rs_flight_log_form tr td,#rs_flight_log_form th {
+	padding: 0px;
+	padding-left: 3px;
+	text-align: left;
+}
+
+/* Poup style */
+.popup_main {
+	margin: 0px auto;
+	background: #fff;
+	border-radius: 5px;
+	position: relative;
+	color: #464646;
+	font-family: segoeui;
+}
+
+.popup_main .title {
+	background: #c1192a;
+	color: #fff;
+	font-weight: bold;
+	padding: 10px;
+}
+
+.popup_main .title span {
+	color: #fff !important;
+	font-size: 16px;
+	background: url(../img/ico_-title.png) no-repeat;
+	padding: 2px 10px 5px 35px;
+}
+
+.popup_main .title1 {
+	background: #fff;
+	color: #333;
+	font-weight: normal;
+}
+
+.popup_main .close {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+.popup_main .popup_content {
+	padding: 20px 5px 0;
+}
+
+.popup_main input,.popup_main select {
+	width: 54% !important;
+	font-family: segoeui;
+}
+
+.popup_main button {
+	width: 20px !important;
+	color: #333;
+}
+
+.popup_main  #id_flight_data_range_from,.popup_main #id_flight_data_range_to
+	{
+	width: 20.2% !important;
+}
+
+.popup_main input.btn_default_flight_log,.popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr
+	{
+	width: auto !important;
+	margin-top: 0.5%;
+}
+
+.border_none {
+	border: none;
+}
+
+.show_cc_line,.show_bcc_line {
+	display: none;
+}
+
+.tcc_line,.cc,.bcc {
+	margin-top: 5px;
+	cursor: pointer;
+	position: absolute;
+}
+
+.bcc_line {
+	margin-left: 10px;
+}
+
+.cc_line,.bcc_line {
+	float: right;
+}
+
+.tcc_line,.cc,.bcc {
+	right: 25px;
+}
+
+/* Account pages style */
+.account_main {
+	width: 33%;
+	margin: 0px auto;
+	background: #fff;
+	border-radius: 5px 5px 5px 5px;
+	position: relative;
+}
+
+.account_main .title {
+	background: url('../img/bg_login_header.png') repeat-x;
+	color: #fff;
+	text-align: center;
+	font-weight: bold;
+	font-size: 22px;
+	border-radius: 5px 5px 0 0;
+	line-height: 60px;
+}
+
+.account_main .login_footer {
+	background: #ebebeb !important;
+	float: left;
+	width: 100%;
+	height: 60px;
+	border-radius: 0 0 5px 5px;
+}
+
+.account_main .main_content {
+	float: left;
+}
+
+@
+-moz-document url-prefix  () { .account_main form#login input {
+	font-size: 16px;
+}
+
+}
+.account_main .main_content .content_center {
+	width: 86%;
+	margin: 20px auto;
+	padding-top: 15px;
+}
+
+.account_main .main_content .line {
+	width: 100%;
+	margin-bottom: 19px;
+	float: left;
+}
+
+.account_main .main_content .line span {
+	width: 33%;
+	text-align: right;
+	float: left;
+	margin-right: 5%;
+	margin-top: 7px;
+}
+
+.account_main .main_content .line input,.account_main .main_content .line select
+	{
+	width: 60%;
+	float: left;
+}
+
+.account_main .main_content .line button {
+	float: right;
+	height: 55px;
+	border: 0;
+	background: #d66363;
+	border-bottom: 2px solid #ca4f4f !important;
+	font-weight: bold;
+}
+
+.account_main .main_content .line .remember {
+	margin-left: 31%;
+	margin-top: 0px;
+}
+
+/* History Style*/
+#history thead th {
+	background: #FFFFFF;
+	border: 1px solid #c6c6c6;
+}
+
+#history td {
+	border: none;
+	border-right: 1px solid #c6c6c6;
+	padding-left: 10px;
+}
+
+#history tr.tda {
+	background: #ededed;
+}
+
+#history tr.tdb {
+	background: #fff;
+}
+/*#history input[checkbox]{ text-align: center !important;}*/
+.center_nopadding {
+	text-align: center;
+	padding-left: 0px !important;
+}
+
+.his_content_center {
+	padding: 30px 20px 62px 20px;
+}
+
+.main_content .pagging { /* position: absolute;  */
+	left: 20px;
+	bottom: 0px;
+	width: auto;
+	float: left;
+}
+
+.pagging ul,.pagging span {
+	float: right;
+	margin-top: 8px;
+}
+
+.pagging ul li {
+	list-style: none;
+	float: left;
+	margin-right: 5px;
+}
+
+.errorlist li {
+	color: red !important;
+	display: block;
+	width: 170;
+}
+
+.datebox {
+	width: 50% !important;
+	height: 27px !important;
+}
+
+.datebox input {
+	width: 81% !important;
+}
+
+.datebox span {
+	width: 10% !important;
+}
+
+.datebox .combo-arrow {
+	float: right !important;
+	width: 100% !important;
+}
+
+#rs_flight_log_form,#rs_fuel_expenses_or_usage_form {
+	width: 100% !important;
+}
+
+.datagrid-row-selected {
+	background: none !important;
+}
+
+.datagrid-body .datagrid-editable .datagrid-editable-input {
+	border-color: #bfbfbf !important;
+	border-width: 1px !important;
+	min-height: 22px;
+	-moz-border-radius: 5px !important;
+	-webkit-border-radius: 5px !important;
+	border-radius: 5px !important;
+}
+
+.datagrid-body .datagrid-editable {
+	margin: 0;
+	padding: 5px !important;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+}
+
+.validatebox-invalid {
+	background-color: #fff !important;
+	background-image: none !important;
+}
+
+.err {
+	color: red;
+	display: none;
+	/* 	padding-right: 46px;
+ */
+	text-align: left;
+	font-size: 12;
+	width: 49%;
+}
+
+.center-logo {
+	width: 406px;
+	height: 136px;
+	margin: 36px auto;
+}
+/*.register_form p label {width: 33%;
+text-align: right;
+float: left;
+margin-right: 5%;
+margin-top: 10px;
+display: none;}*/
+.register_form input,.register_form select {
+	width: 100%;
+	float: left;
+	margin-bottom: 20px;
+	color: #666;
+	padding-left: 22px;
+	border-radius: 5px;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box; /* Firefox, other Gecko */
+	box-sizing: border-box; /* Opera/IE 8+ */
+}
+
+.register_form select {
+	width: 100%;
+}
+
+.register_form .hiline {
+	position: relative;
+	float: left;
+	width: 100%;
+}
+
+.register_form .hiline .over_hidden {
+	position: absolute;
+	left: 22px;
+	top: 20%;
+	color: #666;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.icon_hiden_en {
+	background: url(../img/ico_employee.png);
+	position: absolute;
+	width: 24px;
+	height: 36px;
+	right: 22px;
+	top: 10%;
+}
+
+.icon_hiden_pass {
+	background: url(../img/ico_password.png);
+	position: absolute;
+	width: 24px;
+	height: 28px;
+	right: 22px;
+	top: 15%;
+}
+
+.required_mess {
+	text-align: center;
+	color: #c2192a;
+	border-bottom: 1px solid #bfbfbf;
+	padding-bottom: 10px;
+	width: 65%;
+	margin: 25px auto;
+}
+
+.btn_register {
+	background: #C74040;
+	color: #fff;
+	font-size: 18px;
+	width: 100% !important;
+	margin-bottom: 15px;
+}
+
+.register_form .error_id_mess {
+	position: absolute;
+	left: -32px;
+	top: 20%;
+}
+
+.register_form .error_id_mess .errorlist {
+	text-align: left;
+	width: 90%;
+	margin: 0px;
+}
+
+.messages {
+	text-align: left;
+	padding: 0px;
+	margin: -15px 0px 10px 0px;
+}
+
+.messages li {
+	list-style: none;
+}
+
+.messages li,.messages li a {
+	color: blue;
+}
+
+.datagrid-header-row {
+	background: #e8eaed !important;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.datagrid-header-row td,.datagrid-row td {
+	border-right: 1px solid #c6c6c6 !important;
+}
+
+.last-border {
+	border-right: none !important;
+}
+
+#mass_gross {
+	padding-top: 6px;
+	float: left;
+	text-align: left;
+	padding-left: 17px;
+}
+
+.datagrid-cell table {
+	border: none !important;
+}
+
+.datagrid-cell table td {
+	border-right: none !important;
+}
+
+.register-err {
+	float: left;
+	text-align: center;
+	width: 100%;
+	margin: 0px;
+	top: 10%;
+	left: -55px;
+}
+
+.register_form p {
+	margin: 5px 0px;
+	float: left;
+	width: 100%;
+}
+
+.register_form ul.errorlist {
+	width: 100%;
+	margin: 0px auto;
+	text-align: center;
+	clear: both;
+}
+
+.remember {
+	width: auto !important;
+	min-height: 10px;
+	float: left;
+}
+
+#login,#login a {
+	color: #666;
+}
+
+.box_login_bottom {
+	background: #bfbfbf;
+	clear: both;
+	color: #666;
+	text-align: center;
+	padding: 20px 0px;
+}
+
+#login input {
+	height: 55px;
+	border: 1px solid #C6C6C6;
+	font-size: 16px;
+}
+
+.login-err {
+	font-size: 12px;
+	color: red;
+	float: left;
+	/*margin-left: 11em  A trick  tab from input (login form) */
+}
+
+.remember-label {
+	float: left;
+}
+
+#form_email_popup .line {
+	margin: 5px 0px;
+	float: left;
+	width: 100%;
+	position: relative;
+}
+
+#form_email_popup .line label {
+	width: 8%;
+	text-align: right;
+	float: left;
+	margin-right: 2%;
+	margin-top: 7px;
+	font-weight: bold;
+}
+
+#form_email_popup .line input {
+	float: left;
+	width: 88% !important;
+}
+
+#form_email_popup .button_line {
+	width: 100%;
+	background: #dfdfdf;
+	margin-bottom: 0px;
+}
+
+#send_email {
+	width: 63%;
+	min-height: 365px;
+	padding: 0px;
+	height: auto !important;
+}
+/* #log-box {min-height: 618px;} */
+.combo .combo-text {
+	margin: -5px 0 0 !important;
+}
+
+.combo {
+	border-color: #BFBFBF !important;
+	border-radius: 5px !important;
+}
+
+/* .combo .combo-arrow {
+    background-color: none !important;
+    background: none !important;
+} */
+.datagrid-body {
+	height: auto !important;
+}
+
+.combo-text {
+	height: 29px !important;
+}
+
+.error-line {
+	position: relative;
+	min-height: 30px;
+	/* 	margin-bottom: 1%; */
+	/* display: none; */
+}
+
+.error-line .line1 {
+	left: 0px;
+	position: absolute;
+	top: 5px;
+	padding-left: 17%
+}
+
+.error-line .line2 {
+	left: 33%;
+	position: absolute;
+	top: 5px;
+	padding-left: 17%
+}
+
+.error-line .line3 {
+	left: 66%;
+	position: absolute;
+	top: 5px;
+	padding-left: 17%
+}
+
+.datebox .combo-arrow {
+	margin-top: -5px !important;
+	margin-right: -15px !important;
+}
+
+#id_log_date {
+	background: white url('../media/ico_calendar.png') right no-repeat;
+	padding-right: 17px;
+}
+
+#id_log_date_search {
+	background: white url('../media/ico_calendar.png') right no-repeat;
+	padding-right: 17px;
+}
+
+.pagination {
+	padding: 0 20px;
+	margin-bottom: 20px;
+}
+
+.page {
+	/* display: inline-block; */
+	padding: 5px 9px;
+	border: solid 0px #c0c0c0;
+	border-top: solid 1px #c0c0c0;
+	border-left: solid 1px #c0c0c0;
+	border-bottom: solid 1px #c0c0c0;
+	background: #fff;
+	font-size: 12px;
+	text-decoration: none;
+	color: #666;
+	margin-left: -4px;
+	width: 29px;
+	height: 29px;
+	outline: none;
+}
+
+.page:hover {
+	color: #DA130C;
+}
+
+.disabled:hover {
+	color: #666;
+}
+
+.first {
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+	width: 90px;
+	padding: 0 7px 0 21px;
+	background: url('../media/pre-red.png') no-repeat;
+	background-position: 13% 50%;
+	color: #DA130C;
+}
+
+.first-black {
+	background: url('../media/pre-black.png') no-repeat !important;
+	background-position: 13% 50% !important;
+}
+
+.last-black {
+	background: url('../media/next-black.png') no-repeat !important;
+	background-position: 86% 50% !important;
+}
+
+.last {
+	border-bottom-right-radius: 3px;
+	border-top-right-radius: 3px;
+	width: 64px;
+	padding: 0 21px 0 7px;
+	background: url('../media/next-red.png') no-repeat;
+	background-position: 86% 50%;
+	border-right: solid 1px #c0c0c0;
+	color: #DA130C;
+}
+
+.page.gradient:hover {
+	background: #d86767;
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FEFEFE),
+		to(#f0f0f0));
+	background: -moz-linear-gradient(0% 0% 270deg, #FEFEFE, #f0f0f0);
+	*/
+}
+
+.active {
+	background: #d86767;
+	color: #fff;
+}
+
+.submitted_value {
+	text-align: left;
+	padding-left: 17px;
+}
+
+#log-box {
+	min-height: 440px;
+	padding: 0px;
+}
+
+#pagging_bnt {
+	margin: -2% 1% 4% 0%;
+}
+
+#pa_of {
+	float: left;
+	margin-right: 24px;
+	font-size: 14px;
+	margin-top: 5px;
+}
+
+#open_dialog {
+	height: 139px;
+}
+
+#announce_success {
+	color: blue;
+	text-align: left;
+	padding-left: 1.7%;
+}
+
+#er_search {
+	text-align: left;
+	padding-left: 20px;
+	margin: 0px 0px -20px !important;
+	min-height: 20px !important;
+}
+
+/* div ul.errorlist li { */
+/* 	padding-right: 65; */
+/* } */
+.min-32-error-line1,.min-32-error-line2 {
+	display: none;
+}
+
+#emp_number {
+	padding-top: 6px;
+	padding-left: 5px;
+	float: left;
+}
+
+#number {
+	padding-top: 6px;
+	padding-left: 5px;
+	float: left;
+}
+
+#number_sub {
+	padding-top: 6px;
+	padding-left: 28px;
+	float: left;
+}
+
+input[type='checkbox'] {
+	margin-top: 10px;
+}
+
+@
+-moz-document url-prefix  () { #table_popup input[type='checkbox'] {
+	margin-top: 8px;
+}
+
+}
+#table_popup  ul.errorlist {
+	text-align: center;
+	padding-left: 43% !important;
+	margin: 0px;
+}
+
+#table_popup #id_flight_time,#id_order,#id_flight_data_fuel {
+	border: 0;
+}
+
+.submitted_checkbox {
+	width: 7% !important;
+	margin: 0% 0% 0% -1% !important;
+}
+
+.attack_files {
+	float: left;
+	width: 88%;
+}
+
+.attack_file {
+	border: none;
+	background: #dfdfdf;
+	text-align: center;
+	float: left;
+	margin: 0px 5px 5px 0px;
+	width: 23%;
+	border-radius: 5px;
+}
+
+thead {
+	line-height: 35px;
+}
+
+.close-attack {
+	float: right;
+	margin-top: 4%;
+	margin-right: 4%;
+	cursor: pointer;
+}
+
+.hiden_attack {
+	display: none;
+}
+
+.smart_autocomplete_container {
+	display: block;
+	background-color: white;
+	padding-left: 0%;
+	border: 1px solid #437da8;
+	margin: 0.2% 0% 0% 0%;
+	width: 15.3% !important;
+	box-shadow: 1px 1px 4px #C6C6C6;
+}
+
+ul.smart_autocomplete_container li {
+	list-style: none;
+	padding: 0% 0% 0% 9%;
+	text-align: left;
+	color: black;
+}
+
+li.smart_autocomplete_highlight {
+	background-color: #1885f9;
+	color: white !important;
+	font-weight: bold;
+}
+
+.row_odd {
+	background-color: #e8eaed !important;
+	border: 1px solid #c6c6c6;
+	border-collapse: collapse;
+}
+
+li.smart_autocomplete_hightlight {
+	background-color: #c1ce84;
+}
+
+.row_even {
+	background-color: #ffffff !important;
+	border: 1px solid #c6c6c6;
+	border-collapse: collapse;
+}
+
+.sub_form_pilot {
+	border-top: 1px solid #bfbfbf;
+	padding: 15px 0px;
+	clear: both;
+	margin-bottom: 20px;
+}
+
+.sub_form_fuel {
+	border-top: 1px solid #bfbfbf;
+	padding: 15px 0px;
+	clear: both;
+	margin-bottom: 20px;
+}
+
+.sub_form_fuel .title {
+	margin: -25px 0px 10px 0px;
+	background: #fff;
+	padding-left: 10px;
+	font-family: segoeui;
+}
+
+.sub_form_fuel .title1 {
+	width: 99px;
+}
+
+.sub_form_fuel .title2 {
+	width: 14%;
+}
+
+.check_box {
+	width: 40%;
+}
+
+/* TimeEntry styles v2.0.0 */
+.timeEntry-control {
+	height: 20px !important;
+	margin-left: 2px;
+	right: -2%;
+	vertical-align: middle;
+	width: 15px !important;
+	position: absolute;
+	top: 25%;
+}
+
+#id_off {
+	width: 100% !important;
+	padding: 0% 0% 0% 5%;
+}
+
+#id_on {
+	padding: 0% 0% 0% 3%;
+}
+
+#div_on span {
+	right: 45% !important;
+}
+
+.ui-widget-header {
+	color: #e8eaed !important;
+}
+
+.div-bottom {
+	margin-bottom: 50px;
+}
+
+.input_error {
+	border: 1px solid #d86767 !important;
+}
+
+span.submitted_checkbox input {
+	margin: 0;
+}
+
+.clearthis.min-32-error.min-32 {
+	padding-left: 47%;
+}
+
+.page.margin-left-none {
+	margin-left: 0px;
+}
+
+.page.margin-left-none.dis {
+	margin-left: 0px;
+	color: #464646;
+}
+
+.page.margin-left-none.last.dis {
+	margin-left: 0px;
+	color: #464646;
+}
+
+.datagrid  input {
+	border: 1px solid #C6C6C6;
+}
+
+ul.errorlist li {
+	text-align: left;
+}
+
+#id_flight_data_fuel_station {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	overflow: hidden;
+	background: url('../media/dropdown_arr.png') no-repeat;
+	background-position: 98% 50%;
+	text-indent: 0.01px;
+	text-overflow: "";
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding-top: 1px;
+	cursor: default;
+}
+
+#id_flight_data_fuel {
+	padding-left: 0%;
+}
+
+.jqte {
+	border: #c6c6c6 1px solid !important;
+}
+
+.popup_main span .star,.star {
+	color: red !important;
+}
+
+
+.middle {
+	margin-top: -5px !important;
+}
+
+.main_menu li:before{
+    content:"• ";
+    font-size: 25px;
+}
+

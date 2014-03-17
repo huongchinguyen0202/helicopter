@@ -1,0 +1,122 @@
+{% load dajaxice_templatetags %}
+{% load static from staticfiles %}
+{% dajaxice_js_import %}
+<div class="popup_main clearthis">
+       <div class="title"><span>Send Email</span></div>
+       <div class="close">
+           <a class="close_popup"><img style="width: 20px; height: 20px;" src="{% static "img/ico_popup_close.png"%}"></a>
+       </div>
+       <div id="mes"></div>
+       <div class="popup_content">           
+			<!--<div class="line">
+			    <label>From</label>
+			    <input class="field_email request" name="email_from" value="" type="input" />
+			</div>-->
+			<div class="line">
+			    <label>To</label>
+			    <input class="field_email request" name="email_to" value="" type="input" id = "email"/>
+			    <div class="tcc_line">
+			    	<span class="bcc_line">Bcc</span>
+			    	<span class="cc_line">Cc</span>			    
+			   	</div>
+			</div>
+			<div class="line">
+			    <label>From</label>
+			    <input disabled="disabled" class="email_from" name="email_from" value="" type="input" />
+			</div>
+			<div class="line show_cc_line">
+			    <label>CC</label>
+			    <input class="m_email" name="email_cc" value="" type="input" id = "email_cc" />
+			    <span class="cc">Close</span>
+			</div>
+			<div class="line show_bcc_line">
+			    <label>BCC</label>
+			    <input class="m_email" name="email_bcc" value="" type="input" id="email_bcc"/>
+			    <span class="bcc">Close</span>
+			</div>
+			<div class="line">
+			    <label>Subject</label>
+			    <input name="email_subject" value="" type="input" />
+			</div>
+			<div class="line">
+			    <label></label>
+			    <div class="attack_files">
+				    <input style="width: 20% !important;" class="attack_file" readonly="true" name="attack_file" value="" type="text" />
+			    </div>
+			</div>
+			<div class="line">
+			    <label>Content</label>
+			    <input class="editor" name="email_content" value="" type="text" />
+			</div>			
+    </div>
+    <div class="line button_line" style="padding: 12px 0; border-radius: 0 0 5px 5px;">
+	    <input style="width: auto !important; float: right; margin-right: 20px;" id="btn_send_email" 
+	    	class="btn_default_flight_log last_margin" type="button" value="Send" />
+	    <input style="width: auto !important; float: right;" class="btn_default_flight_log close_popup" 
+	    	type="button" value="Cancel" />
+	</div>
+	<script type="text/javascript">
+		jQuery("#email, #email_cc, #email_bcc").click(function (event) {
+			$("#btn_send_email").attr("type","button");
+			var value = jQuery(this).val();
+			if (value.indexOf("Not a valid e-mail address") != -1
+					|| value.indexOf("This is required field") != -1){
+				jQuery(this).val("");
+				jQuery(this).css("color","#464646");
+			}
+		});
+		jQuery("#email").blur(function (event) {
+			var value = jQuery(this).val();
+			if (value == ""){
+				jQuery(this).val("This is required field");
+				jQuery(this).attr("style", "color: #c2192a !important");
+			}
+		});
+		jQuery("#email, #email_cc, #email_bcc").change(function (event) {
+			var value = jQuery(this).val();
+			if (value.indexOf("Not a valid e-mail address") != -1 
+					|| value.indexOf("This is required field") != -1){
+				jQuery(this).val("");
+				jQuery(this).css("color","#464646");
+				return false;
+			}
+			var em = jQuery(this);
+			var x = em.val();
+			var count = 0;
+			var length = 0;
+			if (x == "" || x == "This is required field") {
+				em.val("This is required field");
+				jQuery(this).attr("style", "color: #c2192a !important");
+				jQuery(this).trigger("blur");
+				return false;
+			}else{
+				x.replace(";", ",");
+				x.replace(" ", "");
+				var array = x.split(",");
+				length = array.length;
+				for (i = 0; i < array.length; i++) {
+					if(array[i].trim() != "" && array[i].trim().indexOf(" ") == -1){
+						count += 1;
+						var atpos = array[i].indexOf("@");
+						var dotpos = array[i].lastIndexOf(".");
+						if (atpos < 1 || dotpos < atpos + 2
+								|| dotpos + 2 >= array[i].length) {
+							jQuery(this).attr("style", "color: #c2192a !important");
+							em.val("Not a valid e-mail address");
+							jQuery(this).trigger("blur");
+							return false;
+						}
+					} 
+				}
+			}
+			if (count == (length)){
+				$(this).val($(this).val() + ",");
+			}
+			$(this).val($(this).val() + " ");	
+    			
+		});
+		
+		
+		$(".editor").jqte();
+	</script>
+</div>

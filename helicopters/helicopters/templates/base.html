@@ -1,0 +1,144 @@
+{% load dajaxice_templatetags %}
+{% load static from staticfiles %}
+{% dajaxice_js_import %}
+<html>
+<head>
+<title>{% block title %}{% endblock %}</title>
+
+<script type="text/javascript" src="{% static "js/jquery-2.0.3.min.js"%}"></script>
+
+<script type="text/javascript" src="{% static "js/main.js"%}"></script>
+<script type="text/javascript" src="{% static "js/dajax.js"%}"></script>
+<script type="text/javascript" src="{% static "js/flight_log.js"%}"></script>
+<link type="text/css" rel="stylesheet" href="{% static "css/flight_log.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/styles.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery-te-1.4.0.css"%}">
+
+<link type="text/css" rel="stylesheet" href="{% static "css/easyui.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui_theme.css"%}">  
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui_icon.css"%}"> 
+
+<script type="text/javascript" src="{% static "js/ajax.js"%}"></script>
+<script type="text/javascript" src="{% static "js/jquery_ui103.js"%}"></script>
+<script type="text/javascript" src="{% static "js/jquery_ui_min.js"%}"></script>
+
+<script src="{{ STATIC_URL }}js/jquery-te-1.4.0.min.js"></script>
+<script src="{{ STATIC_URL }}js/validation.js"></script>
+<script src="{{ STATIC_URL }}js/datagrid.js"></script>
+<script src="{{ STATIC_URL }}js/datagridff.js"></script>
+<script src="{{ STATIC_URL }}js/common.js"></script>
+
+<script src="{{ STATIC_URL }}js/jquery.plugin.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.timeentry.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+
+<!-- Auto complete -->
+<script src="{{ STATIC_URL }}js/qs_score.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.smart_autocomplete.js"></script>
+
+<link type="text/css" rel="stylesheet" href="{% static "css/fire_fox.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/kendo.blueopal.min.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/kendo.common.min.css"%}">  
+<link type="text/css" rel="stylesheet" href="{% static "css/custom_dropdownlist.css"%}"> 
+<script type="text/javascript" src="{% static "js/kendo.web.min.js"%}"></script>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#add_flight_log_save, #add_flight_log_submit').click(function(e) {
+		idButton="";
+		idButton=$(this).attr('id');
+		//Check exist flight leg
+		if (!verify_inp_sel()) return false;
+		if($('#rs_flight_log_form').find('tr.row_odd').length < 1){
+			alert("Please add least one Flight Leg before save or submit.");
+			return false;
+		}
+		if(!valid_grid_fuel()){
+			alert('Please save the Fuel section before saving the Flight Log ');
+			return false;
+		}
+		if(!valid_grid()){
+			alert('Please save the Pilot section before saving the Flight Log ');
+			return false;
+		} 
+		
+		if(!submit_form_add()) return false;
+
+	}); 
+});
+
+</script>
+
+<script language="javascript" type="text/javascript">
+  if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Firefox') > 0)
+  {document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
+		  			.popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 1px;}\
+		  			span.submitted_checkbox input{margin:1% 0 0 19% !important;}\
+  					</style>');}
+  if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Safari') > 0)
+  {document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
+		  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 10px;}\
+		  span.submitted_checkbox input{margin-top:48% !important;}\
+		  </style>');}
+  if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Chrome') > 0)
+  {document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
+		  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 9px;}\
+		  span.submitted_checkbox input{margin-top:36% !important;}</style>');}
+</script>
+</head>
+<body>
+	<div class="header">
+		<div class="left"><img src="{% static 'media/logo.png'%}" alt="logo" /></div>
+		<div class="right">
+			<ul class="top_menu">
+				{% if request.session.usname %}
+				<li style="margin-top: 5px;"><a href="#" tabindex="-1">You are logged in {{ request.session.usname }}</a></li>
+				<li style="margin-top: -16px;"><img src="{% static 'media/space.png' %}" alt="" /></li>
+				<li><a class="mn_logout" href="/logout" tabindex="-1">Logout</a></li>
+				<li style="margin-top: -16px;"><img src="{% static 'media/space.png' %}" alt="" /></li>
+				<li><a class="mn_help" href="#" tabindex="-1">Help</a></li>
+
+				{% else %}
+				<li><a href="/login" tabindex="-1">Login</a></li>
+				<li style="margin-top: -16px;"><img src="{% static 'media/space.png' %}" alt="" /></li>
+				<li><a href="/register" tabindex="-1">Register</a></li>
+				<li style="margin-top: -16px;"><img src="{% static 'media/space.png' %}" alt="" /></li>
+				<li><a class="mn_help" href="#" tabindex="-1">Help</a></li>
+				{% endif %} 
+			</ul>
+		</div>
+	</div>
+	{% if request.session.usname %}
+	<div class="main clearthis">		
+		<div class="main_menu">
+			<ul>
+	        {% ifequal request.path "/log/" %}
+        		<li {% if form.is_submited.value %}class = "active_link"{% endif %}>
+        			<a onclick = "save_confirm('search')" href="javascript:void(0)" tabindex="-1">Submitted Flight Log</a>
+        		</li>
+        		<li {% if form.is_submited.value != None and not form.is_submited.value %}class = "active_link"{% endif %}>
+        			<a onclick = "save_confirm('pending')" href="javascript:void(0)" tabindex="-1">Pending Flight Log</a>
+        		</li>
+				<li {% if form.is_submited.value == None %}class = "active_link"{% endif %}>
+					<a onclick = "save_confirm('log')" href="javascript:void(0)" tabindex="-1">Add Flight Log</a>
+				</li>
+			{% else %}
+				<li {% ifequal request.path "/search/" %}class = "active_link"{% endifequal %}>
+					<a href="/search/" tabindex="-1">Submitted Flight Log</a>
+				</li>
+				<li {% ifequal request.path "/" %}class = "active_link"{% endifequal %}>
+					<a href="/" tabindex="-1">Pending Flight Log</a>
+				</li>
+		        <li><a href="/log/" tabindex="-1">Add Flight Log</a></li>
+		        
+	        {% endifequal %}
+			</ul>
+		</div>
+	</div>
+  	{% endif %}
+  {% block content %}
+  {% endblock %} 
+</body>
+</html>
