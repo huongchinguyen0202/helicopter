@@ -87,7 +87,7 @@ def log(request):
     list_emp = Employee.objects.all().order_by('first_name')   
     
     extra_value = 1
-    extra_value_pilot = 1
+    extra_value_pilot = 0
     if "log_id" in request.GET:
         id = request.GET["log_id"]
         a = Log_Location.objects.filter(log_id = id).count()  if id else 0
@@ -101,11 +101,9 @@ def log(request):
                                        can_delete=True, max_num=10, extra = extra_value)
     
     PilotFormSet = modelformset_factory(model = LogEmployee, form = PilotForm, 
-                                       can_delete=True, max_num=10, extra = extra_value_pilot)
+                                       max_num=10, extra = extra_value_pilot)
     
     if request.method == 'POST':
-        print "moi vao post"
-        
         formset = FuelFormSet(request.POST, request.FILES)
         formset_pilot = PilotFormSet(request.POST, request.FILES, prefix='pilots')
         
@@ -116,16 +114,13 @@ def log(request):
             pk_id = request.POST.get('id_log')
             
             save_data_form_grid(request, pk_id, form, formset, formset_pilot)
-            print "sau goi ham  save_data_form_grid"
             delete_session(request)
             try:
                 submit = request.POST[constant.submit]
                 
                 if submit:
-                    print "vao submit"
                     link_return = "/search/"
             except:
-                print "vao pass form.is_valid() and list_object"
                 pass
             return HttpResponseRedirect(link_return)
 
@@ -166,7 +161,8 @@ def log(request):
             form = LogForm(customer = request.POST.get('customer'), model = request.POST.get('model'), 
                         initial={'log_number': log_n, 'user_id': request.session[constant.usernameParam]})
             formset = FuelFormSet(queryset=Log_Location.objects.none())
-            formset_pilot = PilotFormSet(queryset=LogEmployee.objects.none(), prefix='pilots')
+            cur_login_user = LogEmployee.objects.filter(id_log_employee = request.session[constant.usernameParam])
+            formset_pilot = PilotFormSet(queryset=cur_login_user, prefix='pilots')
             pass
         
         list_flight_log = get_list_session_object(request)
@@ -214,14 +210,12 @@ def save_data_form_grid(request, pk_id, form, formset, formset_pilot):
         if em:
             form.pilot_employee_number = em[0] 
     except:
-        print "get employee number"
         pass
     submit = None
     try:
         submit = request.POST.get("submit")
     except Exception as e:
-        print 'Loi o kt submit'
-        print e
+        pass
     if submit:
         form.is_submited = True
         messages.success(request, 'Flight Log is submitted successfully.')
@@ -246,8 +240,6 @@ def save_data_form_grid(request, pk_id, form, formset, formset_pilot):
     try:
         list_flight_log = get_list_session_object(request, Log.objects.filter(id_log = pk_id)[0])
     except Exception as e:
-        print 'save trong ham save 230'
-        print e
         list_flight_log = get_list_session_object(request, log_ob[log_count-1])
         
     for flight_log in list_flight_log:
@@ -255,17 +247,11 @@ def save_data_form_grid(request, pk_id, form, formset, formset_pilot):
 
 
 def home(request):
-    print "submit home"
     if not is_login(request):
         return response_redirect_login(request)
-    print "sau check login"
     announce_message = None
-    print"truoc check POST"
     if request.method == constant.POST:
-        print "vao check POST"
         data = request.POST
-        print "data of request"
-        print data
         
         list_log_id = []
         delete = None
@@ -443,6 +429,10 @@ def deserializer_log_section(obj1, id_log_section, log = None):
     log_section_object.flight_data_range_from = obj1['flight_data_range_from']
     log_section_object.flight_data_range_to = obj1['flight_data_range_to']
     log_section_object.flight_data_tlo_w = obj1['flight_data_tlo_w']
+    log_section_object.day = obj1['day']
+    log_section_object.night = obj1['night']
+    log_section_object.pilot_nvg = obj1['pilot_nvg']
+    log_section_object.co_pilot_nvg = obj1['co_pilot_nvg']
     return log_section_object
     
 

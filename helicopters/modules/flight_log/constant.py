@@ -62,6 +62,7 @@ home_page = "home.html"
 email_succ_page = "flights/email_succseful.html"
 signin = "accounts/login.html"
 home_submitted = "flights/home_sumitted.html"
+pilot_section = "flights/pilot_session.html"
 
 #edit_delete
 flight_log_id = "flight_log_id"

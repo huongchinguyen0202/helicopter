@@ -25,7 +25,7 @@
 						<div class="clearthis min-32">
 							<div class="per33">
 								<span>Log Number</span>
-								<label id="number_sub" class = "submitted_value" ">{{id | stringformat:"06d"}}</label>
+								<label id="number_sub" class = "submitted_value">{{id | stringformat:"06d"}}</label>
 								{{form.log_number}}{{form.id_log}}
 								<input id = "max_pax" type="hidden" name="max_pax" value="{{max_pax}}"/>
 							</div>
@@ -211,13 +211,7 @@
 				</div>
 				
 				{% else %}
-				<div id = "div_error_passenger" style="color:red; text-align : left;
-						margin-top:6px; padding-left: 20">
-				</div>
-				<div id = "div_succ_passenger" style="color:blue; text-align : left;
-						margin-top:6px; padding-left: 20">
-				</div>
-				
+			
 				{% if form.fuel.value %}
 					<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">Edit Flight Log</span></div>
 				
@@ -498,12 +492,11 @@
 								<tbody id="log_location_grid">
 							    {% for log_loc in log_loc_list %}
 	    							<tr>
-	    								<td>{{ log_loc.location_id.location_name | default_if_none:""}}</td>
-										<td>{{ log_loc.gallons | default_if_none:""}}</td>
-										<td>{{ log_loc.owner | default_if_none:""}}</td>
-										<td>{{ log_loc.amount | default_if_none:""}}</td>
-										<td>{{ log_loc.pk}}</td>
-
+	    								<td>{{ log_loc.location_id.location_name | default_if_none:"" }}</td>
+										<td>{{ log_loc.gallons | default_if_none:"" }}</td>
+										<td>{{ log_loc.owner | default_if_none:"" }}</td>
+										<td>{{ log_loc.amount | default_if_none:"" }}</td>
+										<td>{{ log_loc.pk }}</td>
 									</tr>
 							    {% endfor %}
 								</tbody>
@@ -515,62 +508,33 @@
 							</select>
 							<table id="ff"></table>
 						</div>
-						
 					</div>
-					<div class="sub_form_pilot">
-						<table id="tt" style="width: 100%"></table>
-						<select id="test" hidden="true">
-						
-						{% for emp in list_emp %}
-							<option value="{{emp.id_employee}}">{{emp.first_name}}, {{emp.last_name}}</option>
-						{% endfor %}
-						</select>
-						<table id="temp" style="display: none;">
-							{% for obj in log_emp_list%}
+					<div class="form_pilot">
+						<table id="table_pilot" style="width: 100%;">
+							<thead>
+								<td>PILOT</td>
+								<td>PIC</td>
+								<td>SIC</td>
+								<td>DAY</td>
+								<td>NIGHT</td>
+								<td>VFR</td>
+								<td>IFR</td>
+								<td>NVG</td>
+							</thead>
+							{{ formset_pilot.management_form }}
+							{% for obj in formset_pilot %}
 								<tr>
-								<td>{{obj.employee.id_employee}}</td>
-								<td>
-								{% if obj.pic %}
-									{{obj.pic}}
-								{% endif%}
-								</td>
-								<td>
-								{% if obj.sic %}
-									{{obj.sic}}
-								{% endif%}
-								</td>
-								<td>
-								{% if obj.day %}
-									{{obj.day}}
-								{% endif%}
-								</td>
-								<td>
-								{% if obj.night %}
-									{{obj.night}}
-								{% endif%}
-								</td>
-								<td>
-								{% if obj.ifr %}
-									{{obj.ifr}}
-								{% endif%}
-								</td>
-								<td>
-								{% if obj.nvg %}
-									{{obj.nvg}}
-								{% endif%}
-								</td>
-								<td>
-								{% if obj.long_in %}
-									{{obj.long_in}}
-								{% endif%}
-								</td>
-								<td>
-								{{obj.id_log_employee}}
-								</td>
+									<td>{{obj.pilot.value | default_if_none:""}}</td>
+									<td>{% if obj.pic %}{{obj.pic.value | default_if_none:""}}{% endif%}</td>
+									<td>{% if obj.sic %}{{obj.sic.value | default_if_none:""}}{% endif%}</td>
+									<td>{% if obj.day %}{{obj.day.value | default_if_none:""}}{% endif%}</td>
+									<td>{% if obj.night %}{{obj.night.value | default_if_none:""}}{% endif%}</td>
+									<td>{% if obj.ifr %}{{obj.ifr.value | default_if_none:""}}{% endif%}</td>
+									<td>{% if obj.nvg %}{{obj.nvg.value | default_if_none:""}}{% endif%}</td>
+									<td>{% if obj.long_in %}{{obj.long_in.value | default_if_none:""}}{% endif%}</td>
 								</tr>
 							{% endfor%}
 						</table>
-						
 					</div>
 					<div class="min-32 div-bottom">
 					{% if form.is_submited.value == True %}
@@ -579,9 +543,15 @@
 						<input class="btn_default_flight_log" type="button" value="Return to list" onclick="window.location='/search/'"/>					
 						
 					{% else %}
-						<input class="btn_default_flight_log last_margin" name="save" 
-								id = "add_flight_log_save"
-								type="submit" value="Save" />
+						{% ifequal request.get_full_path "/log/" %}
+							<input class="btn_default_flight_log last_margin" name="save" 
+									id = "add_flight_log_save"
+									type="submit" value="Save" />
+						{% else %}
+							<input class="btn_default_flight_log last_margin" name="save" 
+									id = "add_flight_log_save"
+									type="submit" value="Update" />
+						{% endifequal %}
 						<input class="btn_default_flight_log " name="submit" 
 								id = "add_flight_log_submit"
 								type="submit" value="Submit" />
@@ -600,15 +570,14 @@
 				    </div>
 				    {% endfor %}
 				</div>
-			    
-			    <div id="pi" hidden="true">
+				<div id="pi">
 			    	{{ formset_pilot.management_form }}
 				    {% for form in formset_pilot.forms %}
 				    <div class="item1">
 				      {{form.as_p}}
 				    </div>
 				    {% endfor %}
-			    </div> 
+			    </div>
 			</form>
 		</div>		
 	</div>

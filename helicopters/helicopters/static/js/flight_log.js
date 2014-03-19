@@ -784,7 +784,7 @@ $(document).ready(function() {
 				#id_flight_data_amount, #id_fuel_wheels_down, #id_flight_data_cg,\
 				#id_off, #id_on, #id_flight_data_block_time, #id_flight_data_range_from,\
 				#id_flight_data_range_to, #id_flight_data_fuel_amount, #id_flight_time,\
-				#id_flight_data_patient").val("");
+				#id_flight_data_patient, #id_day, #id_night, #id_pilot_nvg, #id_co_pilot_nvg").val("");
 		 document.getElementById('id_partial_nfr').selectedIndex = 0;
 		 //document.getElementById('id_flight_data_fuel_station').selectedIndex = 0;
 		 $("#id_flight_data_fuel_station").val("");
@@ -849,10 +849,12 @@ $(document).ready(function() {
                 		$("#error_id_flight_data_cg").css("display","none");
             		}
             		if(id == "id_flight_data_range_from"){
+            			pass = true;
                 		$("#range_to_error_id").css("display","none");
                 		$("#id_flight_data_range_from").removeClass("input_error");
                 	}
             		if(id == "id_flight_data_range_to"){
+            			pass = true;
                 		$("#range_to_error_id").css("display","none");
                 		$("#id_flight_data_range_to").removeClass("input_error");
                 	}
@@ -942,4 +944,9 @@ $(document).ready(function() {
 		});
 	});
 	
+	$("#id_co_pilot_employee_number").change(function() {
+		co_pilot = $(this).val(); 
+		Dajaxice.flight_log.load_copilot(Dajax.process, 
+				{'co_pilot':co_pilot});
+	});
 });

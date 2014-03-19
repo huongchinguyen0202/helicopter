@@ -140,15 +140,18 @@ class LogEmployee(models.Model):
     employee = models.ForeignKey(Employee, null=True, db_column='employee_id', blank=True)
     log = models.ForeignKey(Log, null=True, db_column='log', blank=True)
     pic = models.FloatField(null=True, blank=True)
+    
+    #Add fiedl for CRs
+    VFR =  models.FloatField(null=True, blank=True)
+
     class Meta:
         db_table = 'Log_Employee'
-        
-        
+    
 class LogSection(models.Model):
     id_log_section = models.AutoField(primary_key=True, 
                                       db_column='log_section_id')
-    all_ifr = models.BooleanField()
-    all_nfr = models.BooleanField()
+    all_ifr = models.BooleanField(verbose_name = "ALL IFR")
+    all_nfr = models.BooleanField(db_column='all_vfr', verbose_name = "ALL VFR")
     flight_data_amount = models.CharField(null=True, blank=True, max_length = 255L,
                                           db_column='amount',
                                            verbose_name = "Amount")
@@ -187,7 +190,8 @@ class LogSection(models.Model):
     off = models.CharField(max_length = 5, db_column='off')
     on = models.CharField(max_length = 5, db_column='on')
     partial_nfr = models.IntegerField(null=True, blank=True, 
-                                   db_column='partial_nfr', verbose_name = "Partial NFR")
+                                   db_column='partial_vfr', verbose_name = "Partial VFR")
+    
     passenger = models.IntegerField(db_column='Passenger')
     
     flight_time = models.IntegerField(verbose_name = "Flight time", 
@@ -205,6 +209,12 @@ class LogSection(models.Model):
     flight_data_tlo_w = models.FloatField(verbose_name = "T/O W",db_column='t/o_w')
     slot_purpose_id =  models.ForeignKey('Slot_Purpose',db_column='slot_purpose_id',
                                           verbose_name = "Slot_Purpose") 
+    
+    #Add new field for CRs
+    day = models.FloatField(db_column = "day")
+    night = models.FloatField(db_column = "night")
+    pilot_nvg = models.FloatField(null=True, blank=True, db_column = "pilot_nvg")
+    co_pilot_nvg = models.FloatField(null=True, blank=True, db_column = "co_pilot_nvg")
     
     class Meta:
         db_table = 'Log_Section'

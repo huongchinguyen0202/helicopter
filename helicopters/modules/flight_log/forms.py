@@ -64,6 +64,10 @@ class FlightLogDetail(forms.ModelForm):
             self.fields['flight_data_cargo_weight'] = forms.FloatField(required = False, min_value = 0,max_value = 999999999)
             self.fields['flight_data_block_time'] = forms.FloatField(required = False, min_value = 0,max_value = 999999999)
             self.fields['fuel_wheels_down'] = forms.FloatField(required = True, min_value = 0,max_value = 999999999)
+            self.fields['night'] = forms.FloatField(required = True, min_value = 0,max_value = 999999999)
+            self.fields['day'] = forms.FloatField(required = True, min_value = 0,max_value = 999999999)
+            self.fields['pilot_nvg'] = forms.FloatField(required = False, min_value = 0,max_value = 999999999)
+            self.fields['co_pilot_nvg'] = forms.FloatField(required = False, min_value = 0,max_value = 999999999)
             self.fields['flight_data_fuel_station'] = forms.CharField(required = False)
             self.fields['from_field'] = forms.ModelChoiceField(
                                                     queryset=Location.objects.all().order_by("location_name"), 
@@ -91,6 +95,8 @@ class FlightLogDetail(forms.ModelForm):
             self.fields['flight_data_cg'].widget.attrs['class'] = 'req'
             self.fields['flight_data_range_from'].widget.attrs['class'] = 'req'
             self.fields['flight_data_range_to'].widget.attrs['class'] = 'req'
+            self.fields['day'].widget.attrs['class'] = 'req'
+            self.fields['night'].widget.attrs['class'] = 'req'
             
             CHOICES = [(-1,'Choose One'),]
             if partial_range:
@@ -177,18 +183,21 @@ class SearchForm(ModelForm):
         
         
 class FuelForm(ModelForm):
-    sp = forms.CharField(max_length=30L, required=False)
+    gallons = forms.FloatField(widget=forms.HiddenInput())
     def __init__(self, *args, **kwargs):
         super(FuelForm, self).__init__(*args, **kwargs)
-        self.fields['location_id'] = forms.ModelChoiceField(queryset=Location.objects.all(), required=False)
+        self.fields['location_id'] = forms.ModelChoiceField(queryset=Location.objects.none(), empty_label="Choose One", required=False)
+
     class Meta:
         model = Log_Location
         fields = ['id_log_location', 'location_id', 'gallons', 'owner', 'amount']
         
 class PilotForm(ModelForm):
-    sp_pi = forms.CharField(max_length=30L, required=False)
+    pilot = forms.CharField()
     def __init__(self, *args, **kwargs):
         super(PilotForm, self).__init__(*args, **kwargs)
+        cur_emp = kwargs.pop('instance').employee
+        self.fields["pilot"].initial = cur_emp.last_name + "," + cur_emp.first_name
     class Meta:
         model = LogEmployee
 

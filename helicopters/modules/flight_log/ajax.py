@@ -1,6 +1,6 @@
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
-from flight_log.forms import FlightLogDetail
+from flight_log.forms import FlightLogDetail, PilotForm
 from dajax.core import Dajax
 from dajaxice.utils import deserialize_form
 from django.core import serializers
@@ -8,10 +8,11 @@ from flight_log.views import get_list_session_object, fuel_station_list
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from flight_log.models import A1C, Model, Employee, Contract1Chater, Log,\
-    Location,UserTemp
+    Location,UserTemp, LogEmployee
 import constant
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import os
+from django.forms.models import modelformset_factory
 
 @dajaxice_register
 def add_flight_log(request, next_order_id, fuel, max_pax):
@@ -84,11 +85,16 @@ def edit_flight_log(request, index, max_pax, is_submitted = False):
         fuel_station_name = edit_object.flight_data_fuel_station.location_name
     form = FlightLogDetail(instance = edit_object, partial_range = edit_object.flight_time,
                            max_pax = max_pax)
+    
     render = render_to_string(constant.popup_page ,{constant.single_form:form,
                                                     constant.IS_EDIT : "true",
                                                     constant.is_submitted:is_submitted})
-    
     dajax.script(constant.prepend_table_popup %render.replace('\n', ""))
+    dajax.script("if($(\"#id_load_schedule\").is(\":checked\")){\
+            $(\"#id_flight_data_cg\").parent().find(\"span span\").css(\"display\", \"none\");\
+            $(\"#id_flight_data_range_from\").parent().find(\"span span\").css(\"display\", \"none\");\
+            $(\"#id_flight_data_range_to\").parent().find(\"span span\").css(\"display\", \"none\");\
+            }");
 
     '''
         Generate data into fuel station
@@ -494,3 +500,15 @@ def pour_fuel_station_popup(dajax):
     for location in locations:
         list_loc_name.append(location.location_name.encode('ascii', 'ignore'))
     dajax.script("load_ajax_popop("+str(list_loc_name)+");")
+
+@dajaxice_register(method=constant.GET)
+def load_copilot(request, co_pilot):
+    dajax = Dajax()
+    dajax.alert(co_pilot)
+    PilotFormSet = modelformset_factory(model = LogEmployee, form = PilotForm, 
+                                       can_delete=True, max_num=10, extra = 0)
+    cur_login_user = LogEmployee.objects.filter(id_log_employee = request.session[constant.usernameParam])
+    formset_pilot = PilotFormSet(queryset=cur_login_user, prefix='pilots')
+    render = render_to_string(constant.pilot_section ,{"formset_pilot":formset_pilot})
+    dajax.script(constant.prepend_table_popup %render.replace('\n', ""))
+    return dajax.json()

@@ -1,3 +1,4 @@
+<!--[if IE]><!doctype html><![endif]-->
 {% load dajaxice_templatetags %}
 {% load static from staticfiles %}
 {% dajaxice_js_import %}
@@ -12,6 +13,8 @@
 <script type="text/javascript" src="{% static "js/flight_log.js"%}"></script>
 <link type="text/css" rel="stylesheet" href="{% static "css/flight_log.css"%}">
 <link type="text/css" rel="stylesheet" href="{% static "css/styles.css"%}">
+<link type="text/css" rel="stylesheet" href="{% static "css/styles_ie10.css"%}">
+<!--[if IE]><link type="text/css" rel="stylesheet" href="{% static "css/styles_ie.css"%}"><![endif]-->
 <link type="text/css" rel="stylesheet" href="{% static "css/jquery-te-1.4.0.css"%}">
 
 <link type="text/css" rel="stylesheet" href="{% static "css/easyui.css"%}">
@@ -25,8 +28,8 @@
 
 <script src="{{ STATIC_URL }}js/jquery-te-1.4.0.min.js"></script>
 <script src="{{ STATIC_URL }}js/validation.js"></script>
-<script src="{{ STATIC_URL }}js/datagrid.js"></script>
-<script src="{{ STATIC_URL }}js/datagridff.js"></script>
+<!-- <script src="{{ STATIC_URL }}js/datagrid.js"></script> -->
+<!-- <script src="{{ STATIC_URL }}js/datagridff.js"></script> -->
 <script src="{{ STATIC_URL }}js/common.js"></script>
 
 <script src="{{ STATIC_URL }}js/jquery.plugin.js"></script>
