@@ -1,0 +1,38 @@
+/* ie styles */
+#id_log_date_search, #id_log_date {
+	background: white url('../media/ico_calendar.png') right no-repeat;
+	padding-right: 0px;
+}
+.sub_form .per333 input, .sub_form .per33 select {
+padding: 0px;
+padding-left: 3%;
+height:28px;
+width: 45%;
+}
+input, select {
+/* padding-left: 0px; */
+/* width: 48%; */
+}
+
+.sub_form .per333>span {
+width: 46%;
+margin-top: 5px;
+margin-right: 2%;
+}
+
+.err {
+padding-right: 46px;
+font-size: 12px;
+/* width: 49%; */
+}
+
+.error-line .line1, .error-line .line2, .error-line .line3 {
+padding-left: 16.3%;
+}
+.k-widget, .k-dropdown, .k-header  {
+	width: 48.5% !important;
+}
+.k-dropdown-wrap .k-state-default .k-state-focused{
+	width: 86% !important;
+}
+input[type='checkbox'], #login input {border: border:0px !important; outline-style:none!important;}

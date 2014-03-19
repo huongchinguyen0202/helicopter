@@ -1,0 +1,25 @@
+{% load static from staticfiles %}
+<table id="table_pilot" style="width: 100%;">
+	<thead>
+		<td>PILOT</td>
+		<td>PIC</td>
+		<td>SIC</td>
+		<td>DAY</td>
+		<td>NIGHT</td>
+		<td>VFR</td>
+		<td>IFR</td>
+		<td>NVG</td>
+	</thead>
+	{% for obj in formset_pilot %}
+		<tr>
+		<td>{{obj.pilot | default_if_none:""}}</td>
+		<td>{% if obj.pic %}{{obj.pic.value | default_if_none:""}}{% endif%}</td>
+		<td>{% if obj.sic %}{{obj.sic.value | default_if_none:""}}{% endif%}</td>
+		<td>{% if obj.day %}{{obj.day.value | default_if_none:""}}{% endif%}</td>
+		<td>{% if obj.night %}{{obj.night.value | default_if_none:""}}{% endif%}</td>
+		<td>{% if obj.ifr %}{{obj.ifr.value | default_if_none:""}}{% endif%}</td>
+		<td>{% if obj.nvg %}{{obj.nvg.value | default_if_none:""}}{% endif%}</td>
+		<td>{% if obj.long_in %}{{obj.long_in.value | default_if_none:""}}{% endif%}</td>
+		</tr>
+	{% endfor%}
+</table>
