@@ -1,0 +1,9 @@
+{% load static from staticfiles %}
+<div id = "pi_content">
+	{{ formset_pilot.management_form }}
+    {% for form in formset_pilot.forms %}
+    <div class="item1">
+      {{form.as_p}}
+    </div>
+    {% endfor %}
+</div>

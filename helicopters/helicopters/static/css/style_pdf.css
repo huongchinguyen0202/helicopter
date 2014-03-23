@@ -1,0 +1,19 @@
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+body { font-size:14px;}
+table {width: 100%; margin: 2% auto;}
+th, tr, td { border: 1px solid #938888;text-align: center;padding: 3px; }
+.contain {width: 94%;margin: 3% auto;}
+.contain #table1 span {display: block; }
+#table0  td {text-align: left;}
+#table0 span {display: inline;}
+#table0 tr td span:last-child {padding-left: 3px;}
+#table1 td span:first-child { min-height: 40px;}
+table th, table tr span:first-child , #table2 tr:first-child, #table2 td:first-child, #table3 tr:nth-child(-n+2) , #table4 tr:first-child {font-weight: bold;}
+#table3, #table0 {table-layout:fixed;}
+#table3 tr td:last-child { width:10%;white-space:nowrap;}
+/*#table3 td {width: 25%}*/
+#table4  {table-layout:fixed}
+.header { margin-bottom: 25px;}
+.left{width: 20%;}
+.right {float:right; text-align: right}
