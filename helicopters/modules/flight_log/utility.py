@@ -9,6 +9,24 @@ from django.core.validators import validate_email
 import constant
 import os
 from django.contrib import messages
+from django_xhtml2pdf.utils import render_to_pdf_response, fetch_resources
+import ho.pisa as pisa
+
+# Utility function
+def convertHtmlToPdf(sourceHtml, outputFilename):
+    pisa.showLogging()
+    # open output file for writing (truncated binary)
+    resultFile = open(outputFilename, "w+b")
+    # convert HTML to PDF
+    pisaStatus = pisa.CreatePDF(
+            sourceHtml.encode("UTF-8"),                # the HTML to convert
+            dest=resultFile, encoding='UTF-8',
+                   link_callback=fetch_resources)           # file handle to recieve result
+    # close output file
+    resultFile.close()                 # close output file
+    # return True on success and False on errors
+    return pisaStatus.err
+
 
 def random_with_N_digits(n):
     

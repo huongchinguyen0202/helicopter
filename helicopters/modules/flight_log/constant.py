@@ -50,6 +50,8 @@ add_succ_mess = "Flight Leg is added successfully"
 edited_succ_mess = "Flight Leg is edited successfully"
 mess_delete_suc = "The selected flight log(s) is deleted successfully"
 mess_submit_suc = "The selected flight log(s) is submitted successfully"
+append_pilot_section = "$('#form_pilot').append('%s');"
+append_pilot_form = "$('#pi').append('%s');"
 
 """
     Html pages
@@ -62,7 +64,8 @@ home_page = "home.html"
 email_succ_page = "flights/email_succseful.html"
 signin = "accounts/login.html"
 home_submitted = "flights/home_sumitted.html"
-pilot_section = "flights/pilot_session.html"
+pilot_section = "flights/pilot_section.html"
+pilot_form = "flights/pilot_form.html"
 
 #edit_delete
 flight_log_id = "flight_log_id"

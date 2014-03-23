@@ -12,14 +12,14 @@
 	</thead>
 	{% for obj in formset_pilot %}
 		<tr>
-		<td>{{obj.pilot | default_if_none:""}}</td>
-		<td>{% if obj.pic %}{{obj.pic.value | default_if_none:""}}{% endif%}</td>
-		<td>{% if obj.sic %}{{obj.sic.value | default_if_none:""}}{% endif%}</td>
-		<td>{% if obj.day %}{{obj.day.value | default_if_none:""}}{% endif%}</td>
-		<td>{% if obj.night %}{{obj.night.value | default_if_none:""}}{% endif%}</td>
-		<td>{% if obj.ifr %}{{obj.ifr.value | default_if_none:""}}{% endif%}</td>
-		<td>{% if obj.nvg %}{{obj.nvg.value | default_if_none:""}}{% endif%}</td>
-		<td>{% if obj.long_in %}{{obj.long_in.value | default_if_none:""}}{% endif%}</td>
+			<td>{{obj.pilot.value | default_if_none:""}}</td>
+			<td>{% if obj.pic %}{{obj.pic.value | default_if_none:""}}{% endif%}</td>
+			<td>{% if obj.sic %}{{obj.sic.value | default_if_none:""}}{% endif%}</td>
+			<td>{% if obj.day %}{{obj.day.value | default_if_none:""}}{% endif%}</td>
+			<td>{% if obj.night %}{{obj.night.value | default_if_none:""}}{% endif%}</td>
+			<td>{% if obj.vfr %}{{obj.vfr.value | default_if_none:""}}{% endif%}</td>
+			<td>{% if obj.ifr %}{{obj.ifr.value | default_if_none:""}}{% endif%}</td>
+			<td>{% if obj.nvg %}{{obj.nvg.value | default_if_none:""}}{% endif%}</td>
 		</tr>
 	{% endfor%}
 </table>

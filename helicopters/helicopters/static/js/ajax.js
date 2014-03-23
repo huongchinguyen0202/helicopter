@@ -81,25 +81,11 @@ function change_model(data) {
 	$('#from').text(data.from);
 	$('#to').text(data.to);
 	document.getElementsByName('max_pax')[0].value = data.max_pax;
-	//$("select").data("kendoDropDownList").dataSource.data(data);
-	//alert( $("#id_a1c").data("kendoDropDownList").html());
-	//$("#id_a1c").data("kendoDropDownList").dataSource.read(); //shows list Loading But Same Data Is present .
-	   //$("#id_a1c").data("kendoDropDownList").refresh(); //NOT Working 
-	//console.log(JSON.stringify(data.list_ac));
-	/*
-	$("#id_a1c").data('kendoDropDownList').dataSource.data( [
-	                                                         { text: "Cotton", value: "1" },
-	                                                         { text: "Polyester", value: "2" },
-	                                                         { text: "Cotton/Polyester", value: "3" },
-	                                                         { text: "Rib Knit", value: "4" }
-	                                                     ]);
-	   $("#id_customer").data("kendoDropDownList").select(1);
-	   */
-	//alert(dropdownlist)
-	//alert("how to change");
+	
 	$('#id_a1c').kendoDropDownList({animation:false, template:'<span title=\'#: mytooltip #\'>#: mytooltip #</span>', 
 		dataTextField: "mytooltip"});
-//	$('#id_a1c').data("kendoDropDownList").refresh();
+	
+	$("#mass_gross").change(); //.trigger("change");
 
 }
 

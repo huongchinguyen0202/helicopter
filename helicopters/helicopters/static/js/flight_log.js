@@ -52,7 +52,7 @@ function set_tabindex_add_flight_log() {
 		).each(function (i) { 
 		$(this).attr('tabindex', i + 1);
 	}); 
-	
+	$('#fuel_tbl select').kendoDropDownList();
 }
 function load_ajax_popop(list_loc_name) {
 	$("#id_off").timeEntry({
@@ -178,6 +178,14 @@ function open_popup(loginBox){
 	jQuery(loginBox).center();
 }
 
+function get_float_value(str) {
+	var value = parseFloat( jQuery(str).val() );
+	// console.log(value);
+	if (!isNaN(value))
+		return value;
+	else
+		return 0.0;
+}
 function val_send_email(is_checked, id){
 	var j = [];
 	i = 0;
@@ -188,7 +196,8 @@ function val_send_email(is_checked, id){
 		if($(this).is(':checked')) {// if exist one  untick
 			is_checked = true;
 			//j[i] = $(this).attr("name").replace('row_check_','');
-			j[i] = $(this).parent().find('input.log_number').val();
+			j[i] = $(this).closest('tr').find('input.log_id').val();
+			//console.log("checkd email id " +j[i])
 			i++;
 			// break from each loop
 			//return false;
@@ -214,7 +223,8 @@ function val_print_pdf(is_checked,id){
 	$("input:not(:hidden)[name^='row_check_']").each(function(){
 		if($(this).is(':checked')) {// if exist one  untick
 			is_checked = true;
-			j = j + ',' + $(this).parent().find('input.log_number').val();
+			console.log($(this).parent());
+			j = j + ',' + $(this).closest('tr').find('input.log_id').val();
 			//j[i] = $(this).attr("name").replace('row_check_','');
 			// break from each loop
 			//return false;
@@ -228,7 +238,7 @@ function val_print_pdf(is_checked,id){
 		if(j.length > 1) {
 			j = j.substring(1);
 		}
-		window.location='print?i='+j;
+		window.location='print?log_id='+j;
 		/*for (var i=0;i<j.length;i++) {
 			window.location= 'print?i='+j[i];
 		}*/
@@ -411,6 +421,39 @@ $(document).ready(function() {
 		}
 	});
 	
+	$('#id_a1c_empty_weight, #id_pilot_weight, #id_co_pilot_weight').on('change paste', function(e){
+		var opt_weight = 0.0;
+		opt_weight += get_float_value('#id_a1c_empty_weight');
+		opt_weight += get_float_value('#id_pilot_weight');
+		opt_weight += get_float_value('#id_co_pilot_weight');
+		if (opt_weight <= 0.0)
+			opt_weight = "";
+		console.log(opt_weight);
+		$("#id_opterational_weight").val(opt_weight).change(); //.trigger("change");
+	});
+	$('#id_opterational_weight, #mass_gross').on('change paste', function(e){
+//		alert("this ok");
+		var mass_gross_value = parseFloat( $('#mass_gross').text() );
+		console.log(mass_gross_value);
+		if (isNaN(mass_gross_value)) {
+//				alert("isNaN(mass_gross_value)");
+			return;
+		}
+		var opterational_weigh = get_float_value('#id_opterational_weight');
+		if (opterational_weigh <= 0.0) {
+			$("#payload_available").text(mass_gross_value);
+			return;
+		}
+		
+		if (opterational_weigh > mass_gross_value) {
+			alert("Operational Weight cannot be greater than Max Gross Weight.");
+			$('#id_opterational_weight').val("").change();
+			//verify_inp_sel();
+			return;
+		}
+		$("#payload_available").text(mass_gross_value - opterational_weigh);
+	});
+	
 	// checkbox event on each row
 	$(document).on("change", "input:not(:hidden)[name^='row_check_']", function() {
 		//console.log("check_change");
@@ -558,7 +601,8 @@ $(document).ready(function() {
 	}
 	
 	function load_partial_nfr(){
-		value = $("#id_flight_time").val();
+		var select_index = parseInt($("#id_partial_nfr").val()) + 1;
+		var value = $("#id_flight_time").val();
 		var select = document.getElementById("id_partial_nfr");
     	var length = select.options.length;
     	for (i = 1; i < length; i++) {
@@ -572,7 +616,7 @@ $(document).ready(function() {
     		option.value = index;
     		select.add(option);
     	}
-//    	$("#id_partial_nfr").prop('selectedIndex', select_value);
+    	$("#id_partial_nfr").prop('selectedIndex', select_index);
     	$('#id_partial_nfr').kendoDropDownList({ animation: false});
 	}
 	
@@ -590,17 +634,20 @@ $(document).ready(function() {
 	$(document).on('click', '.delete_flight_log', function(e){
 		if (confirm("Are you sure to delete this record?")){
 			var list_fuel_location = []
-			var length = $('#ff').datagrid('getRows').length;
-			if(length!=0){
-				for (var i=0;i<length;i++) {
-					list_fuel_location.push($('#ff').datagrid('getRows')[i].location);
-				}
-			}
-//			var index = $(this).closest('td').parent()[0].sectionRowIndex;
+			var rowCount = $('#fuel_tbl tr:visible:gt(0)').length; 
+		    for (var i=1; i <= rowCount; i++) { 
+		    	loc_id = $('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children("span").children("select").attr("id");
+		    	loc_choosen = $("#" + loc_id + " option:selected").text();
+		    	list_fuel_location.push(loc_choosen);
+		    };
 			var index = $(this).parent().parent().find("td:first").html()
 			var max_pax = $("#max_pax").val();
+			var co_pilot = $("#id_co_pilot_employee_number").val(); 
+			var id_log = $("#id_id_log").val();
 		    Dajaxice.flight_log.delete_flight_log(call_back_delete, {'index':index,
 		    														'max_pax':max_pax,
+		    														'co_pilot':co_pilot,
+		    														'id_log':id_log,
 		    														'list_fuel_location':list_fuel_location});
 		}
 	});
@@ -610,24 +657,28 @@ $(document).ready(function() {
 	$(document).on('click', '#save_flight_log', function(e){
 		if(verify_inp_req()){			
 			var list_fuel_location = []
-			var length = $('#ff').datagrid('getRows').length;
-			if(length!=0){
-				for (var i=0;i<length;i++) {
-					list_fuel_location.push($('#ff').datagrid('getRows')[i].location);
-				}
-			}
+			var rowCount = $('#fuel_tbl tr:visible:gt(0)').length; 
+		    for (var i=1; i <= rowCount; i++) { 
+		    	loc_id = $('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children("span").children("select").attr("id");
+		    	loc_choosen = $("#" + loc_id + " option:selected").text();
+		    	list_fuel_location.push(loc_choosen);
+		    };
 			before_fuel_location = $("#before_fuel_location").val()
 			
 			var max_pax = $("#max_pax").val();
 			var partial_range = $("#id_flight_time").val();
 			var is_edit = $("#is_edit").val();
+			var co_pilot = $("#id_co_pilot_employee_number").val(); 
+			var id_log = $("#id_id_log").val();
 			Dajaxice.flight_log.save_flight_log(js_callback, 
 					{'forms':$('#popup_add_flight_log').serialize(),
 					 'max_pax':max_pax,
 					 'partial_range':partial_range,
 					 "is_edit":is_edit,
 					 'before_fuel_location':before_fuel_location,
-					 'list_fuel_location':list_fuel_location});
+					 'list_fuel_location':list_fuel_location,
+					 'co_pilot':co_pilot,
+					 'id_log':id_log});
 		}
 		
 	});
@@ -817,6 +868,8 @@ $(document).ready(function() {
 		var pass = true;
 		var length = $(".popup_main input.req").length;
 		var allInputs = $( "input.req" );
+		var partial_temp = -1;
+		var i = 0;
     	allInputs.each(function(){
     		var id = "#error_" + jQuery(this).attr("id");
     		if(jQuery(this).val() == ""){
@@ -945,8 +998,21 @@ $(document).ready(function() {
 	});
 	
 	$("#id_co_pilot_employee_number").change(function() {
-		co_pilot = $(this).val(); 
+		var pre_value = $("#pre-co-pilot").html();
+		var emp_number = $("#emp_number").html();
+		var co_pilot = $(this).val();
+		if (emp_number == co_pilot){
+			alert("The selected pilot is duplicated. Please select another pilot");
+			var dropdownlist = $(this).data("kendoDropDownList");
+			if (pre_value != ""){
+				pre_value = parseInt(pre_value);
+			}
+			dropdownlist.value(pre_value);
+			return false;
+		}
+		$("#pre-co-pilot").html($(this).val());
+		var id_log = $("#id_id_log").val();
 		Dajaxice.flight_log.load_copilot(Dajax.process, 
-				{'co_pilot':co_pilot});
+				{'co_pilot':co_pilot, 'id_log':id_log});
 	});
 });

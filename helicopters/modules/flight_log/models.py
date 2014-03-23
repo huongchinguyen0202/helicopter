@@ -57,11 +57,24 @@ class Customer(models.Model):
     def __unicode__(self):
         return u'%s' %self.cus_name
 
+# Temporary User for debug
+class UserTemp(models.Model):    
+    employee_number = models.IntegerField(primary_key=True, db_column='employee_Number', max_length=32)
+    password = models.CharField(max_length=10)
+    email = models.EmailField(unique= True,max_length=255L,blank=True,)
+    class Meta:
+        db_table = 'UserTemp'
+    def __unicode__(self):
+        return u'%s' %self.employee_number        
+
 class Employee(models.Model):
     id_employee = models.AutoField(primary_key=True, db_column='employee_id') # Field name made lowercase.
     first_name = models.CharField(max_length=255L)
     last_name = models.CharField(max_length=255L)
-    employee_number = models.IntegerField(unique=True,  max_length=32)
+    
+    employee_number = models.OneToOneField(UserTemp)
+#     employee_number = models.IntegerField(unique=True,  max_length=32)
+    
     email = models.EmailField(unique= True,max_length=255L,blank=True,)
     phone = models.IntegerField(max_length=255L)
     password = models.CharField(max_length=255L)
@@ -114,8 +127,8 @@ class Log(models.Model):
     fuel = models.FloatField(null=True, blank=True)
     log_date = models.DateField()
     log_number = models.IntegerField()
-    opterational_weight = models.FloatField()
-    payload_available = models.FloatField()
+    opterational_weight = models.FloatField(null=True, blank=True)
+    payload_available = models.FloatField(null=True, blank=True)
     pilot_employee_number = models.ForeignKey('Employee', null=True, db_column='pilot_employee_number', 
                                               related_name ='pilot_employee_number', blank=True)
     pilot_weight = models.FloatField()
@@ -142,7 +155,7 @@ class LogEmployee(models.Model):
     pic = models.FloatField(null=True, blank=True)
     
     #Add fiedl for CRs
-    VFR =  models.FloatField(null=True, blank=True)
+    vfr =  models.FloatField(null=True, blank=True)
 
     class Meta:
         db_table = 'Log_Employee'
@@ -252,15 +265,6 @@ class Log_Location(models.Model):
     class Meta:
         db_table = 'Log_Location'
 
-# Temporary User for debug
-class UserTemp(models.Model):
-    employee_number = models.IntegerField(primary_key=True, db_column='employee_Number', max_length=32)
-    password = models.CharField(max_length=10)
-    email = models.EmailField(unique= True,max_length=255L,blank=True,)
-    class Meta:
-        db_table = 'UserTemp'
-    def __unicode__(self):
-        return u'%s' %self.employee_number        
 
 
 class Fuel (models.Model):

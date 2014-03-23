@@ -14,27 +14,22 @@
 <link type="text/css" rel="stylesheet" href="{% static "css/flight_log.css"%}">
 <link type="text/css" rel="stylesheet" href="{% static "css/styles.css"%}">
 <link type="text/css" rel="stylesheet" href="{% static "css/styles_ie10.css"%}">
-<!--[if IE]><link type="text/css" rel="stylesheet" href="{% static "css/styles_ie.css"%}"><![endif]-->
 <link type="text/css" rel="stylesheet" href="{% static "css/jquery-te-1.4.0.css"%}">
 
-<link type="text/css" rel="stylesheet" href="{% static "css/easyui.css"%}">
 <link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui.css"%}">
-<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui_theme.css"%}">  
-<link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui_icon.css"%}"> 
 
 <script type="text/javascript" src="{% static "js/ajax.js"%}"></script>
 <script type="text/javascript" src="{% static "js/jquery_ui103.js"%}"></script>
-<script type="text/javascript" src="{% static "js/jquery_ui_min.js"%}"></script>
 
 <script src="{{ STATIC_URL }}js/jquery-te-1.4.0.min.js"></script>
 <script src="{{ STATIC_URL }}js/validation.js"></script>
-<!-- <script src="{{ STATIC_URL }}js/datagrid.js"></script> -->
-<!-- <script src="{{ STATIC_URL }}js/datagridff.js"></script> -->
+<script src="{{ STATIC_URL }}js/editable_fuel.js"></script> 
 <script src="{{ STATIC_URL }}js/common.js"></script>
 
 <script src="{{ STATIC_URL }}js/jquery.plugin.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.timeentry.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> -->
+
 
 <!-- Auto complete -->
 <script src="{{ STATIC_URL }}js/qs_score.js"></script>
@@ -47,25 +42,30 @@
 <script type="text/javascript" src="{% static "js/kendo.web.min.js"%}"></script>
 
 
+
 <script type="text/javascript">
 $(document).ready(function() {
+	$("#id_log_number").blur(function (e){
+		if(isNaN($("#id_log_number").val())){
+			$("#id_log_number").val("");
+			$("#err_log_number").css("display","block");
+		}
+	});
 	$('#add_flight_log_save, #add_flight_log_submit').click(function(e) {
 		idButton="";
 		idButton=$(this).attr('id');
 		//Check exist flight leg
 		if (!verify_inp_sel()) return false;
+		
 		if($('#rs_flight_log_form').find('tr.row_odd').length < 1){
 			alert("Please add least one Flight Leg before save or submit.");
 			return false;
 		}
-		if(!valid_grid_fuel()){
-			alert('Please save the Fuel section before saving the Flight Log ');
+		
+		if(check_location() == false){
+			alert("Location is required.");
 			return false;
 		}
-		if(!valid_grid()){
-			alert('Please save the Pilot section before saving the Flight Log ');
-			return false;
-		} 
 		
 		if(!submit_form_add()) return false;
 
@@ -90,6 +90,7 @@ $(document).ready(function() {
 		  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 9px;}\
 		  span.submitted_checkbox input{margin-top:36% !important;}</style>');}
 </script>
+
 </head>
 <body>
 	<div class="header">
@@ -142,6 +143,7 @@ $(document).ready(function() {
 	</div>
   	{% endif %}
   {% block content %}
-  {% endblock %} 
+  {% endblock %}
+
 </body>
 </html>

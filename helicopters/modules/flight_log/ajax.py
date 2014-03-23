@@ -4,7 +4,7 @@ from flight_log.forms import FlightLogDetail, PilotForm
 from dajax.core import Dajax
 from dajaxice.utils import deserialize_form
 from django.core import serializers
-from flight_log.views import get_list_session_object, fuel_station_list
+from flight_log.views import get_list_session_object, fuel_station_list, todict
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from flight_log.models import A1C, Model, Employee, Contract1Chater, Log,\
@@ -13,6 +13,7 @@ import constant
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import os
 from django.forms.models import modelformset_factory
+from django.forms.formsets import formset_factory
 
 @dajaxice_register
 def add_flight_log(request, next_order_id, fuel, max_pax):
@@ -48,6 +49,8 @@ def send_email(request, arr):
     html = ''
     val = ''
     j = 0
+    from flight_log.views import log_pdf
+    from flight_log.utility import convertHtmlToPdf
     for i in arr:
         html = html + "<div class=\"attack_file\"><input class=\"attack_file\" readonly=\"true\" name=\"attack_file_" + i + "\" value=\"flight_log_" + i + ".pdf\" type=\"text\" /><div class=\"close-attack\">x</div></div>"
         if(j == 0):
@@ -55,13 +58,9 @@ def send_email(request, arr):
             j = 1
         else:
             val = val + ',' + i
-            pdf_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/flight_log_' + i + '.pdf'
-            from PyPDF2 import PdfFileWriter
-            op = PdfFileWriter() 
-            op.addBlankPage(793, 1122)
-            ops = file(pdf_path, "wb") 
-            op.write(ops)
-            ops.close()
+        pdf_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/flight_log_' + i + '.pdf'
+        pdf = render_to_string("flights/pdf.html", log_pdf(i))
+        convertHtmlToPdf(pdf, pdf_path)
              
     html = html + '<input class="hiden_attack" name="hiden_attack" val="'+ val + '" type="input" />'
     dajax.script("var e_html = '" + html +"';\
@@ -106,7 +105,7 @@ def edit_flight_log(request, index, max_pax, is_submitted = False):
     return dajax.json()
     
 @dajaxice_register
-def delete_flight_log(request, index, max_pax, list_fuel_location):
+def delete_flight_log(request, index, max_pax, list_fuel_location, co_pilot, id_log):
     dajax = Dajax()
     
     list_object = get_list_session_object(request)
@@ -165,12 +164,13 @@ def delete_flight_log(request, index, max_pax, list_fuel_location):
     
     ''' Modify data for hidden combobox and used for fuel expenses sessio '''
     dajax.remove("#hiddenff option")
+    dajax.remove("#fuel_tbl select option")
     import operator
     sorted_list_fuel_station = sorted(fuel_station_list(request).items(), key=operator.itemgetter(1))
     for local_id, name in sorted_list_fuel_station:
         dajax.append('#hiddenff', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
-
-     
+        dajax.append('#fuel_tbl select', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
+    load_copilot_sub(request, co_pilot, id_log, dajax)
     return dajax.json()
      
 def save_add_case(request, result):
@@ -218,7 +218,7 @@ def save_add_case(request, result):
 @dajaxice_register
 def save_flight_log(request, forms, max_pax, partial_range, 
                     before_fuel_location, list_fuel_location,
-                    is_edit):
+                    is_edit, co_pilot, id_log):
     dajax = Dajax()
     
     ''' Remove all errors message in popup '''
@@ -259,7 +259,7 @@ def save_flight_log(request, forms, max_pax, partial_range,
                 - If has conflict so announce and return
             '''
             remove_older_location = False
-            list_location_temp = []
+            list_location_temp = ['Choose One']
             list_object = get_list_session_object(request)
             
             ''' Get older station location '''
@@ -282,7 +282,7 @@ def save_flight_log(request, forms, max_pax, partial_range,
                     dajax.script(constant.prevent_default)
                     return dajax.json()
                 
-            ''' Change data of flight log in sessio '''    
+            ''' Change data of flight log in session '''    
             lst = request.session[constant.list_flight_log]
             lst[request.session["current_index"]] = serializers.serialize(constant.json, [result, ])
             request.session[constant.list_flight_log] = lst
@@ -296,9 +296,10 @@ def save_flight_log(request, forms, max_pax, partial_range,
         dajax.remove("#hiddenff option")
         import operator
         sorted_list_fuel_station = sorted(fuel_station_list(request).items(), key=operator.itemgetter(1))
+        dajax.append('#fuel_tbl select', 'innerHTML', "<option value="">Choose One</option>")
         for local_id, name in sorted_list_fuel_station:
             dajax.append('#hiddenff', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
-            
+     
         '''
             Modify flight legs table
         '''
@@ -307,6 +308,9 @@ def save_flight_log(request, forms, max_pax, partial_range,
                                   {constant.forms:get_list_session_object(request)})
         dajax.script(constant.prepend_flight_log_table 
                      %render.replace('\n', ""))
+        
+        dajax.script('load_combo();')
+        dajax.script('change_location();')
         
     else:#Form not valid
         dajax.remove(constant.class_pop_main)
@@ -335,6 +339,9 @@ def save_flight_log(request, forms, max_pax, partial_range,
         dajax.script(constant.remove_save_succ_mess)
         
     pour_fuel_station_popup(dajax)
+    
+    ''' Reload pilot section'''
+    load_copilot_sub(request, co_pilot, id_log, dajax)
     return dajax.json()
 
 
@@ -502,13 +509,86 @@ def pour_fuel_station_popup(dajax):
     dajax.script("load_ajax_popop("+str(list_loc_name)+");")
 
 @dajaxice_register(method=constant.GET)
-def load_copilot(request, co_pilot):
+def load_copilot(request, co_pilot, id_log):
     dajax = Dajax()
-    dajax.alert(co_pilot)
-    PilotFormSet = modelformset_factory(model = LogEmployee, form = PilotForm, 
-                                       can_delete=True, max_num=10, extra = 0)
-    cur_login_user = LogEmployee.objects.filter(id_log_employee = request.session[constant.usernameParam])
-    formset_pilot = PilotFormSet(queryset=cur_login_user, prefix='pilots')
-    render = render_to_string(constant.pilot_section ,{"formset_pilot":formset_pilot})
-    dajax.script(constant.prepend_table_popup %render.replace('\n', ""))
+    load_copilot_sub(request, co_pilot, id_log, dajax)
+    '''Return'''
     return dajax.json()
+
+def load_copilot_sub(request, co_pilot, id_log, dajax):
+    '''Create formset'''
+    PilotFormSet = formset_factory( form = PilotForm, 
+                                       max_num=10, extra = 0)
+    '''Load data for table'''
+    list = []
+    '''Get list flight log in session and calculate sum value'''
+    lst_flight_log = get_list_session_object(request)
+    sic = pic = night = day = vfr = ifr = nvg = co_nvg = 0
+
+    for flight in lst_flight_log:
+        sic = sic + flight.flight_time
+        pic = pic + flight.flight_time
+        day = day + flight.day
+        night = night + flight.night
+        if flight.pilot_nvg:
+            nvg = nvg + flight.pilot_nvg
+        if flight.co_pilot_nvg:
+            co_nvg = co_nvg + flight.co_pilot_nvg
+        if flight.partial_nfr > -1:
+            vfr = vfr + flight.flight_time + flight.partial_nfr
+            ifr = ifr + 2*flight.flight_time - flight.partial_nfr
+        else:
+            vfr = vfr + flight.flight_time
+            ifr = ifr + 2*flight.flight_time
+    
+    pilot = LogEmployee()
+    pilot.pic = pic
+    pilot.day = day
+    pilot.night = night
+    pilot.nvg = nvg
+    pilot.vfr = vfr
+    pilot.ifr = ifr
+    try:
+        log_temp = Log.objects.filter(id_log=id_log)
+        if log_temp:
+            pilot.log = log_temp[0]
+    except:
+        pass
+    emp_temp = Employee.objects.filter(employee_number = request.session[constant.usernameParam])
+    if emp_temp:
+        pilot.employee = emp_temp[0]
+    list.append(todict(pilot))
+
+    if co_pilot != "Choose One" and request.session[constant.usernameParam] != co_pilot:
+        co_pilot_object = LogEmployee()
+        co_pilot_object.sic = sic
+        co_pilot_object.day = day
+        co_pilot_object.night = night
+        co_pilot_object.nvg = co_nvg
+        co_pilot_object.vfr = vfr
+        co_pilot_object.ifr = ifr
+        try:
+            log_temp = Log.objects.filter(id_log=id_log)
+            if log_temp:
+                co_pilot_object.log = log_temp[0]
+        except:
+            pass
+        emp_temp = Employee.objects.filter(employee_number = co_pilot)
+        if emp_temp:
+            co_pilot_object.employee = emp_temp[0]
+        list.append(todict(co_pilot_object))
+    
+    '''Remove older table'''
+    dajax.remove("#table_pilot")
+    dajax.remove("#pi_content")
+    
+    '''Init data for formset'''
+    formset_pilot = PilotFormSet(initial = list, prefix='pilots')
+    
+    '''Render form'''
+    render = render_to_string(constant.pilot_section ,{"formset_pilot":formset_pilot})
+    render1 = render_to_string(constant.pilot_form ,{"formset_pilot":formset_pilot})
+    
+    '''Append form'''
+    dajax.script(constant.append_pilot_section %render.replace('\n', ""))
+    dajax.script(constant.append_pilot_form %render1.replace('\n', ""))

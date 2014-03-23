@@ -566,6 +566,7 @@ function addForm_pilot(btn, prefix) {
 
   } // End if
   else {
+    alert("Sorry, you can only enter a maximum of ten item1s.");
   }
   return false;
 }

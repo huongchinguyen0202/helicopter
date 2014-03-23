@@ -148,6 +148,8 @@ INSTALLED_APPS = (
 #     'formset_demo',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    'mytag',
+    'ho',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

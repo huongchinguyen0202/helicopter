@@ -137,7 +137,6 @@ class LogForm(ModelForm):
     pilot_weight = forms.FloatField(widget=forms.TextInput(attrs={'onblur':'verify_blur(this);', 'class':'req'}))
     opterational_weight = forms.FloatField(widget=forms.TextInput(attrs={'onblur':'verify_blur(this);', 'class':'req'}))
     allowable_takeoff_weight = forms.FloatField(widget=forms.TextInput(attrs={'onblur':'verify_blur(this);', 'class':'req'}))
-    payload_available = forms.FloatField(widget=forms.TextInput(attrs={'onblur':'verify_blur(this);', 'class':'req'}))
     is_submited = forms.CharField(widget=forms.HiddenInput(), required=False)
     user_id = forms.CharField(widget=forms.HiddenInput(), required=False)
     fuel = forms.FloatField(widget=forms.TextInput(attrs={'onblur':'verify_blur(this);', 'class':'req'}))
@@ -171,7 +170,7 @@ class LogForm(ModelForm):
         model = Log
         fields = ['id_log', 'log_date', 'contract1charter', 'fuel', 'pilot_employee_number', 'co_pilot_employee_number', 'co_pilot_weight',
                   'a1c', 'base', 'a1c_empty_weight', 'pilot_weight', 'opterational_weight', 'customer',
-                  'allowable_takeoff_weight', 'payload_available', 'log_number', 'is_submited', 'user_id']
+                  'allowable_takeoff_weight', 'log_number', 'is_submited', 'user_id']
         
 class SearchForm(ModelForm):  
     customer = forms.CharField(widget=forms.TextInput(attrs={'id':'cus'}), max_length=30L, required=False)
@@ -183,21 +182,44 @@ class SearchForm(ModelForm):
         
         
 class FuelForm(ModelForm):
-    gallons = forms.FloatField(widget=forms.HiddenInput())
+    gallons = forms.FloatField(widget=forms.HiddenInput(), required=False)
     def __init__(self, *args, **kwargs):
         super(FuelForm, self).__init__(*args, **kwargs)
-        self.fields['location_id'] = forms.ModelChoiceField(queryset=Location.objects.none(), empty_label="Choose One", required=False)
+        self.fields['location_id'] = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="Choose One", required=False)
 
     class Meta:
         model = Log_Location
         fields = ['id_log_location', 'location_id', 'gallons', 'owner', 'amount']
         
 class PilotForm(ModelForm):
-    pilot = forms.CharField()
+    day = forms.FloatField(required = False)
+    ifr = forms.FloatField(required = False)
+    vfr = forms.FloatField(required = False)
+    long_in = forms.FloatField(required = False)
+    night = forms.FloatField(required = False)
+    nvg = forms.FloatField(required = False)
+    sic = forms.FloatField(required = False)
+    pic = forms.FloatField(required = False)
+    pilot = forms.CharField(required = False)
     def __init__(self, *args, **kwargs):
         super(PilotForm, self).__init__(*args, **kwargs)
-        cur_emp = kwargs.pop('instance').employee
-        self.fields["pilot"].initial = cur_emp.last_name + "," + cur_emp.first_name
+        try:
+            cur_emp = Employee.objects.get(id_employee = kwargs["initial"]["employee_id"])
+            if cur_emp:
+                self.fields["pilot"].initial = cur_emp.last_name + ", " + cur_emp.first_name
+                self.fields["employee"].initial = cur_emp
+                self.fields["log"].initial = Log.objects.get(id_log = kwargs["initial"]["log_id"])
+        except:
+            try:
+                cur_emp = Employee.objects.filter(id_employee = kwargs["instance"].employee_id)
+                if cur_emp:
+                    self.fields["pilot"].initial = cur_emp[0].last_name + ", " + cur_emp[0].first_name
+                    self.fields["employee"].initial = cur_emp
+                    self.fields["log"].initial = Log.objects.get(id_log = kwargs["instance"].log_id)
+            except:
+                pass
+
+        
     class Meta:
         model = LogEmployee
 

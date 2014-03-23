@@ -116,7 +116,6 @@ input,select {
 /* table {border:1px solid #c6c6c6;border-collapse:collapse; width: auto;} */
 table td {
 	border: 1px solid #c6c6c6;
-	padding: 3px 0px;
 }
 
 table th {
@@ -371,6 +370,7 @@ table th {
 
 #rs_sub_form tr td {
 	text-align: center;
+	overflow: hidden;
 }
 
 #rs_sub_form input {
@@ -380,12 +380,14 @@ table th {
 
 #rs_fuel_expenses_or_usage_form tr td {
 	text-align: center;
+	overflow: hidden;
 }
 
 #rs_flight_log_form tr td,#rs_flight_log_form th {
 	padding: 0px;
 	padding-left: 3px;
 	text-align: left;
+	overflow: hidden;
 }
 
 /* Poup style */
@@ -562,6 +564,7 @@ table th {
 	border: none;
 	border-right: 1px solid #c6c6c6;
 	padding-left: 10px;
+	overflow: hidden;
 }
 
 #history tr.tda {
@@ -774,6 +777,7 @@ display: none;}*/
 
 .datagrid-header-row td,.datagrid-row td {
 	border-right: 1px solid #c6c6c6 !important;
+	overflow: hidden;
 }
 
 .last-border {
@@ -793,6 +797,7 @@ display: none;}*/
 
 .datagrid-cell table td {
 	border-right: none !important;
+	overflow: hidden;
 }
 
 .register-err {
@@ -818,9 +823,17 @@ display: none;}*/
 }
 
 .remember {
-	width: auto !important;
+	width: 16px!important;
+	height:18px!important;
 	min-height: 10px;
-	float: left;
+	float: left!important;
+	margin-top: 3px!important;
+	padding-left: 0px!important;
+	outline-style:none;
+	display: block;
+	border-radius: 0; 
+	border:0px!important; 
+
 }
 
 #login,#login a {
@@ -1058,8 +1071,8 @@ display: none;}*/
 #er_search {
 	text-align: left;
 	padding-left: 20px;
-	margin: 0px 0px -20px !important;
-	min-height: 20px !important;
+	margin: 10px 0px 0px;
+	/* font-size: 15px; */
 }
 
 /* div ul.errorlist li { */
@@ -1069,7 +1082,7 @@ display: none;}*/
 	display: none;
 }
 
-#emp_number {
+#emp_number, #payload_available {
 	padding-top: 6px;
 	padding-left: 5px;
 	float: left;
@@ -1244,6 +1257,7 @@ li.smart_autocomplete_hightlight {
 
 .div-bottom {
 	margin-bottom: 50px;
+	margin-top: 2%;
 }
 
 .input_error {
@@ -1318,10 +1332,64 @@ ul.errorlist li {
     font-size: 25px;
 }
 
+
+
+#fuel_tbl thead th,#fuel_tbl tfoot tr,#rs_fuel_expenses_or_usage_form thead th,#rs_sub_form thead th
+	{
+	background: #e8eaed;;
+	border: 1px solid #c6c6c6;
+	text-align: center;
+}
+
+#fuel_tbl tr td,#fuel_tbl th {
+	padding: 0px;
+	padding-left: 3px;
+	text-align: left;
+	width: 20%;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	overflow: hidden;
+}
+
+#fuel_tbl,#rs_fuel_expenses_or_usage_form {
+	width: 100% !important;
+}
+
+.btnEdit {
+	padding-right: 3%;
+}
+.btnSave{
+	padding-right: 3%;
+}
+
+#fuel_tbl tbody td{
+	text-align: center;
+	overflow: hidden;
+}
+
+table#table_pilot tbody tr td
+{
+	padding-left: 0.5%;
+	overflow: hidden;
+}
+
 table#table_pilot thead tr
 {
 	background: #e8eaed;;
 	border: 1px solid #c6c6c6;
 	text-align: center;
-	font-weight: bolder;
+	font-weight: bold;
+	font-size: 14px;
 }
+table#table_pilot  tr, #fuel_tbl
+{
+	line-height: 35px;
+}
+
+#fuel_tbl input{
+	width: 80%;
+}
+#fuel_tbl {table-layout:fixed;}
+
+#rs_flight_log_form {table-layout:fixed;}
+

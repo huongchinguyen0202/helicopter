@@ -1,11 +1,216 @@
-<html>
+<!doctype html>
+{% load static from staticfiles %}
+<html lang="en">
 <head>
-<title>PDF</title>
-<style type="text/css">
-	body {margin: 20px auto; width: 100%; font-size: 15px;}
+	<meta charset="UTF-8">
+	<title class="upper">daily flight log</title>
+	<style type="text/css">
+		/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{
+border:0;font-size:100%;margin:0;padding:0
+}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
+body{line-height:1}ol,ul{list-style:none}
+blockquote,q{quotes:none}
+blockquote:before,blockquote:after,q:before,q:after{content:none}
+
+
+body { font-size:10px;}
+table {width: 100%; margin: 15px auto; }
+
+
+.contain {width: 94%;margin: 0px auto;}
+.contain #table1 span {display: block; }
+#table0  td {text-align: left;}
+#table0 span {display: inline;}
+#table0 tr td span:last-child {padding-left: 3px;}
+#table1 td span:last-child { position: relative;bottom: -7px;}
+#table2 td:first-child {width: 13%; font-weight: bold; text-align: left;}
+table th, table tr span:first-child , #table2 tr:first-child, #table2 tr td:first-child, #table3 tr:first-child , #table3 #table3tr2, #table4 tr:first-child {font-weight: bold; text-align: center;}
+#table1 span {text-align: center;}
+#table3, #table0 {table-layout:fixed;}
+/*#table3 td {width: 25%}*/
+#table4  {table-layout:fixed;}
+#table2 td, #table3 td,#table4 td {vertical-align:middle }
+.header { margin-bottom: 0px;}
+.left{width: 20%;}
+.right {float:right; text-align: right}
+
+.mydiv{
+	border:1px solid;
+	 min-width: 10px; 
+	float: left;
+}
+#a{
+	 width: 100% 
+
+}		
+.mydiv > div, .td{
+	height: 10px;
+	border:1px solid;
+	background-color: aqua;
+}
+#head td, tr{
+	border:0px solid !important;
+	text-align:left; 
+    vertical-align:middle;
+    
+} 
+
+.address{
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+.page{
+	margin-bottom: 0px;
+	font-size: 10px;
+}
+#head, #table0, #table1, #table3, #table4{
+	margin-bottom: 0px !important;
+}
+th, td { border: 1px solid #474644 ; padding: 3px; }
+#table0, #table1, #table3, #table4{ border-spacing:0}
+.td_center {vertical-align:middle;}
 </style>
+	
 </head>
 <body>
-	pdf content
-</body>
-</html>
+
+
+	<div class="contain">
+		<div class="header">
+			
+			<table id="head" style="width: 100%;">
+				<tr>
+					<td style="width: 17%" ><img width="200px" height="70px" src="{% static 'img/logo.png' %}"/></td>
+					<td style="width: 23%"> 
+						<p class="address">P.O Box 6550
+						<p class="address">Lake Charles, LA 70606</p>
+						<p class="address">Fax – (337) 474 - 3421</p>
+					</td>
+					<td style="width: 45%; font-weight: bold; font-size: 15px; "> DAILY FLIGHT LOG </td>
+					<td style="width: 15%; text-align:right;" >
+						<p class="page" style="font-weight: bold;">{{ log.log_number| stringformat:"06d" }}</p>
+						<p class="page">{{ log.log_date|date:"m/d/Y" }}</p>
+						<p class="page">PAGE 1 OF 1</p>
+					</td>
+				</tr>
+			</table>
+			
+		</div>
+		<table id="table0">
+			<tr>
+				<td><span>CUSTOMER </span><span>{{ log.customer_id|default_if_none:"" }}</span></td>
+				<td><span>CONTRACT/CHARTER# </span><span>{{ log.contract1chater_id|default_if_none:"" }}</span></td>
+			</tr>
+		</table>
+		<table id="table1">
+			<tr>
+				<td><span>MODEL</span><span>{{ log.model_id }}</span></td>
+				<td><span>A/C#</span><span>{{ log.a1c_id }}</span></td>
+				<td><span>BASE</span><span>{{ log.base_id }}</span></td>
+				<td><span>A/C EMPTY WEIGHT</span><span>{{ log.a1c_empty_weight }}</span></td>
+				<td><span>PILOT WEIGHT</span><span>{{ log.pilot_weight }}</span></td>
+				<td><span>CO-PILOT EMPLOYEE NUMBER</span><span>{{ log.co_pilot_employee_number_id }}</span></td>
+				<td><span>CO-PILOT WEIGHT</span><span>{{ log.co_pilot_weight }}</span></td>
+			</tr>
+			<tr>
+				<td><span>OPERATIONAL WEIGHT</span><span>{{ log.opterational_weight }}</span></td>
+				<td><span>MAX GROSS WEIGHT</span><span>{{ log.max_gross_weight }}</span></td>
+				<td><span>ALLOWABLE T/O WEIGHT</span><span>{{ log.allowable_takeoff_weight }}</span></td>
+				<td><span>PAYLOAD AVAILABLE</span><span>{{ log.payload_available }}</span></td>
+				<td colspan="2" style="border-right: none"><span>ME LOAD SCHEDULE C.G RANGE</span><span>{{ log.me_load_schedule_cg_range_from }}</span></td>
+				<td style="border-left: none"><span>TO</span><span>{{ log.me_load_schedule_cg_range_to }}</span></td>
+			</tr>
+		</table>
+		
+		<table id="table2">
+			<tr style = "font-weight: bold">
+				<td colspan="12">FLIGHT DATA</td>
+				<td>TOTALS</td>
+			</tr>
+			{% for log_loc in list_flight_log %}
+			<tr>
+				<td>{{log_loc.title}}</td>	
+				{% if forloop.counter == 21 or forloop.counter == 22 %}
+				<td>{% if log_loc.0 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.1 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.2 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.3 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.4 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.5 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.6 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.7 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.8 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.9 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.10 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				{% else %}
+				<td>{{log_loc.0|default:""}}</td>
+				<td>{{log_loc.1|default:""}}</td>
+				<td>{{log_loc.2|default:""}}</td>
+				<td>{{log_loc.3|default:""}}</td>
+				<td>{{log_loc.4|default:""}}</td>
+				<td>{{log_loc.5|default:""}}</td>
+				<td>{{log_loc.6|default:""}}</td>
+				<td>{{log_loc.7|default:""}}</td>
+				<td>{{log_loc.8|default:""}}</td>
+				<td>{{log_loc.9|default:""}}</td>
+				<td>{{log_loc.10|default:""}}</td>
+				{% endif %}
+				<td style="width:6%">{{log_loc.total|default:""}}</td>
+			</tr>
+			{% endfor %}
+			
+		</table>
+
+		<table id="table3">
+			<tr>
+				<td colspan="4">FUEL EXPENSES OR USAGE</td>
+			</tr>
+			<tr id="table3tr2">
+				<td>LOCATION</td>
+				<td>GALLONS</td>
+				<td>OWNER</td>
+				<td>AMOUNT</td>
+			</tr>
+			{% for log_loc in log_loc_list %}
+			<tr>
+				<td>{{log_loc.location_id}}</td>
+				<td>{{log_loc.gallons |default:""}}</td>
+				<td>{{log_loc.owner |default:""}}</td>
+				<td>{{log_loc.amount |default:""}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<table id="table4">
+			<tr>
+				<td>PILOT</td>
+				<td>FLIGHT TIME</td>
+				<td>DAY</td>
+				<td>NIGHT</td>
+				<td>VFR</td>
+				<td>IFR</td>
+				<td>NVG</td>
+			</tr>
+			{{ formset_pilot.management_form }}
+			{% for obj in formset_pilot %}
+				<tr>
+					<td>{{obj.pilot.value | default_if_none:""}}</td>
+					{%ifnotequal obj.pic.value None%}
+						<td>{{ obj.pic.value | default_if_none:"" }}</td>
+					{% else %}
+						<td>{{ obj.sic.value | default_if_none:"" }}</td>
+					{%endifnotequal%}
+					<td>{{obj.day.value | default_if_none:""}}</td>
+					<td>{{obj.night.value | default_if_none:""}}</td>
+					<td>{{obj.vfr.value | default_if_none:""}}</td>
+					<td>{{obj.ifr.value | default_if_none:""}}</td>
+					<td>{{obj.nvg.value | default_if_none:""}}</td>
+				</tr>
+			{% endfor%}
+		</table>
+		
+	</div>
+	
+</body></html>

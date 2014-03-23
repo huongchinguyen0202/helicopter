@@ -3,6 +3,16 @@
     width: 48%;
     margin-left: -2%;
 }
+
+#fuel_tbl .k-dropdown {
+    background-color: transparent !important;
+    /* width: 50%; */
+    min-width: 90%;
+    margin-left: 3%;
+}
+#fuel_tbl select {
+	width: 50%;
+}
 k.header{
 	padding: 0%;
 	margin: 0%;
@@ -139,7 +149,7 @@ k.header{
 }
 
 /* the core trim text */
-.k-item {
+.k-item, #fuel_tbl td {
 /* 	display: inline-block;-webkit-box-sizing: border-box;box-sizing: border-box; */
 	white-space: nowrap;
     overflow: hidden;

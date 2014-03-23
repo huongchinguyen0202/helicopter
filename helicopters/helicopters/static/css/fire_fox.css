@@ -7,10 +7,6 @@
 		padding-top: 5px;
 	}
 	
-	span.submitted_checkbox input {
-		margin: 27% 0 0 19% !important;
-	}
-	
 	.timeEntry-control {
 		height: 20px !important;
 		margin-left: 2px;
@@ -23,6 +19,6 @@
 	
 	#id_load_schedule , #id_all_nfr,
 			#id_all_ifr{ 
-			margin-top:2.6% !important;
+			margin-top:0% !important;
 		}
 }
