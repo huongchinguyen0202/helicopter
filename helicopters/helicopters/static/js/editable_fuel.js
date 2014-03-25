@@ -11,9 +11,15 @@ function format_button(table_id, action_index){
 				<img src='../static/media/add3.png' class='btnAdd' style='visibility: hidden'/>");
     }
     
-    $('#fuel_tbl tr:visible:eq('+ rowCount +')').find('td').eq(4).html(
-    		"<img src='../static/media/delete.png' class='btnDelete' onclick='Delete(this)'/> \
-    		<img src='../static/media/add3.png' class='btnAdd' onclick='Add(this)'/>");
+    if (rowCount == 1){
+    	$('#fuel_tbl tr:visible:eq('+ rowCount +')').find('td').eq(4).html(
+        		"<img src='../static/media/add3.png' class='btnAdd' onclick='Add(this)'/>");
+    }else{
+    	$('#fuel_tbl tr:visible:eq('+ rowCount +')').find('td').eq(4).html(
+        		"<img src='../static/media/delete.png' class='btnDelete' onclick='Delete(this)'/> \
+        		<img src='../static/media/add3.png' class='btnAdd' onclick='Add(this)'/>");
+    }
+    
 }
 
 // Add new row: append new textbox... with id and name follow django formset
@@ -90,13 +96,12 @@ function Delete(target){
         var tdButtons = par.children("td:nth-child(6)");
         id_del = tdButtons.children("input[type=checkbox]").attr('id');
       	$("#"+id_del).prop('checked', true);
-        format_button('fuel_tbl', 4);
         if (row_visible == 0){
         	Add();
         }
+        format_button('fuel_tbl', 4);
     }
 };
-
 
 // onchange when choose location
 $(document).ready(function() {
@@ -124,9 +129,13 @@ function load_combo(){
 			}
 		}
 		$("#"+loc_id1).val();
+		if(typeof String.prototype.trim !== 'function') {
+		  String.prototype.trim = function() {
+		    return this.replace(/^\s+|\s+$/g, ''); 
+		  }
+		}
 		$("#"+loc_id1).val($('#fuel_tbl tr:visible:eq('+ j +')').find('td').eq(0).children("label").text().trim());
 	}
-	
 	
 	$( '#fuel_tbl select' ).change(function() {
 		var rowCount_fuel = $('#fuel_tbl tr:gt(0)').length;
@@ -135,7 +144,8 @@ function load_combo(){
 		var ind = par.rowIndex;
 		var coincide = false;
 		
-		loc_val_old = $('#fuel_tbl tr:eq('+ ind +')').find('td').eq(0).children("label").text().trim();
+		loc_val_old = $('#fuel_tbl tr:eq('+ ind +')').find('td').eq(0).children("label").text();
+		loc_val_old = loc_val_old.trim();
 		loc_val_change = $('#fuel_tbl tr:eq('+ ind +')').find('td').eq(0).children("span").children("select").val();
 		for ( var int = 1; int <= rowCount_fuel; int++) {
 			if (int != ind){
@@ -152,25 +162,27 @@ function load_combo(){
 		}
 		
 		
+		
 		if (!coincide){
+			var sum_amount = 0;
 			loc_id = $('#fuel_tbl tr:eq('+ ind +')').find('td').eq(0).children("span").children("select").attr("id");
 			$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(0).children("label").text(loc_val_change);
 	    	loc_choosen = $("#" + loc_id + " option:selected").text();
-	  		for (var i=2; i < rowCount; i++) {
-				td_final = $('#rs_flight_log_form tr:eq('+ i +')').find('td').eq(13);
-				loc = td_final.children("label").text();
-				if(loc.trim() == loc_choosen.trim()){
-					gallon = td_final.children("input").val();
-					$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(1).children("label").text(gallon);
-					$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(1).children("input").val(gallon);
-					
-					break;
-				}else{
-					$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(1).children("label").text("");
-					$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(1).children("input").val("");
-				}
-			};
+	    	if ($("#" + loc_id).val() != ""){
+	    		for (var i=2; i < rowCount; i++) {
+					td_final = $('#rs_flight_log_form tr:eq('+ i +')').find('td').eq(13);
+					loc = td_final.children("label").text();
+					if(loc.trim() == loc_choosen.trim()){
+						gallon = td_final.children("input").val();
+						sum_amount = sum_amount + parseInt(gallon);
+					}
+				};
+	    	}
+	  		
+			$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(1).children("label").text(sum_amount);
+			$('#fuel_tbl tr:eq('+ ind +')').find('td').eq(1).children("input").val(sum_amount);
 		}
+		
 	});
 	
 	$('#fuel_tbl select').kendoDropDownList({animation:false, template:'<span title=\'#: mytooltip #\'>#: mytooltip #</span>', 
@@ -182,6 +194,21 @@ function load_combo(){
 function change_location(){
 	var rowCount = $('#fuel_tbl tr:visible:gt(0)').length; 
 	before_fuel_location = $("#id_flight_data_fuel_station").val();
+	
+	var rowCount_leg = $('#rs_flight_log_form tr:gt(0)').length-1; 
+	var sum_amount = 0;
+	
+	for ( var j = 2; j <= rowCount_leg; j++) {
+		td_final = $('#rs_flight_log_form tr:eq('+ j +')').find('td').eq(13);
+		var loc_label = td_final.children('label').text();
+		if (loc_label.trim() == before_fuel_location.trim()){
+			var amount = td_final.children("input").val();
+			if (amount != ""){
+				sum_amount = sum_amount + parseInt(amount);
+			}
+		}
+	}
+	
     for (var i=1; i <= rowCount; i++) { 
         td1 = $('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children('label').text(); 
     	$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children('span').children('select').data("kendoDropDownList").value(td1.trim());
@@ -190,7 +217,8 @@ function change_location(){
     	loc_choosen = $("#" + loc_id + " option:selected").text();
     	
     	if(loc_choosen == before_fuel_location){
-    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("label").text($("#id_flight_data_fuel_amount").val());
+    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("label").text(sum_amount);
+    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("input").val(sum_amount);
     	}
     };
 }
@@ -210,4 +238,34 @@ function check_location(){
 }
 
 
+function change_location_del(){
+	var rowCount = $('#fuel_tbl tr:visible:gt(0)').length; 
+	before_fuel_location = $('#result').val();
+	var rowCount_leg = $('#rs_flight_log_form tr:gt(0)').length-1; 
+	var sum_amount = 0;
+	
+	for ( var j = 2; j <= rowCount_leg; j++) {
+		td_final = $('#rs_flight_log_form tr:eq('+ j +')').find('td').eq(13);
+		var loc_label = td_final.children('label').text();
+		if (loc_label.trim() == before_fuel_location.trim()){
+			var amount = td_final.children("input").val();
+			if (amount != ""){
+				sum_amount = sum_amount + parseInt(amount);
+			}
+		}
+	}
+	
+    for (var i=1; i <= rowCount; i++) { 
+        td1 = $('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children('label').text(); 
+    	$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children('span').children('select').data("kendoDropDownList").value(td1.trim());
+    	
+    	loc_id = $('#fuel_tbl tr:eq('+ i +')').find('td').eq(0).children("span").children("select").attr("id");
+    	loc_choosen = $("#" + loc_id + " option:selected").text();
+    	
+    	if(loc_choosen == before_fuel_location){
+    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("label").text(sum_amount);
+    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("input").val(sum_amount);
+    	}
+    };
+}
 

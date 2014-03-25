@@ -208,13 +208,23 @@ function val_send_email(is_checked, id){
 	}else{
 		// Send email
 		//$(document).on('click', '.send_email',function(e) {
-			Dajaxice.flight_log.send_email(Dajax.process,{'arr':j});
-			open_popup('#send_email');
+		jQuery('body').addClass('loading');
+		open_popup('#id_loading');
+		Dajaxice.flight_log.send_email(callback_add_file_send_email, {
+			'arr' : j
+		});
+
 		//});
 	}
 	window.location = "#Email"
 }
 
+function callback_add_file_send_email(data) {
+	Dajax.process(data);
+	$('body').removeClass('loading');
+	open_popup('#send_email');
+	return true
+}
 
 function val_print_pdf(is_checked,id){
 	//var j = [];
@@ -348,19 +358,47 @@ $(document).ready(function() {
 						}
 					}
 			}else{
-				var element = jQuery(this).parent().parent().parent().find('span').html();
-				// Check input is null
-				if ((element_value == "" || element_value == " " || element_value == null) 
-						&& class_select.indexOf("req") > -1){
-					$("#"+$(this).attr("id")).addClass("input_error");
-					$(error_id).append("<ul class = 'errorlist' ><li>"+name+" is required.</li></ul>");
-				}else{// Input has data
-					$("#"+$(this).attr("id")).removeClass("input_error");
-					$(error_id + " ul").remove();
+				if($(this).attr("id") != "id_all_nfr" && 
+						$(this).attr("id") != "id_all_ifr"){
+					var element = jQuery(this).parent().parent().parent().find('span').html();
+					// Check input is null
+					if ((element_value == "" || element_value == " " || element_value == null) 
+							&& class_select.indexOf("req") > -1){
+						$("#"+$(this).attr("id")).addClass("input_error");
+						$(error_id).append("<ul class = 'errorlist' ><li>"+name+" is required.</li></ul>");
+					}else{// Input has data
+						$("#"+$(this).attr("id")).removeClass("input_error");
+						$(error_id + " ul").remove();
+					}
+				}else{
+					if($(this).attr("id") == "id_all_nfr"){
+						if($("#id_all_nfr").is(":checked")){
+							$("#id_all_ifr").attr("disabled","disabled");
+							var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+							dropdownlist.enable(false);
+							dropdownlist.value(-1);
+						}else{
+							$("#id_all_ifr").removeAttr( "disabled" );
+							var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+							dropdownlist.enable(true);
+						}
+					}else{
+						if($("#id_all_ifr").is(":checked")){
+							$("#id_all_nfr").attr("disabled","disabled");
+							var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+							dropdownlist.enable(false);
+							dropdownlist.value(-1);
+						}else{
+							$("#id_all_nfr").removeAttr( "disabled" );
+							var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+							dropdownlist.enable(true);
+						}
+					}
 				}
 			}
 		} else{// Check
 			// Disappear star
+			alert(456);
 			jQuery("#id_flight_data_cg").parent().find('span span').css("display", "none");
 			jQuery("#id_flight_data_range_from").parent().find('span span').css("display", "none");
 			jQuery("#id_flight_data_range_to").parent().find('span span').css("display", "none");
@@ -430,6 +468,7 @@ $(document).ready(function() {
 			opt_weight = "";
 		console.log(opt_weight);
 		$("#id_opterational_weight").val(opt_weight).change(); //.trigger("change");
+		validate_operational_weight();
 	});
 	$('#id_opterational_weight, #mass_gross').on('change paste', function(e){
 //		alert("this ok");
@@ -497,7 +536,7 @@ $(document).ready(function() {
 	    	
 	    }else{
 	    	if(sum){
-	    		$(totalclass).html(sum.toFixed(2));
+	    		$(totalclass).html(sum.toFixed(1));
 	    	}
 	    }
 	}
@@ -561,6 +600,11 @@ $(document).ready(function() {
 			return false
 		}
 		if ($(id).val().indexOf(" ") != -1){
+			if(typeof String.prototype.trim !== 'function') {
+			  String.prototype.trim = function() {
+			    return this.replace(/^\s+|\s+$/g, ''); 
+			  }
+			}
 			$(id).val($(id).val().trim())
 		}
 		return true
@@ -638,13 +682,16 @@ $(document).ready(function() {
 		    for (var i=1; i <= rowCount; i++) { 
 		    	loc_id = $('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children("span").children("select").attr("id");
 		    	loc_choosen = $("#" + loc_id + " option:selected").text();
-		    	list_fuel_location.push(loc_choosen);
+		    	if (loc_choosen!=""){
+		    		list_fuel_location.push(loc_choosen.trim());
+		    	}
 		    };
-			var index = $(this).parent().parent().find("td:first").html()
+			var index = $(this).parent().parent().find("td:first").html();
+			var loc_temp = $(this).parent().parent().find("td").eq(13).children("label").text().trim();
 			var max_pax = $("#max_pax").val();
 			var co_pilot = $("#id_co_pilot_employee_number").val(); 
 			var id_log = $("#id_id_log").val();
-		    Dajaxice.flight_log.delete_flight_log(call_back_delete, {'index':index,
+		    Dajaxice.flight_log.delete_flight_log(call_back_delete, {'index':index, 'loc_temp':loc_temp,
 		    														'max_pax':max_pax,
 		    														'co_pilot':co_pilot,
 		    														'id_log':id_log,
@@ -661,7 +708,7 @@ $(document).ready(function() {
 		    for (var i=1; i <= rowCount; i++) { 
 		    	loc_id = $('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(0).children("span").children("select").attr("id");
 		    	loc_choosen = $("#" + loc_id + " option:selected").text();
-		    	list_fuel_location.push(loc_choosen);
+		    	list_fuel_location.push(loc_choosen.trim());
 		    };
 			before_fuel_location = $("#before_fuel_location").val()
 			
@@ -751,13 +798,11 @@ $(document).ready(function() {
 		if(save_add_flight_leg()){
 			close_popup();
 		}
-		fill_data_combo();
 		return true
 	}
 	
 	function call_back_delete(data){
 		Dajax.process(data);
-		fill_data_combo();
 		return true
 	}
 	
@@ -824,7 +869,7 @@ $(document).ready(function() {
 			alert("Please select at least one log to delete.");
 			return false;
 		}else{
-			if(!confirm('Are you sure to delete these flight logs?'))
+			if(!confirm('Are you sure to hese flight logs?'))
 				return false;
 		}
 	});
@@ -848,6 +893,7 @@ $(document).ready(function() {
 		
 		$(".errorlist li").remove();
 		$("#on_off_error_mess_div").css("display","none");
+		$("#range_to_error_id").css("display","none");
 		$("input").removeClass("input_error");
 		$("select").parent().find("span:first").removeClass("input_error");
 		
@@ -876,6 +922,8 @@ $(document).ready(function() {
     			i= i + 1;
     			tex = jQuery(this).parent().find('span').html();
     			tex = tex.replace("<span class=\"star\">*</span>","");
+    			tex = tex.replace("<SPAN class=star>*</SPAN>","");
+    			tex = tex.replace("<SPAN class=star style=\"DISPLAY: inline\">*</SPAN>","");
     			tex = tex.replace("<span class=\"star\" style=\"display: inline;\">*</span>","");
     			$(id).html("<ul class = 'errorlist' ><li>"+ tex +" is required.</li></ul>");
     			jQuery(this).addClass('input_error');
@@ -926,6 +974,7 @@ $(document).ready(function() {
             	jQuery("#"+id).parent().find('span:first').addClass('input_error');
             	name = $("#"+id).parent().parent().find('span:first').html();
             	name = name.replace("<span class=\"star\">*</span>","");
+            	name = name.replace("<SPAN class=star>*</SPAN>","");
             	$("#error_"+id).html("<ul class = 'errorlist' ><li>"+name+" is required.</li></ul>");
             }
         }

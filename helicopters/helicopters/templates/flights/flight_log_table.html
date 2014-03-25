@@ -1,7 +1,7 @@
 {% load static from staticfiles %}
 <table id="rs_flight_log_form">
 	<thead>
-		<th>FTL#</th>
+		<th style="width: 4%">FTL#</th>
 		<th>FROM</th>
 		<th>TO</th>
 		<th>PAX</th>
@@ -12,7 +12,7 @@
 		<th>CG</th>
 		<th>FUEL</th>
 		<th>CARGO</th>
-		<th>BLOCKTIME</th>
+		<th style="width: 9%;">BLOCKTIME</th>
 		<th>PATIENTS</th>
 		<th>ACTION</th>
 	</thead>
@@ -31,7 +31,7 @@
 				<td>{{ form.flight_data_cg|default_if_none:"" }}</td>
 				<td>{{ form.flight_data_fuel|default_if_none:"" }}</td>
 				<td class = "cls_cargo">{{ form.flight_data_cargo_weight|default_if_none:"" }}</td>
-				<td class = "cls_block_time">{{ form.flight_data_block_time|default_if_none:"" }}</td>
+				<td style="padding-right: 10px" class = "cls_block_time">{{ form.flight_data_block_time|default_if_none:"" }}</td>
 				<td class = "patient">{{ form.flight_data_patient|default_if_none:"" }}</td>
 				<td style="text-align:center; padding: 0.5% 0% 0% 0%;">
 					<a href="#log-box" class = "edit_flight_log">
@@ -84,7 +84,7 @@ function colSum(subclass, totalclass) {
     	
     }else{
     	if(sum){
-    		$(totalclass).html(sum.toFixed(2));
+    		$(totalclass).html(sum.toFixed(1));
     	}
     }
 }

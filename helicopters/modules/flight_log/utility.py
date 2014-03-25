@@ -11,18 +11,20 @@ import os
 from django.contrib import messages
 from django_xhtml2pdf.utils import render_to_pdf_response, fetch_resources
 import ho.pisa as pisa
-
+from datetime import datetime
+def format6(org_log_number):
+    return "Daily_Flight_Log_%06d.pdf" % (org_log_number,)
 # Utility function
 def convertHtmlToPdf(sourceHtml, outputFilename):
     pisa.showLogging()
-    # open output file for writing (truncated binary)
+    print "open output file for writing (truncated binary)", datetime.now().strftime('%H:%M:%S')
     resultFile = open(outputFilename, "w+b")
-    # convert HTML to PDF
+    print " convert HTML to PDF", datetime.now().strftime('%H:%M:%S')
     pisaStatus = pisa.CreatePDF(
             sourceHtml.encode("UTF-8"),                # the HTML to convert
             dest=resultFile, encoding='UTF-8',
                    link_callback=fetch_resources)           # file handle to recieve result
-    # close output file
+    print " close output file", datetime.now().strftime('%H:%M:%S')
     resultFile.close()                 # close output file
     # return True on success and False on errors
     return pisaStatus.err
@@ -84,11 +86,13 @@ def send_email(request):
                 msg = EmailMultiAlternatives(email_subject, email_content, email_from, to, cc=mcc, bcc=mbcc)
                 msg.content_subtype = constant.html
                 files = request.POST.get(constant.hiden_attack)
+                #print files
                 arr_files = files.split(',')
+                #print "splirt to: ", arr_files
                 for file_name in arr_files:
                     if(file_name):
-                        if(os.path.isfile(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/flight_log_' + file_name + '.pdf')):
-                            msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/flight_log_' + file_name + '.pdf')
+                        if(os.path.isfile(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/' + file_name +'.pdf')):
+                            msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/' + file_name +'.pdf')
                 #msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/ThbaoTSCH1_2014.pdf')
                 #msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/add.png')
                 try:

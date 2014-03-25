@@ -18,15 +18,15 @@ blockquote:before,blockquote:after,q:before,q:after{content:none}
 body { font-size:10px;}
 table {width: 100%; margin: 15px auto; }
 
-
+table th, table tr span:first-child , #table2 tr:first-child, #table2 tr td:first-child, #table3 tr:first-child , #table3 #table3tr2, #table4 tr:first-child {font-weight: bold; text-align: center;}
 .contain {width: 94%;margin: 0px auto;}
 .contain #table1 span {display: block; }
 #table0  td {text-align: left;}
 #table0 span {display: inline;}
+#table1 span:first-child {min-height:20px}
 #table0 tr td span:last-child {padding-left: 3px;}
-#table1 td span:last-child { position: relative;bottom: -7px;}
-#table2 td:first-child {width: 13%; font-weight: bold; text-align: left;}
-table th, table tr span:first-child , #table2 tr:first-child, #table2 tr td:first-child, #table3 tr:first-child , #table3 #table3tr2, #table4 tr:first-child {font-weight: bold; text-align: center;}
+/* #table1 td span:last-child { position: relative;bottom: -7px;} */
+#table2 tr td:first-child {width: 13%; font-weight: bold; text-align: left;}
 #table1 span {text-align: center;}
 #table3, #table0 {table-layout:fixed;}
 /*#table3 td {width: 25%}*/
@@ -68,8 +68,8 @@ table th, table tr span:first-child , #table2 tr:first-child, #table2 tr td:firs
 #head, #table0, #table1, #table3, #table4{
 	margin-bottom: 0px !important;
 }
-th, td { border: 1px solid #474644 ; padding: 3px; }
-#table0, #table1, #table3, #table4{ border-spacing:0}
+th, td { border: 1px solid #474644 ; padding: 2px; }
+#table0, #table1, #table2, #table3, #table4{border-collapse:collapse;border-spacing:0}
 .td_center {vertical-align:middle;}
 </style>
 	
@@ -125,25 +125,25 @@ th, td { border: 1px solid #474644 ; padding: 3px; }
 		</table>
 		
 		<table id="table2">
-			<tr style = "font-weight: bold">
-				<td colspan="12">FLIGHT DATA</td>
+			<tr style = "font-weight: bold;">
+				<td colspan="12" style="text-align: center;">FLIGHT DATA</td>
 				<td>TOTALS</td>
 			</tr>
 			{% for log_loc in list_flight_log %}
 			<tr>
 				<td>{{log_loc.title}}</td>	
 				{% if forloop.counter == 21 or forloop.counter == 22 %}
-				<td>{% if log_loc.0 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.1 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.2 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.3 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.4 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.5 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.6 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.7 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.8 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.9 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
-				<td>{% if log_loc.10 %}<img src="{% static 'img/checked.gif' %}"/>{% endif %}</td>
+				<td>{% if log_loc.0 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.1 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.2 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.3 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.4 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.5 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.6 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.7 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.8 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.9 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
+				<td>{% if log_loc.10 %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}</td>
 				{% else %}
 				<td>{{log_loc.0|default:""}}</td>
 				<td>{{log_loc.1|default:""}}</td>

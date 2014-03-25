@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
+encoding//common/extra_modules/django_tables2/columns/templatecolumn.py=utf-8
 encoding//common/extra_modules/django_xhtml2pdf/__init__.py=utf-8
 encoding//common/extra_modules/django_xhtml2pdf/utils.py=utf-8

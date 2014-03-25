@@ -605,7 +605,7 @@ table th {
 .errorlist li {
 	color: red !important;
 	display: block;
-	width: 170;
+	width: 100%;
 }
 
 .datebox {
@@ -1194,9 +1194,9 @@ li.smart_autocomplete_hightlight {
 	border-collapse: collapse;
 }
 
-.sub_form_pilot {
+#form_pilot {
 	border-top: 1px solid #bfbfbf;
-	padding: 15px 0px;
+	padding: 6px 0px;
 	clear: both;
 	margin-bottom: 20px;
 }
@@ -1393,3 +1393,41 @@ table#table_pilot  tr, #fuel_tbl
 
 #rs_flight_log_form {table-layout:fixed;}
 
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   speak for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+#id_loading {
+    display:    none;
+    z-index:    1000;
+    background: rgba( 0, 0, 0, 0.8 ) 
+                url('../img/loading.gif') 
+                50% 50% 
+                no-repeat;
+   	position: absolute;
+   	top: auto;
+	left: 241px;
+	width: 63%;
+	min-height: 450px;
+	padding: 0px;
+	height: auto !important;
+    width: 63%;
+	height: 365px;
+	padding: 0px;
+	background-color: white;
+}
+
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading #id_loading {
+    display: block;
+}
+.add_flight_log{
+	padding: 0.5% 1% !important;
+}
+
+#table_pilot{
+	margin-top: 1.2%;
+}

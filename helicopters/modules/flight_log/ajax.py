@@ -14,7 +14,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import os
 from django.forms.models import modelformset_factory
 from django.forms.formsets import formset_factory
-
+from utility import format6
 @dajaxice_register
 def add_flight_log(request, next_order_id, fuel, max_pax):
     '''
@@ -40,9 +40,9 @@ def add_flight_log(request, next_order_id, fuel, max_pax):
 
 
 @dajaxice_register
-def send_email(request, arr):    
+def send_email(request, arr):
     render = render_to_string(constant.email_popup_page)
-    dajax = Dajax()
+    dajax = Dajax() 
     html = render.replace('\n', "")
     dajax.script(constant.append_flight_email_popup %html)
     emails = UserTemp.objects.filter(employee_number=request.session[constant.usernameParam])
@@ -52,16 +52,22 @@ def send_email(request, arr):
     from flight_log.views import log_pdf
     from flight_log.utility import convertHtmlToPdf
     for i in arr:
-        html = html + "<div class=\"attack_file\"><input class=\"attack_file\" readonly=\"true\" name=\"attack_file_" + i + "\" value=\"flight_log_" + i + ".pdf\" type=\"text\" /><div class=\"close-attack\">x</div></div>"
+        log = Log.objects.get(id_log=i) or None
+        if not log:
+            continue
+        num_formated = format6(log.log_number)
+        html = html + "<div class=\"attack_file\"><input class=\"attack_file\" readonly=\"true\" name=\"attack_file_" + i + "\" value=\"" + num_formated +"\" type=\"text\" /><div class=\"close-attack\">x</div></div>"
         if(j == 0):
-            val = val + i
+            val = val + num_formated
             j = 1
         else:
-            val = val + ',' + i
-        pdf_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/flight_log_' + i + '.pdf'
+            val = val + ',' + num_formated
+        pdf_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/' + num_formated
         pdf = render_to_string("flights/pdf.html", log_pdf(i))
         convertHtmlToPdf(pdf, pdf_path)
-             
+        
+    # POST lost dot, so we remove it and add on recived
+    val = val.replace(".pdf", "")
     html = html + '<input class="hiden_attack" name="hiden_attack" val="'+ val + '" type="input" />'
     dajax.script("var e_html = '" + html +"';\
         jQuery('.attack_files').html(e_html);")
@@ -105,7 +111,7 @@ def edit_flight_log(request, index, max_pax, is_submitted = False):
     return dajax.json()
     
 @dajaxice_register
-def delete_flight_log(request, index, max_pax, list_fuel_location, co_pilot, id_log):
+def delete_flight_log(request, index, loc_temp, max_pax, list_fuel_location, co_pilot, id_log):
     dajax = Dajax()
     
     list_object = get_list_session_object(request)
@@ -119,7 +125,7 @@ def delete_flight_log(request, index, max_pax, list_fuel_location, co_pilot, id_
     for obj in list_object:
         if obj.flight_data_fuel_station and current_object.flight_data_fuel_station:
             if obj.flight_data_fuel_station == current_object.flight_data_fuel_station:
-                if str(obj.flight_data_fuel_station.location_name) in list_fuel_location:
+                if str(obj.flight_data_fuel_station.location_name).strip() in list_fuel_location:
                     count += 1
     if count == 1:
         dajax.alert(constant.announce_mess_fuel_location_change);
@@ -171,6 +177,9 @@ def delete_flight_log(request, index, max_pax, list_fuel_location, co_pilot, id_
         dajax.append('#hiddenff', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
         dajax.append('#fuel_tbl select', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
     load_copilot_sub(request, co_pilot, id_log, dajax)
+    dajax.script('load_combo();')
+    dajax.script("jQuery('#result').val('" + str(loc_temp) + "');")
+    dajax.script('change_location_del();')
     return dajax.json()
      
 def save_add_case(request, result):
@@ -267,13 +276,13 @@ def save_flight_log(request, forms, max_pax, partial_range,
                 if obj.flight_data_fuel_station:
                     location_name = obj.flight_data_fuel_station.location_name
                     if location_name:
-                        list_location_temp.append(str(location_name))
+                        list_location_temp.append(str(location_name.strip()))
                 if before_fuel_location == str(location_name) != "None" and not remove_older_location:
                     list_location_temp.remove(before_fuel_location)
                     remove_older_location = True
             ''' Input new station into list '''
             if current_location:   
-                list_location_temp.append(current_location)
+                list_location_temp.append(current_location.strip())
             ''' Verify whether conflict '''    
             for val in list_fuel_location:
                 if str(val) != "None" and str(val) != "" and str(val) not in list_location_temp:
@@ -534,7 +543,7 @@ def load_copilot_sub(request, co_pilot, id_log, dajax):
             nvg = nvg + flight.pilot_nvg
         if flight.co_pilot_nvg:
             co_nvg = co_nvg + flight.co_pilot_nvg
-        if flight.partial_nfr > -1:
+        if flight.partial_nfr != "":
             vfr = vfr + flight.flight_time + flight.partial_nfr
             ifr = ifr + 2*flight.flight_time - flight.partial_nfr
         else:
@@ -592,3 +601,14 @@ def load_copilot_sub(request, co_pilot, id_log, dajax):
     '''Append form'''
     dajax.script(constant.append_pilot_section %render.replace('\n', ""))
     dajax.script(constant.append_pilot_form %render1.replace('\n', ""))
+    
+    
+@dajaxice_register(method=constant.GET)
+def ajax_check_lognumber(request, log_number):
+    log = Log.objects.filter(log_number = log_number)
+    if log:
+        log_number = int(log_number) + 1
+     
+    return simplejson.dumps({'log_number':log_number})   
+ 
+

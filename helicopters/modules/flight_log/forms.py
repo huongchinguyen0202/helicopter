@@ -40,8 +40,6 @@ class LoginForm (forms.Form):
 class FlightLogDetail(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         max_pax = kwargs.pop("max_pax", None)
-        print "max_pax"
-        print max_pax
         order_id = kwargs.pop("next_order_id", None)
         fuel = kwargs.pop("fuel", None)
         partial_range = kwargs.pop("partial_range", None)

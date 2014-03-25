@@ -6,16 +6,16 @@
 <head>
 <title>{% block title %}{% endblock %}</title>
 
-<script type="text/javascript" src="{% static "js/jquery-2.0.3.min.js"%}"></script>
-
+<!-- <script type="text/javascript" src="{% static "js/jquery-2.0.3.min.js"%}"></script> -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script type="text/javascript" src="{% static "js/main.js"%}"></script>
 <script type="text/javascript" src="{% static "js/dajax.js"%}"></script>
 <script type="text/javascript" src="{% static "js/flight_log.js"%}"></script>
 <link type="text/css" rel="stylesheet" href="{% static "css/flight_log.css"%}">
 <link type="text/css" rel="stylesheet" href="{% static "css/styles.css"%}">
-<link type="text/css" rel="stylesheet" href="{% static "css/styles_ie10.css"%}">
-<link type="text/css" rel="stylesheet" href="{% static "css/jquery-te-1.4.0.css"%}">
 
+<link type="text/css" rel="stylesheet" href="{% static "css/jquery-te-1.4.0.css"%}">
+<!--[if IE]><link type="text/css" rel="stylesheet" href="{% static "css/styles_ie.css"%}"><![endif]-->
 <link type="text/css" rel="stylesheet" href="{% static "css/jquery_ui.css"%}">
 
 <script type="text/javascript" src="{% static "js/ajax.js"%}"></script>
@@ -28,8 +28,6 @@
 
 <script src="{{ STATIC_URL }}js/jquery.plugin.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.timeentry.js"></script>
-<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> -->
-
 
 <!-- Auto complete -->
 <script src="{{ STATIC_URL }}js/qs_score.js"></script>
@@ -75,20 +73,31 @@ $(document).ready(function() {
 </script>
 
 <script language="javascript" type="text/javascript">
-  if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Firefox') > 0)
-  {document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
-		  			.popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 1px;}\
-		  			span.submitted_checkbox input{margin:1% 0 0 19% !important;}\
-  					</style>');}
-  if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Safari') > 0)
-  {document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
-		  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 10px;}\
-		  span.submitted_checkbox input{margin-top:48% !important;}\
-		  </style>');}
-  if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Chrome') > 0)
-  {document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
-		  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 9px;}\
-		  span.submitted_checkbox input{margin-top:36% !important;}</style>');}
+	var isIE10 = false;
+	/*@cc_on
+	    if (/^10/.test(@_jscript_version)) {
+	    	document.write('<style type="text/css">\
+		    	input {\
+		    		width: 40% !important;\
+		    	}\
+			</style>');
+	    }
+	@*/
+	
+	if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Firefox') > 0)
+	{document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
+	  			.popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 1px;}\
+	  			span.submitted_checkbox input{margin:1% 0 0 19% !important;}\
+						</style>');}
+	if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Safari') > 0)
+	{document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
+	  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 10px;}\
+	  span.submitted_checkbox input{margin-top:48% !important;}\
+	  </style>');}
+	if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Chrome') > 0)
+	{document.write ('<style type="text/css">.popup_main input.btn_default_flight_log,\
+	  .popup_main #id_load_schedule,#id_all_nfr,#id_all_ifr{margin-top: 9px;}\
+			  span.submitted_checkbox input{margin-top:36% !important;}</style>');}
 </script>
 
 </head>

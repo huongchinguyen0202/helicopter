@@ -16,6 +16,13 @@ function submit_form_add() {
 	}
 }
 
+function validate_operational_weight() {
+	if (jQuery("#id_opterational_weight").val() == "") {
+		$("#err_id_opterational_weight").text('Operational Weight is required');
+	} else {
+		$("#err_id_opterational_weight").text('');
+	}
+}
 function verify_inp_sel() {
 	var valid = true;
 	var i = 0;
@@ -26,6 +33,7 @@ function verify_inp_sel() {
 			i = i + 1;
 			var tex = jQuery(this).parent().find('span').html();
 			tex = tex.replace("<span class=\"star\">*</span>","");
+			tex = String(tex).replace("<SPAN class=star>*</SPAN>","");
 			$(id).text(tex + ' is required');
 			jQuery(this).addClass('input_error');
 
@@ -43,8 +51,10 @@ function verify_inp_sel() {
 			i = i + 1;
 			var id_com = "#err_" + jQuery(this).attr("id");
 			var tex1 = jQuery(this).parent().parent().parent().find('span').html();
+			tex1 = tex1.replace("<SPAN class=star>*</SPAN>","");
 			tex1 = tex1.replace("<span class=\"star\">*</span>","");
 			tex1 = tex1.replace("<span class = \"star\" style=\"display: inline;\">*</span>","");
+			tex1 = tex1.replace("<SPAN class = \"star\" style=\"display: inline;\">*</SPAN>","");
 			if (id_com == "#err_id_co_pilot_employee_number") {
 				$(id_com).text('Co-Pilot Employee Number is required');
 			} else {
@@ -72,6 +82,7 @@ function verify_blur(e) {
 		jQuery('.err').css('display', 'block');
 		var tex = jQuery(e).parent().find('span').html();
 		tex = tex.replace("<span class=\"star\">*</span>","");
+		tex = tex.replace("<SPAN class=star>*</SPAN>","");
 		$(id).text(tex + ' is required');
 		jQuery(e).addClass('input_error');
 	} else {

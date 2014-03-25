@@ -150,7 +150,7 @@ span.k-numeric-wrap.k-state-active,
 .k-state-selected,
 .k-state-focused,
 .k-tabstrip-items .k-item {
-  background-image: url("textures/highlight.png");
+/*   background-image: url("textures/highlight.png"); */
 }
 .k-header,
 .k-grid-header,
@@ -179,13 +179,13 @@ span.k-numeric-wrap.k-state-active,
 .k-callout,
 .k-progress,
 .k-progress-status {
-  background-image: url('BlueOpal/sprite.png');
+/*   background-image: url('BlueOpal/sprite.png'); */
 }
 .k-loading {
-  background-image: url('BlueOpal/loading.gif');
+/*   background-image: url('BlueOpal/loading.gif'); */
 }
 .k-loading-image {
-  background-image: url('BlueOpal/loading-image.gif');
+/*   background-image: url('BlueOpal/loading-image.gif'); */
 }
 .k-loading-color {
   background-color: #ffffff;

@@ -194,3 +194,15 @@ function pagging_function(pg,is_sub){
 		'ac': $('#id_a1c').val(), 'pg': pg, 'is_sub': is_sub});
 		
 }
+
+function check_log_number(){
+	alert ("goi ajax");
+	Dajaxice.flight_log.ajax_check_lognumber(check_lognumber, {'log_number': $('#num_hidden').val()});
+	return false;
+}
+
+function check_lognumber(data) {
+	alert(data.log_number);
+} 
+
+

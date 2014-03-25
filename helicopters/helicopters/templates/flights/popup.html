@@ -9,7 +9,7 @@
 
 {% if is_submitted == True %}
 <div class="popup_main clearthis" id = "popup_form">
-	<div class="title"><span>Add Flight Log Detail</span></div>
+	<div class="title"><span>Add Flight Leg Details</span></div>
 	<div class="close">
 		<a class = "id_cancel_popup" class = "close_popup"><img style = "width: 20px; height: 20px;" 
 			src="{% static "img/ico_popup_close.png"%}" /></a>
@@ -183,7 +183,7 @@
 </div>
 {% else %}
 <div class="popup_main clearthis">
-	<div class="title"><span>Add Flight Log Detail</span></div>
+	<div class="title"><span>Add Flight Leg Details</span></div>
 	<div class="close">
 		<a class = "id_cancel_popup" class = "close_popup"><img style = "width: 20px; height: 20px;" 
 			src="{% static "img/ico_popup_close.png"%}" /></a>
@@ -198,7 +198,7 @@
 				<div class="per33">
 					<span class = "check_box">Load Schedule</span>
 					{{single_form.load_schedule}}
-					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.load_schedule.errors}}	
 					</div>
 				</div>
@@ -206,7 +206,7 @@
 					<span>Slot Purpose<span class = "star">*</span></span>
 					{{single_form.slot_purpose_id}}
 					<div class = "error_id_mess" id = "error_id_slot_purpose_id" 
-						style = "color:red; display:inline; font-size: smaller;">
+						style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.slot_purpose_id.errors}}	
 					</div>
 				</div>
@@ -225,7 +225,7 @@
 					{{single_form.from_field}}
 					<div class = "error_id_mess" id = "error_id_from_field" 
 						style = "color:red; display:inline; font-size: smaller;
-						margin: 0% 20% 0% 0%;">
+						margin: 0% 5% 0% 0%;">
 						{{single_form.from_field.errors}}	
 					</div>
 				</div>
@@ -234,7 +234,7 @@
 					{{single_form.to}}
 					<div class = "error_id_mess" id = "error_id_to"
 					 style = "color:red; display:inline; font-size: smaller;
-					 		margin: 0% 20% 0% 0%;">
+					 		margin: 0% 5% 0% 0%;">
 						{{single_form.to.errors}}	
 					</div>
 				</div>
@@ -244,7 +244,7 @@
 					<span>Manifest#</span>
 					{{single_form.manifest_number}}
 					<div class = "error_id_mess" id = "error_id_manifest_number" 
-					style = "color:red; display:inline; font-size: smaller;">
+					style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.manifest_number.errors}}	
 					</div>
 				</div>
@@ -252,14 +252,14 @@
 					<span>Passengers<span class = "star">*</span></span>
 					{{single_form.passenger}}
 					<div class = "error_id_mess" id = "error_id_passenger" 
-					style = "color:red; display:inline; font-size: smaller;">
+					style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.passenger.errors}}
 					</div>
 				</div>		
 				<div class="per33">
 					<span>Emp By</span>
 					{{single_form.emp_by}}
-					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.emp_by.errors}}	
 					</div>
 				</div>
@@ -279,7 +279,7 @@
 					{{single_form.flight_data_cg}}		
 					<div class="error_id_mess" id="error_id_flight_data_cg" 
 						style="color:red; display:none; font-size: smaller;
-						margin: 0% 20% 0% 0%;">
+						margin: 0% 5% 0% 0%;">
 						<ul class="errorlist">
 						<li>CG is required.</li>
 						</ul>
@@ -302,7 +302,7 @@
 				<div class="per33">
 					<span>Cargo Weight</span>
 						{{single_form.flight_data_cargo_weight}}
-					<div class = "error_id_mess" id = "error_id_flight_data_cargo_weight" style = "color:red; display:inline; font-size: smaller;">
+					<div class = "error_id_mess" id = "error_id_flight_data_cargo_weight" style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.flight_data_cargo_weight.errors}}	
 					</div>
 				</div>
@@ -311,14 +311,14 @@
 					<span>Fuel Station</span>
 						{{ single_form.flight_data_fuel_station }}
 					
-					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
 						{{single_form.flight_data_fuel_station.errors}}	
 					</div>	
 				</div>
 				<div class="per33">
 					<span>Fuel Amount</span>
 					{{single_form.flight_data_fuel_amount}}
-					<div class = "error_id_mess" id = "error_id_flight_data_fuel_amount"  style = "color:red; display:inline; font-size: smaller;">
+					<div class = "error_id_mess" id = "error_id_flight_data_fuel_amount"  style = "color:red; display:inline; font-size: smaller; margin: 0% 5% 0% 0%;">
 						{{single_form.flight_data_fuel_amount.errors}}	
 					</div>	
 				</div>	
@@ -327,7 +327,7 @@
 				<div class="per33">
 					<span>Amount</span>
 					{{single_form.flight_data_amount}}
-					<div class = "error_id_mess" id = "error_id_flight_data_amount"  style = "color:red; display:inline; font-size: smaller;">
+					<div class = "error_id_mess" id = "error_id_flight_data_amount"  style = "color:red; display:inline; font-size: smaller; margin: 0% 5% 0% 0%;">
 						{{single_form.flight_data_amount.errors}}	
 					</div>
 				</div>
@@ -374,7 +374,7 @@
 						style = "position: absolute;
 									color: red;
 									display:block;
-									margin: -0.5% 0% 0% 13.9%;
+									margin: -1% 0% 0% 13.9%;
 									font-size: smaller;">
 						"OFF and On" is required.
 					</div> 
@@ -387,7 +387,7 @@
 					{{single_form.fuel_wheels_down}}
 					<div class = "error_id_mess" id = "error_id_fuel_wheels_down"  
 					style = "color:red; display:inline; font-size: smaller;
-								margin: 0% 20% 0% 0%;">
+								margin: 0% 5% 0% 0%;">
 						{{single_form.fuel_wheels_down.errors}}	
 					</div>
 				</div>
@@ -417,7 +417,7 @@
 					{{single_form.day}}
 					<div class = "error_id_mess" id = "error_id_day"  
 					style = "color:red; display:inline; font-size: smaller;
-								margin: 0% 20% 0% 0%;">
+								margin: 0% 5% 0% 0%;">
 						{{single_form.day.errors}}	
 					</div>
 				</div>
@@ -426,7 +426,7 @@
 					{{single_form.night}}
 					<div class = "error_id_mess" id = "error_id_night"  
 					style = "color:red; display:inline; font-size: smaller;
-								margin: 0% 20% 0% 0%;">
+								margin: 0% 5% 0% 0%;">
 						{{single_form.night.errors}}	
 					</div>
 				</div>
@@ -499,7 +499,19 @@
 		  return false;
 		}
 	});
+	
 	$("input").attr("border","1px solid red");
+	if($("#id_all_nfr").is(":checked")){
+		$("#id_all_ifr").attr("disabled","disabled");
+		$("#id_partial_nfr").attr("disabled","disabled");
+	}
+	
+	if($("#id_all_ifr").is(":checked")){
+		$("#id_all_nfr").attr("disabled","disabled");
+		$("#id_partial_nfr").attr("disabled","disabled");
+	}
+	
+	
 </script>
 <style>
     /* General styles for smart auto complete*/

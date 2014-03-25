@@ -1,3 +1,6 @@
 /* ie 10 styles */
 
 input[type='checkbox'], #login input { border: 0!important; appearance: none;outline-style:none!important;}
+.btn_default_flight_log {
+	padding: 0% 2% 0% 2% !important;
+}
