@@ -43,6 +43,7 @@
 							alt="delete flight log"> 
 					</a>
 					
+					<p style="display: none;"> {{form.flight_data_fuel_station.id_location}}</p>
 					<label style="display: none;"> {{form.flight_data_fuel_station |default_if_none:"" }} </label> 
 					<input style="display: none;" type="text" id="amount_gallon" value="{{form.flight_data_fuel_amount|default_if_none:""}}"/>
 				</td>

@@ -15,6 +15,9 @@ import os
 from django.forms.models import modelformset_factory
 from django.forms.formsets import formset_factory
 from utility import format6
+import zipfile
+import cStringIO as StringIO
+
 @dajaxice_register
 def add_flight_log(request, next_order_id, fuel, max_pax):
     '''
@@ -51,24 +54,58 @@ def send_email(request, arr):
     j = 0
     from flight_log.views import log_pdf
     from flight_log.utility import convertHtmlToPdf
+    pdf_files = []
+    dirname = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) +'/../helicopters/static/media/pdf_export/'
     for i in arr:
         log = Log.objects.get(id_log=i) or None
         if not log:
             continue
         num_formated = format6(log.log_number)
-        html = html + "<div class=\"attack_file\"><input class=\"attack_file\" readonly=\"true\" name=\"attack_file_" + i + "\" value=\"" + num_formated +"\" type=\"text\" /><div class=\"close-attack\">x</div></div>"
         if(j == 0):
             val = val + num_formated
             j = 1
         else:
             val = val + ',' + num_formated
-        pdf_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/' + num_formated
+        pdf_path = dirname + num_formated
+        pdf_files.append(num_formated)
         pdf = render_to_string("flights/pdf.html", log_pdf(i))
         convertHtmlToPdf(pdf, pdf_path)
         
+    if len(arr) > 1:
+        from datetime import datetime
+        today_str= datetime.now().strftime('%m_%d_%Y')
+        i = today_str
+        files_today = 'Daily_Flight_Log_' + today_str + '.zip'
+        
+        # read stream zip
+        buffer = StringIO.StringIO()
+        zf = zipfile.ZipFile(buffer, mode='w')
+        for pdf_file in pdf_files:
+            try:
+                zf.write(dirname + pdf_file, pdf_file)
+            finally:
+                pass
+        zf.close()
+        # save file to local
+        buffer.seek(0)
+        f = file(dirname + files_today, "w")
+        f.write(buffer.read())
+        f.close()
+        
+        
+    else:
+        i = arr[0]
+        files_today = pdf_files[0]
+    
+    
+
+    #print "files_today on dajaxice_register send_email", files_today
+   
+    html = html + "<div class=\"attack_file\"><input id=\"attack_file_1\" onclick=\"download(this)\" class=\"attack_file\" readonly=\"true\" name=\"attack_file_" + i + "\" value=\"" + files_today +"\" type=\"text\" /><div class=\"close-attack\">x</div></div>"
+    
+        
     # POST lost dot, so we remove it and add on recived
-    val = val.replace(".pdf", "")
-    html = html + '<input class="hiden_attack" name="hiden_attack" val="'+ val + '" type="input" />'
+    html = html + '<input class="hiden_attack" name="hiden_attack" val="'+ files_today + '" type="input" />'
     dajax.script("var e_html = '" + html +"';\
         jQuery('.attack_files').html(e_html);")
     for email in emails:
@@ -111,7 +148,7 @@ def edit_flight_log(request, index, max_pax, is_submitted = False):
     return dajax.json()
     
 @dajaxice_register
-def delete_flight_log(request, index, loc_temp, max_pax, list_fuel_location, co_pilot, id_log):
+def delete_flight_log(request, index, loc_temp, max_pax, list_fuel_location, co_pilot, id_log, all_vfr, all_ifr,):
     dajax = Dajax()
     
     list_object = get_list_session_object(request)
@@ -176,7 +213,7 @@ def delete_flight_log(request, index, loc_temp, max_pax, list_fuel_location, co_
     for local_id, name in sorted_list_fuel_station:
         dajax.append('#hiddenff', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
         dajax.append('#fuel_tbl select', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
-    load_copilot_sub(request, co_pilot, id_log, dajax)
+    load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax)
     dajax.script('load_combo();')
     dajax.script("jQuery('#result').val('" + str(loc_temp) + "');")
     dajax.script('change_location_del();')
@@ -227,7 +264,7 @@ def save_add_case(request, result):
 @dajaxice_register
 def save_flight_log(request, forms, max_pax, partial_range, 
                     before_fuel_location, list_fuel_location,
-                    is_edit, co_pilot, id_log):
+                    is_edit, co_pilot, id_log, all_vfr, all_ifr):
     dajax = Dajax()
     
     ''' Remove all errors message in popup '''
@@ -350,7 +387,7 @@ def save_flight_log(request, forms, max_pax, partial_range,
     pour_fuel_station_popup(dajax)
     
     ''' Reload pilot section'''
-    load_copilot_sub(request, co_pilot, id_log, dajax)
+    load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax)
     return dajax.json()
 
 
@@ -518,13 +555,13 @@ def pour_fuel_station_popup(dajax):
     dajax.script("load_ajax_popop("+str(list_loc_name)+");")
 
 @dajaxice_register(method=constant.GET)
-def load_copilot(request, co_pilot, id_log):
+def load_copilot(request, co_pilot, id_log, all_vfr, all_ifr):
     dajax = Dajax()
-    load_copilot_sub(request, co_pilot, id_log, dajax)
+    load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax)
     '''Return'''
     return dajax.json()
 
-def load_copilot_sub(request, co_pilot, id_log, dajax):
+def load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax):
     '''Create formset'''
     PilotFormSet = formset_factory( form = PilotForm, 
                                        max_num=10, extra = 0)
@@ -533,22 +570,31 @@ def load_copilot_sub(request, co_pilot, id_log, dajax):
     '''Get list flight log in session and calculate sum value'''
     lst_flight_log = get_list_session_object(request)
     sic = pic = night = day = vfr = ifr = nvg = co_nvg = 0
-
+    
+    flight_time = 0 
+    into_partial = 0
     for flight in lst_flight_log:
         sic = sic + flight.flight_time
         pic = pic + flight.flight_time
         day = day + flight.day
         night = night + flight.night
+        flight_time = flight_time + flight.flight_time
         if flight.pilot_nvg:
             nvg = nvg + flight.pilot_nvg
         if flight.co_pilot_nvg:
             co_nvg = co_nvg + flight.co_pilot_nvg
-        if flight.partial_nfr != "":
-            vfr = vfr + flight.flight_time + flight.partial_nfr
-            ifr = ifr + 2*flight.flight_time - flight.partial_nfr
+        if flight.partial_nfr != -1 and type(flight.partial_nfr) != unicode:
+            into_partial = into_partial + 1
+            vfr = vfr + flight.partial_nfr
         else:
-            vfr = vfr + flight.flight_time
-            ifr = ifr + 2*flight.flight_time
+            if all_vfr:
+                vfr = vfr + flight.flight_time
+                ifr = ifr + 0
+            if all_ifr:
+                ifr = ifr + flight.flight_time
+                vfr = vfr + 0
+    if into_partial != 0:
+        ifr = flight_time - vfr
     
     pilot = LogEmployee()
     pilot.pic = pic
@@ -602,13 +648,3 @@ def load_copilot_sub(request, co_pilot, id_log, dajax):
     dajax.script(constant.append_pilot_section %render.replace('\n', ""))
     dajax.script(constant.append_pilot_form %render1.replace('\n', ""))
     
-    
-@dajaxice_register(method=constant.GET)
-def ajax_check_lognumber(request, log_number):
-    log = Log.objects.filter(log_number = log_number)
-    if log:
-        log_number = int(log_number) + 1
-     
-    return simplejson.dumps({'log_number':log_number})   
- 
-

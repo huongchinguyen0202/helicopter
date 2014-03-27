@@ -35,7 +35,7 @@ padding-left: 16.3%;
 .k-dropdown-wrap .k-state-default .k-state-focused{
 	width: 86% !important;
 }
-input[type='checkbox'], #login input {
+#login input {
 	border: border:0px !important; outline-style:none!important;
 	padding-left: 0px;	
 	margin-top: 0% !important;
@@ -84,4 +84,9 @@ input {
 }
 body{
 	height: auto;
+}
+input[type=checkbox]{
+	border: none !important;
+	padding-left: 0px;	
+	margin-top: 0% !important;
 }

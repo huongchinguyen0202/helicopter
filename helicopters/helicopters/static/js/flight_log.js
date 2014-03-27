@@ -101,6 +101,13 @@ function set_fuel_station(location_name) {
 function save_confirm(page){
 	if($("#id_is_submited").val() == "False" || $("#id_is_submited").val() == ""){
 		if (confirm("Unsaved data will be lost. Do you want to save the changes before continuing?")){
+			if (page == 'search'){
+				$("#form_add").attr('action',"/log/1");
+			}else if (page == 'pending'){
+				$("#form_add").attr('action',"/log/2");
+			}else{
+				$("#form_add").attr('action',"/log/3");
+			}
 			$("#add_flight_log_save").trigger('click');
 		}else{
 			if (page == 'search'){
@@ -209,7 +216,7 @@ function val_send_email(is_checked, id){
 		// Send email
 		//$(document).on('click', '.send_email',function(e) {
 		jQuery('body').addClass('loading');
-		open_popup('#id_loading');
+		open_popup_email('#id_loading');
 		Dajaxice.flight_log.send_email(callback_add_file_send_email, {
 			'arr' : j
 		});
@@ -222,8 +229,18 @@ function val_send_email(is_checked, id){
 function callback_add_file_send_email(data) {
 	Dajax.process(data);
 	$('body').removeClass('loading');
-	open_popup('#send_email');
+	open_popup_email('#send_email');
 	return true
+}
+
+function open_popup_email(loginBox){
+	//Fade in the Popup and add close button
+	$(loginBox).fadeIn(300);
+	
+	// Add the mask to body
+	$('body').append('<div id="mask"></div>');
+	$('#mask').fadeIn(300);
+	jQuery(loginBox).center_email();
 }
 
 function val_print_pdf(is_checked,id){
@@ -248,13 +265,13 @@ function val_print_pdf(is_checked,id){
 		if(j.length > 1) {
 			j = j.substring(1);
 		}
-		window.location='print?log_id='+j;
-		/*for (var i=0;i<j.length;i++) {
-			window.location= 'print?i='+j[i];
-		}*/
+		new_location = '/search/print/?log_id='+j;
+		window.location.href = new_location;
 	}
 }
-
+function download(filename) {
+    window.location.href = '/download/?file=' + $(filename).val();
+}
 $(document).ready(function() {
 	// check all checkbox
 	$("input[name='all_check']").on('change',function() {
@@ -398,7 +415,6 @@ $(document).ready(function() {
 			}
 		} else{// Check
 			// Disappear star
-			alert(456);
 			jQuery("#id_flight_data_cg").parent().find('span span').css("display", "none");
 			jQuery("#id_flight_data_range_from").parent().find('span span').css("display", "none");
 			jQuery("#id_flight_data_range_to").parent().find('span span').css("display", "none");
@@ -418,14 +434,41 @@ $(document).ready(function() {
 						$("#id_flight_data_cg").removeClass("input_error");
 					}
 				}else{
-					// Check input is null
-					if ((element_value == "" || element_value == " " || element_value == null) 
-							&& class_select.indexOf("req") > -1){
-						$("#"+$(this).attr("id")).addClass("input_error");
-						$(error_id).append("<ul class = 'errorlist' ><li>"+name+" is required.</li></ul>");
-					}else{// Input has data
-						$("#"+$(this).attr("id")).removeClass("input_error");
-						$(error_id + " ul").remove();
+					if($(this).attr("id") != "id_all_nfr" && 
+							$(this).attr("id") != "id_all_ifr"){
+						// Check input is null
+						if ((element_value == "" || element_value == " " || element_value == null) 
+								&& class_select.indexOf("req") > -1){
+							$("#"+$(this).attr("id")).addClass("input_error");
+							$(error_id).append("<ul class = 'errorlist' ><li>"+name+" is required.</li></ul>");
+						}else{// Input has data
+							$("#"+$(this).attr("id")).removeClass("input_error");
+							$(error_id + " ul").remove();
+						}
+					}else{
+						if($(this).attr("id") == "id_all_nfr"){
+							if($("#id_all_nfr").is(":checked")){
+								$("#id_all_ifr").attr("disabled","disabled");
+								var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+								dropdownlist.enable(false);
+								dropdownlist.value(-1);
+							}else{
+								$("#id_all_ifr").removeAttr( "disabled" );
+								var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+								dropdownlist.enable(true);
+							}
+						}else{
+							if($("#id_all_ifr").is(":checked")){
+								$("#id_all_nfr").attr("disabled","disabled");
+								var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+								dropdownlist.enable(false);
+								dropdownlist.value(-1);
+							}else{
+								$("#id_all_nfr").removeAttr( "disabled" );
+								var dropdownlist = $("#id_partial_nfr").data("kendoDropDownList");
+								dropdownlist.enable(true);
+							}
+						}
 					}
 				}// End else
 			}// End else
@@ -691,11 +734,21 @@ $(document).ready(function() {
 			var max_pax = $("#max_pax").val();
 			var co_pilot = $("#id_co_pilot_employee_number").val(); 
 			var id_log = $("#id_id_log").val();
+			var all_vfr = false;
+			var all_ifr = false;
+			if ($('#id_all_nfr').attr('disabled') == "disabled"){
+				all_ifr = true;
+			}
+			else if ($('#id_all_ifr').attr('disabled') == "disabled"){
+				all_vfr = true;
+			}
 		    Dajaxice.flight_log.delete_flight_log(call_back_delete, {'index':index, 'loc_temp':loc_temp,
 		    														'max_pax':max_pax,
 		    														'co_pilot':co_pilot,
 		    														'id_log':id_log,
-		    														'list_fuel_location':list_fuel_location});
+		    														'list_fuel_location':list_fuel_location,
+		    														'all_vfr':all_vfr,
+		    														'all_ifr':all_ifr});
 		}
 	});
 	
@@ -715,8 +768,16 @@ $(document).ready(function() {
 			var max_pax = $("#max_pax").val();
 			var partial_range = $("#id_flight_time").val();
 			var is_edit = $("#is_edit").val();
-			var co_pilot = $("#id_co_pilot_employee_number").val(); 
+			var co_pilot = $("#id_co_pilot_employee_number option:selected").text();
 			var id_log = $("#id_id_log").val();
+			var all_vfr = false;
+			var all_ifr = false;
+			if ($('#id_all_nfr').attr('disabled') == "disabled"){
+				all_ifr = true;
+			}
+			else if ($('#id_all_ifr').attr('disabled') == "disabled"){
+				all_vfr = true;
+			}
 			Dajaxice.flight_log.save_flight_log(js_callback, 
 					{'forms':$('#popup_add_flight_log').serialize(),
 					 'max_pax':max_pax,
@@ -725,7 +786,9 @@ $(document).ready(function() {
 					 'before_fuel_location':before_fuel_location,
 					 'list_fuel_location':list_fuel_location,
 					 'co_pilot':co_pilot,
-					 'id_log':id_log});
+					 'id_log':id_log,
+					 'all_vfr':all_vfr,
+					 'all_ifr':all_ifr});
 		}
 		
 	});
@@ -766,6 +829,15 @@ $(document).ready(function() {
 	
 	/* Monitor Center */
 	jQuery.fn.center = function () {
+	    this.css("position","absolute");
+	    this.css("top",  $(window).scrollTop() + "px");
+	    //this.css("top", Math.max(200, ($(window).innerHeight()/2 - $(this).outerHeight()) + $(window).scrollTop()) + "px")
+	    this.css("height", "auto");
+	    this.css("left", "0px");
+	    return this;
+	}
+	
+	jQuery.fn.center_email = function () {
 	    this.css("position","absolute");
 	    this.css("top",  $(window).scrollTop() + 100 + "px");
 	    //this.css("top", Math.max(200, ($(window).innerHeight()/2 - $(this).outerHeight()) + $(window).scrollTop()) + "px")
@@ -833,6 +905,7 @@ $(document).ready(function() {
 			window.location='/';
 			return false;
 		} else{
+			if (!verify_inp_sel()) return false;
 			return true;
 		}
 			
@@ -869,7 +942,7 @@ $(document).ready(function() {
 			alert("Please select at least one log to delete.");
 			return false;
 		}else{
-			if(!confirm('Are you sure to hese flight logs?'))
+			if(!confirm('Are you sure to delete these flight logs?'))
 				return false;
 		}
 	});
@@ -970,7 +1043,6 @@ $(document).ready(function() {
             if($(".popup_main select.req")[index].value == ""){
             	pass = false;
             	id = $(".popup_main select.req")[index].id;
-        		//$("#"+id).addClass('input_error');
             	jQuery("#"+id).parent().find('span:first').addClass('input_error');
             	name = $("#"+id).parent().parent().find('span:first').html();
             	name = name.replace("<span class=\"star\">*</span>","");
@@ -1001,7 +1073,7 @@ $(document).ready(function() {
 		    	$("#id_on").css("border","1px solid red");
 		    	$("#id_on").focus();
 		    	$("#id_flight_time").val("");
-		    	$("#on_off_error_mess_div").css("display","block");
+//		    	$("#on_off_error_mess_div").css("display","block");
 		    	pass = false;
 		    }
 	    }	 
@@ -1049,7 +1121,18 @@ $(document).ready(function() {
 	$("#id_co_pilot_employee_number").change(function() {
 		var pre_value = $("#pre-co-pilot").html();
 		var emp_number = $("#emp_number").html();
-		var co_pilot = $(this).val();
+		var co_pilot = $("#id_co_pilot_employee_number option:selected").text();
+		var vfr_disable = $('#id_all_vfr').attr('disabled');
+		var ifr_disable = $('#id_all_vfr').attr('disabled');
+		var all_vfr = false;
+		var all_ifr = false;
+		if ($('#id_all_nfr').attr('disabled') == "disabled"){
+			all_ifr = true;
+		}
+		else if ($('#id_all_ifr').attr('disabled') == "disabled"){
+			all_vfr = true;
+		}
+			
 		if (emp_number == co_pilot){
 			alert("The selected pilot is duplicated. Please select another pilot");
 			var dropdownlist = $(this).data("kendoDropDownList");
@@ -1062,6 +1145,7 @@ $(document).ready(function() {
 		$("#pre-co-pilot").html($(this).val());
 		var id_log = $("#id_id_log").val();
 		Dajaxice.flight_log.load_copilot(Dajax.process, 
-				{'co_pilot':co_pilot, 'id_log':id_log});
+				{'co_pilot':co_pilot, 'id_log':id_log,
+				'all_vfr':all_vfr, 'all_ifr':all_ifr});
 	});
 });

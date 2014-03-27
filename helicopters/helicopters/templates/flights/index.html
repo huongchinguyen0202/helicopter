@@ -5,7 +5,6 @@
 	<div class="main clearthis">
 		<div class="main_content clearthis">
 			<form method="post" action="/log/" id = "form_add">{% csrf_token %}
-				
 				{{form.is_submited}}
 				{% if form.is_submited.value == True %}
 					<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">View Flight Log</span></div>
@@ -202,17 +201,29 @@
 					{% if form.fuel.value %}
 						<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">Edit Flight Log</span></div>
 					{% else %}
-					<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">Add Flight Log Details</span></div>
+					<div class="form_title"><img src="{% static "img/ico_-title.png"%}" style="vertical-align: middle;" /><span style="margin-left: 10px;">Add Flight Log</span></div>
 					{% endif %}
 					<div class="block1">
 						<div class="sub_form">
+						{% if check and alert %}
+						<script type="text/javascript">
+						 $(function(){
+							 if (!alert('{{alert}}')){
+								 {% if is_sub %}
+								 	window.location = '/search/';
+								 {% else %}
+								 	window.location = '/';
+								 {% endif %}
+							 } 
+						 });
+						</script>
+						{% endif %}
 							<div class="title title1">Daily Flight Log</div>
 							<div class="clearthis min-32">
 								<div class="per333">
 									<input id = "max_pax" type="hidden" name="max_pax" value="{{max_pax}}"/>
 									<span>Log Number</span>
 									<label id="number">{{id | stringformat:"06d"}}</label>{{form.log_number}}{{form.id_log}}{{form.user_id}}
-									<!-- <input value="{{id}}" id="num_hidden"/> -->
 								</div>
 								<div class="per333"><span>Date<span class = "star">*</span></span>
 									 <input  class = "req" type="text" id="id_log_date" name="log_date" value="{{form.log_date.value | date:"m/d/Y"}}" onchange="valid_date()"> 
@@ -442,6 +453,7 @@
 														<img src="{% static "media/delete.png"%}" 
 															alt="delete flight log"> 
 													</a>
+													<p style="display: none;"> {{form.flight_data_fuel_station.id_location}}</p>
 													<label style="display: none;"> {{form.flight_data_fuel_station |default_if_none:""}} </label> 
 													<input style="display: none;" type="text" id="amount_gallon" value="{{form.flight_data_fuel_amount |default_if_none:""}}"/>
 												</td>
@@ -615,16 +627,16 @@
 				    {% endfor %}
 			    </div> 
 			</form>
+			<div id="log-box" class="login-popup">
+		         <form method="post" class="signin" 
+		         action = "/save_fightlog/"
+		         id = "popup_add_flight_log">{% csrf_token %}
+		               <div id = "table_popup">
+		               </div>
+		         </form>
+		         <div style="color: red;" id  = "display">{{ single_form.as_p }}</div>
+			</div>
 		</div>		
-	</div>
-	<div id="log-box" class="login-popup">
-         <form method="post" class="signin" 
-         action = "/save_fightlog/"
-         id = "popup_add_flight_log">{% csrf_token %}
-               <div id = "table_popup">
-               </div>
-         </form>
-         <div style="color: red;" id  = "display">{{ single_form.as_p }}</div>
 	</div>
 	<div id="send_email" class="login-popup">
 		<form method="post" class="" onsubmit="return validate_email_form()" action="/send_email/" id="form_email_popup">

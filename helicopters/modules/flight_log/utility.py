@@ -17,14 +17,14 @@ def format6(org_log_number):
 # Utility function
 def convertHtmlToPdf(sourceHtml, outputFilename):
     pisa.showLogging()
-    print "open output file for writing (truncated binary)", datetime.now().strftime('%H:%M:%S')
+    #print "open output file for writing (truncated binary)", datetime.now().strftime('%H:%M:%S')
     resultFile = open(outputFilename, "w+b")
-    print " convert HTML to PDF", datetime.now().strftime('%H:%M:%S')
+    #print " convert HTML to PDF", datetime.now().strftime('%H:%M:%S')
     pisaStatus = pisa.CreatePDF(
             sourceHtml.encode("UTF-8"),                # the HTML to convert
             dest=resultFile, encoding='UTF-8',
                    link_callback=fetch_resources)           # file handle to recieve result
-    print " close output file", datetime.now().strftime('%H:%M:%S')
+    #print " close output file", datetime.now().strftime('%H:%M:%S')
     resultFile.close()                 # close output file
     # return True on success and False on errors
     return pisaStatus.err

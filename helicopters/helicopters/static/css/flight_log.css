@@ -68,6 +68,7 @@ select {padding-right: 16px; /* visibility: hidden; */}
 	width: 100%; height: 100%;
 	opacity: 0.8;
 	z-index: 8;
+	filter:alpha(opacity=80);
 }
 
 .login-popup{
@@ -84,6 +85,7 @@ select {padding-right: 16px; /* visibility: hidden; */}
 	-webkit-border-radius: 3px;
 	width:90%;
 	height: auto;
+	margin: 0%;
 }
 
 img.btn_close {
@@ -136,21 +138,25 @@ form.signin input::-webkit-input-placeholder { color:#464646; text-shadow:0 0 2p
 
 #history {width: 100%;}
 
+#log-box{
+		width:100%;
+	}
+		
+@media
+	screen and (max-width:600px){
+		#log-box{
+			width:100%;
+		}
+	}
+@media
+	screen and (max-width:800px){
+		#log-box{
+			width:100%;
+		}
+	}		
 @media
 	screen and (max-width:900px){
 		#log-box{
-			width:1000px;
+			width:100%;
 		}
 	}
-/* Change width of datagrid */
-/* .datagrid-btable{
-	width:100% !important;
-}
-
-.datagrid-htable{
-	width:100% !important;
-}
-
-.datagrid-header-inner{
-	width: 100% !important;
-} */

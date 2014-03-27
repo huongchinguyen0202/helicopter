@@ -163,8 +163,8 @@ class LogEmployee(models.Model):
 class LogSection(models.Model):
     id_log_section = models.AutoField(primary_key=True, 
                                       db_column='log_section_id')
-    all_ifr = models.BooleanField(verbose_name = "ALL IFR")
-    all_nfr = models.BooleanField(db_column='all_vfr', verbose_name = "ALL VFR")
+    all_ifr = models.BooleanField(db_column='all_ifr',verbose_name = "ALL IFR", blank=True)
+    all_nfr = models.BooleanField(db_column='all_vfr', blank=True, verbose_name = "ALL VFR")
     flight_data_amount = models.CharField(null=True, blank=True, max_length = 255L,
                                           db_column='amount',
                                            verbose_name = "Amount")
@@ -189,7 +189,7 @@ class LogSection(models.Model):
                                                 verbose_name = "Fuel Station")
     fuel_wheels_down = models.FloatField(db_column='fuel_wheels_down',
                                           verbose_name = "Fuel at Wheels Down")
-    load_schedule = models.BooleanField(verbose_name = "Load schedule",
+    load_schedule = models.BooleanField(verbose_name = "Load schedule", blank=True,
                                          db_column='load_schedule')
     log = models.ForeignKey(Log, null=True, blank=True, 
                             db_column='log_id',

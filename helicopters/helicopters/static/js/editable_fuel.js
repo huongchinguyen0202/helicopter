@@ -174,7 +174,9 @@ function load_combo(){
 					loc = td_final.children("label").text();
 					if(loc.trim() == loc_choosen.trim()){
 						gallon = td_final.children("input").val();
-						sum_amount = sum_amount + parseInt(gallon);
+						if (gallon != ""){
+							sum_amount = sum_amount + parseInt(gallon);
+						}
 					}
 				};
 	    	}
@@ -193,18 +195,28 @@ function load_combo(){
 //Call from dajax (ajax.py), if fuel amount change, gallon also change correspondly
 function change_location(){
 	var rowCount = $('#fuel_tbl tr:visible:gt(0)').length; 
-	before_fuel_location = $("#id_flight_data_fuel_station").val();
-	
+	before_fuel_location = $("#before_fuel_location").val();
+	after_fuel_location = $("#id_flight_data_fuel_station").val(); 
+	before_amount = $("#before_amount").val()
 	var rowCount_leg = $('#rs_flight_log_form tr:gt(0)').length-1; 
 	var sum_amount = 0;
+	var sum_before = 0;
 	
 	for ( var j = 2; j <= rowCount_leg; j++) {
 		td_final = $('#rs_flight_log_form tr:eq('+ j +')').find('td').eq(13);
 		var loc_label = td_final.children('label').text();
-		if (loc_label.trim() == before_fuel_location.trim()){
+		var p = td_final.children('p').html();
+		if (loc_label.trim() == after_fuel_location.trim()){
 			var amount = td_final.children("input").val();
 			if (amount != ""){
 				sum_amount = sum_amount + parseInt(amount);
+			}
+		}
+		
+		if (p.trim() == before_fuel_location.trim()){
+			var amount = td_final.children("input").val();
+			if (amount != ""){
+				sum_before = sum_before + parseInt(amount);
 			}
 		}
 	}
@@ -215,10 +227,16 @@ function change_location(){
     	
     	loc_id = $('#fuel_tbl tr:eq('+ i +')').find('td').eq(0).children("span").children("select").attr("id");
     	loc_choosen = $("#" + loc_id + " option:selected").text();
+    	loc_choosen_val = $('#fuel_tbl tr:eq('+ i +')').find('td').eq(0).children("span").children("select").val();
     	
-    	if(loc_choosen == before_fuel_location){
+    	if(loc_choosen == after_fuel_location){
     		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("label").text(sum_amount);
     		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("input").val(sum_amount);
+    	}
+
+    	if(loc_choosen_val == before_fuel_location){ 
+    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("label").text(sum_before);
+    		$('#fuel_tbl tr:visible:eq('+ i +')').find('td').eq(1).children("input").val(sum_before);
     	}
     };
 }

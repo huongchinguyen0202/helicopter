@@ -658,10 +658,10 @@ table th {
 .err {
 	color: red;
 	display: none;
-	/* 	padding-right: 46px;
- */
+	
 	text-align: left;
-	font-size: 12;
+	font-family: Arial !important;
+	font-size: 13px !important;
 	width: 49%;
 }
 
@@ -765,7 +765,9 @@ display: none;}*/
 }
 
 .messages li,.messages li a {
-	color: blue;
+	color: green;
+	font-family: Arial !important;
+	font-size: 13px !important;
 }
 
 .datagrid-header-row {
@@ -898,7 +900,6 @@ display: none;}*/
 	padding: 0px;
 	height: auto !important;
 }
-/* #log-box {min-height: 618px;} */
 .combo .combo-text {
 	margin: -5px 0 0 !important;
 }
@@ -1072,7 +1073,6 @@ display: none;}*/
 	text-align: left;
 	padding-left: 20px;
 	margin: 10px 0px 0px;
-	/* font-size: 15px; */
 }
 
 /* div ul.errorlist li { */
@@ -1430,4 +1430,8 @@ body.loading #id_loading {
 
 #table_pilot{
 	margin-top: 1.2%;
+}
+
+input[type=checkbox]{
+	border: none !important;
 }

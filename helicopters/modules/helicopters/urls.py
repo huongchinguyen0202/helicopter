@@ -10,7 +10,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
-    url(r'^log/$', views.log),
+    url(r'^log/', views.log),
+    url(r'^log/(?P<param>\d{1})/$', views.log),
     url(r'^admin/', include(admin.site.urls)),
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
     url(r'^$', views.home),

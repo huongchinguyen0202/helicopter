@@ -110,7 +110,7 @@ class FlightLogDetail(forms.ModelForm):
                                                 choices = init_array
                                                 , required=True)
             self.fields['passenger'].widget.attrs['class'] = 'req'
-            
+    
     def clean_flight_data_fuel_station(self):
         data = self.cleaned_data['flight_data_fuel_station'] or None
         if data:

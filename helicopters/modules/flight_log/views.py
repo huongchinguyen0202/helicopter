@@ -83,7 +83,10 @@ def log(request):
     max_pax = None
     locations = None
     payload_available = None
-    
+    alert = None
+    log_id = None
+    check = None
+    is_sub = None
     log_ob = Log.objects.order_by('log_number').all()
     if log_ob:
         log_count = log_ob.count()
@@ -91,7 +94,6 @@ def log(request):
     else:
         log_n = 1
     list_emp = Employee.objects.all().order_by('first_name')   
-    
     extra_value = 1
     extra_value_pilot = 0
     if "log_id" in request.GET:
@@ -116,19 +118,38 @@ def log(request):
         form = LogForm(request.POST, customer = request.POST.get('customer'), 
                                 model = request.POST.get('model'))
         
+        
+        log_num = request.POST.get('log_number')
+        
         if form.is_valid() and formset.is_valid() and formset_pilot.is_valid():
             pk_id = request.POST.get('id_log')
-            
-            save_data_form_grid(request, pk_id, form, formset, formset_pilot)
+            alert = save_data_form_grid(request, pk_id, form, formset, formset_pilot, log_num)
+            check = True
             delete_session(request)
             try:
                 submit = request.POST[constant.submit]
-                
+                 
                 if submit:
+                    is_sub = True
                     link_return = "/search/"
             except:
                 pass
-            return HttpResponseRedirect(link_return)
+            if not alert:
+                try:
+                    param = request.get_full_path()
+                    next = param[5:]
+                    if next == "1":
+                        link_return = "/search/"
+                    if next == "2":
+                        link_return = "/"
+                    if next == "3":
+                        link_return = "/log/"
+                except:
+                    pass
+                return HttpResponseRedirect(link_return)
+
+            
+#             return HttpResponseRedirect(link_return)
 
     else:#Get data from DB and reload data into sessions
         delete_session(request)
@@ -210,251 +231,118 @@ def log(request):
         "max_pax":max_pax,
         "payload_available":payload_available,
         "emp_number" : request.session[constant.usernameParam],
-        "log_loc_list" : log_loc_list
+        "log_loc_list" : log_loc_list, 
+        "alert":alert, 
+        "log_id":log_id,
+        "check":check,
+        "is_sub": is_sub
         }
     c.update(csrf(request))
     
     return render(request, "flights/index.html", c)
 
 def log_pdf(log_id):
-    log_loc_list = Log_Location.objects.filter(log_id = log_id)
-    flight_table = LogSection.objects.filter(log = log_id)
-        
     flight_leg_details = ['FLIGHT#','SLOT PURPOSE','FROM','OFF','FUEL','TO','ON','MANIFEST#','PASSENGERS',\
                          'EMP BY','T/O W','CG','RANGE','CARGO WEIGHT','FUEL STATION','FUEL AMOUNT',\
                          'AMOUNT','FLIGHT TIME','DAY','NIGHT','IFR','VFR','BLOCK TIME','PATIENTS']
     
-    list_flight_log = []
-    dic_prop_order = {}
-    dic_slot = {}
-    dic_from = {}
-    dic_off = {}
-    dic_fuel = {}
-    dic_to = {}
-    dic_on = {}
-    dic_manifest = {}
-    dic_passengers = {}
-    dic_emp_by = {}
-    dic_tow = {}
-    dic_cg = {}
-    dic_range = {}
-    dic_cargo_weight = {}
-    dic_fuel_station = {}
-    dic_fuel_amount = {}
-    dic_amount = {}
-    dic_flight_time = {}
-    dic_day = {}
-    dic_night = {}
-    dic_ifr = {}
-    dic_vfr = {}
-    dic_block_time = {}
-    dic_patient = {}
-    dic_total = {}
-    
-    dic_prop_order['title'] =flight_leg_details[0]
-    dic_slot['title'] =flight_leg_details[1]
-    dic_from['title'] =flight_leg_details[2]
-    dic_off['title'] =flight_leg_details[3]
-    dic_fuel['title'] =flight_leg_details[4]
-    dic_to['title'] =flight_leg_details[5]
-    dic_on['title'] =flight_leg_details[6]
-    dic_manifest['title'] =flight_leg_details[7]
-    dic_passengers['title'] =flight_leg_details[8]
-    dic_emp_by['title'] =flight_leg_details[9]
-    dic_tow['title'] =flight_leg_details[10]
-    dic_cg['title'] =flight_leg_details[11]
-    dic_range['title'] =flight_leg_details[12]
-    dic_cargo_weight['title'] =flight_leg_details[13]
-    dic_fuel_station['title'] =flight_leg_details[14]
-    dic_fuel_amount['title'] =flight_leg_details[15]
-    dic_amount['title'] =flight_leg_details[16]
-    dic_flight_time['title'] =flight_leg_details[17]
-    dic_day['title'] =flight_leg_details[18]
-    dic_night['title'] =flight_leg_details[19]
-    dic_ifr['title'] =flight_leg_details[20]
-    dic_vfr['title'] =flight_leg_details[21]
-    dic_block_time['title'] =flight_leg_details[22]
-    dic_patient['title'] =flight_leg_details[23]
-
-    for i in range(11):
-        dic_prop_order[i] =  dic_prop_order['total']= None
-        dic_slot[i] =  dic_slot['total']= None
-        dic_from[i] =  dic_from['total']= None
-        dic_off[i] =  dic_off['total']= None
-        dic_fuel[i] =  dic_fuel['total']= None
-        dic_to[i] =  dic_to['total']= None
-        dic_on[i] =  dic_on['total']= None
-        dic_manifest[i] =  dic_manifest['total']= None
-        dic_passengers[i] =  dic_passengers['total']= None
-        dic_emp_by[i] = dic_emp_by['total']= None
-        dic_tow[i] = dic_tow['total']= None
-        dic_cg[i] = dic_cg['total']= None
-        dic_range[i] = dic_range['total']= None
-        dic_cargo_weight[i] = dic_cargo_weight['total']= None
-        dic_fuel_station[i] = dic_fuel_station['total']= None
-        dic_fuel_amount[i] = dic_fuel_amount['total']= None
-        dic_amount[i] = dic_amount['total']= None
-        dic_flight_time[i] = dic_flight_time['total']= None
-        dic_day[i] = dic_day['total']= None
-        dic_night[i] = dic_night['total']= None
-        dic_ifr[i] = dic_ifr['total']= None
-        dic_vfr[i] = dic_vfr['total']= None
-        dic_block_time[i] = dic_block_time['total']= None
-        dic_patient[i] = dic_patient['total']= None
-        dic_total[i] = dic_total['total'] =  None
-    
+    list_legs = []
+    #table2 col 0
+    #list_legs.append(flight_leg_details)
     sum_flight_time = sum_cargo = sum_blocktime = sum_patient = sum_pax = 0
-    i = 0
     
+    flight_table = LogSection.objects.filter(log = log_id)
     for flight_log in flight_table:
         if flight_log.flight_time:
             sum_flight_time = sum_flight_time +  flight_log.flight_time 
-        
         if flight_log.flight_data_cargo_weight:
             sum_cargo = sum_cargo + flight_log.flight_data_cargo_weight 
-        
         if flight_log.flight_data_block_time:
             sum_blocktime = sum_blocktime + flight_log.flight_data_block_time 
-        
         if flight_log.flight_data_patient:
             sum_patient = sum_patient + flight_log.flight_data_patient
         if flight_log.passenger:
             sum_pax = sum_pax + flight_log.passenger 
+            
+        leg = []
+        leg.append(flight_log.order)
+        leg.append(flight_log.slot_purpose_id)
+        leg.append(flight_log.from_field)
+        leg.append(flight_log.off)
+        leg.append(flight_log.fuel_wheels_down)
+        leg.append(flight_log.to)
+        leg.append(flight_log.on)
+        leg.append(flight_log.manifest_number)
+        leg.append(flight_log.passenger)
+        leg.append(flight_log.emp_by)
+        leg.append(flight_log.flight_data_tlo_w)
+        leg.append(flight_log.flight_data_cg)
+        leg.append(flight_log.flight_data_range_to - flight_log.flight_data_range_from)
+        leg.append(flight_log.flight_data_cargo_weight)
+        leg.append(flight_log.flight_data_fuel_station)
+        leg.append(flight_log.flight_data_fuel_amount)
+        leg.append(flight_log.flight_data_amount)
+        leg.append(flight_log.flight_time)
+        leg.append(flight_log.day)
+        leg.append(flight_log.night)
+        leg.append(flight_log.all_ifr)
+        leg.append(flight_log.all_nfr)
+        leg.append(flight_log.flight_data_block_time)
+        leg.append(flight_log.flight_data_patient)
         
-        dic_prop_order[i] = flight_log.order
-        
-        slot_purpose_name = from_location = to_location = flight_data_fuel_station= amount = None
-        vfr = False
-        
-        if flight_log.slot_purpose_id:
-            slot_purpose_name = Slot_Purpose.objects.get(id_slot_purpose = flight_log.slot_purpose_id.id_slot_purpose).slot_purpose_name
-        
-        dic_slot[i] = slot_purpose_name
-        
-        if flight_log.from_field:
-            from_location = Location.objects.get(id_location = flight_log.from_field.id_location).location_name
-            to_location = Location.objects.get(id_location = flight_log.from_field.id_location).location_name
-        dic_from[i] = from_location
-        
-        dic_off[i] = flight_log.off
-        dic_fuel[i] = flight_log.fuel_wheels_down
-        dic_to[i] = to_location
-        dic_on[i] = flight_log.on
-        dic_manifest[i] = flight_log.manifest_number
-        dic_passengers[i] = flight_log.passenger
-        dic_emp_by[i] = flight_log.emp_by
-        dic_tow[i] = flight_log.flight_data_tlo_w
-        dic_cg[i] = flight_log.flight_data_cg
-        dic_range[i] = flight_log.flight_data_range_to - flight_log.flight_data_range_from
-        dic_cargo_weight[i] = flight_log.flight_data_cargo_weight
-        
-        if flight_log.flight_data_fuel_station:
-            flight_data_fuel_station = Location.objects.get(id_location = flight_log.flight_data_fuel_station.id_location).location_name
-        dic_fuel_station[i] = flight_log.flight_data_fuel_station
-        
-        dic_fuel_amount[i] = flight_log.flight_data_fuel_amount
-        
-        if flight_log.flight_data_amount:
-            amount = flight_log.flight_data_amount
-        dic_amount[i] = amount
-        
-        dic_flight_time[i] = flight_log.flight_time
-        dic_day[i] = flight_log.day
-        dic_night[i] = flight_log.night
-        dic_ifr[i] = flight_log.all_ifr
-        
-        if flight_log.all_nfr:
-            vfr = True
-        dic_vfr[i] = vfr
-        
-        dic_block_time[i] = flight_log.flight_data_block_time
-        dic_patient[i] = flight_log.flight_data_patient
-        
-        i = i + 1
+        #table2 col i [1,11]
+        list_legs.append(leg)
     ## end for
     
-    dic_flight_time['total'] = sum_flight_time if sum_flight_time > 0 else None
-    dic_cargo_weight['total'] = sum_cargo if sum_cargo > 0 else None
-    dic_block_time['total'] = sum_blocktime if sum_blocktime > 0 else None
-    dic_patient['total'] = sum_patient if sum_patient > 0 else None
-    dic_passengers['total'] = sum_pax if sum_pax > 0 else None
-        
-    list_flight_log.append(dic_prop_order)
-    list_flight_log.append(dic_slot)
-    list_flight_log.append(dic_from)
-    list_flight_log.append(dic_off)
-    list_flight_log.append(dic_fuel)
-    list_flight_log.append(dic_to)
-    list_flight_log.append(dic_on)
-    list_flight_log.append(dic_manifest)
-    list_flight_log.append(dic_passengers)
-    list_flight_log.append(dic_emp_by)
-    list_flight_log.append(dic_tow)
-    list_flight_log.append(dic_cg)
-    list_flight_log.append(dic_range)
-    list_flight_log.append(dic_cargo_weight)
-    list_flight_log.append(dic_fuel_station)
-    list_flight_log.append(dic_fuel_amount)
-    list_flight_log.append(dic_amount)
-    list_flight_log.append(dic_flight_time)
-    list_flight_log.append(dic_day)
-    list_flight_log.append(dic_night)
-    list_flight_log.append(dic_ifr)
-    list_flight_log.append(dic_vfr)
-    list_flight_log.append(dic_block_time)
-    list_flight_log.append(dic_patient)
+    #table2 col total
+    total = [''] * 24
+    total[8] = sum_pax if sum_pax else ''
+    total[13] = sum_cargo if sum_cargo else ''
+    total[17] = sum_flight_time if sum_flight_time else ''
+    total[22] = sum_blocktime  if sum_blocktime else ''
+    total[23] = sum_patient  if sum_patient else ''
     
-    """ Reload data for LogForm Section and AirCraft """
-    log = Log.objects.get(id_log = log_id)
-    
-    a1c_name = A1C.objects.get(id_a1c = log.a1c.id_a1c)
-    id_model = a1c_name.model.id_model
-    model_name = Model.objects.get(id_model = id_model)
-    max_gross_weight = model_name.max_gross_weight
-    me_load_schedule_cg_range_from = model_name.me_load_schedule_cg_range_from
-    me_load_schedule_cg_range_to = model_name.me_load_schedule_cg_range_to
-    base_name = Base.objects.get(id_base = log.base.id_base)
-    contract1charter_name = customer_name = customer_id = None
-    if log.customer:
-        customer_name = Customer.objects.get(id_customer = log.customer.id_customer)
-        customer_id = customer_name.cus_name
-    if log.contract1charter:
-        contract1charter_name = Contract1Chater.objects.get(id_contract1chater = log.contract1charter.id_contract1chater)
-    log = log.__dict__
-    
-    PilotFormSet = formset_factory(form = PilotForm, 
-                                       max_num=10, extra = 0)
+    PilotFormSet = formset_factory(form = PilotForm,max_num=10, extra = 0)
     cur_login_user = LogEmployee.objects.filter(log=log_id).values()
+    #table4
     formset_pilot = PilotFormSet(initial=cur_login_user, prefix='pilots')
+    #table3
+    log_loc_list = Log_Location.objects.filter(log_id = log_id)
+    #table0 and  #table1
+    loglog = Log.objects.get(id_log = log_id)
+    payload_available = loglog.a1c.model.max_gross_weight - loglog.opterational_weight
     
-    log['a1c_id'] = a1c_name.a1c_name
-    log['model_id'] = model_name.mo_name
-    log['base_id'] = base_name.base_name
-    log['customer_id'] = customer_id
-    log['contract1chater_id'] = contract1charter_name
-    log['max_gross_weight']=  max_gross_weight
-    log['payload_available'] = log['max_gross_weight'] - log['opterational_weight']
-    log['me_load_schedule_cg_range_from'] = me_load_schedule_cg_range_from
-    log['me_load_schedule_cg_range_to'] = me_load_schedule_cg_range_to
-       
     c = {
         'formset_pilot':formset_pilot,
-        'log': log,
-        'list_flight_log':list_flight_log,
-        "log_loc_list" : log_loc_list
+        'loglog':loglog,
+        "log_loc_list" : log_loc_list,
+        'list_legs': list_legs,
+        'len': range(24), #contain header table2 so 24+1=25
+        'flight_leg_details':flight_leg_details,
+        'total':total,
+        'add_more': range(abs(11 - len(list_legs))), #contain headertable2 so 11+1 = 12
+        'payload_available':payload_available
         }
     return c
 
 """ Save data in form, pilot section and fuel section """
-def save_data_form_grid(request, pk_id, form, formset, formset_pilot):
+def save_data_form_grid(request, pk_id, form, formset, formset_pilot, log_number):
+    alert = None
     if pk_id:
         LogSection.objects.filter(log = pk_id).delete()
         log = Log.objects.get(pk=pk_id)
         if log:
             form = LogForm(request.POST, customer = request.POST.get('customer'), 
                             model = request.POST.get('model'), instance=log)
+            form = form.save(commit = False)
+    else:
+        form = form.save(commit = False)
+        check_lognumber = Log.objects.filter(log_number = log_number)
+        if check_lognumber:
+            new_log_num = int(log_number) + 1
+            form.log_number = new_log_num
+            alert = "The log number has been used. Your log number changes to %06d" % new_log_num
             
-    form = form.save(commit = False)
     try:
         em = Employee.objects.filter(employee_number = request.session[constant.usernameParam])
         if em:
@@ -496,8 +384,11 @@ def save_data_form_grid(request, pk_id, form, formset, formset_pilot):
         list_flight_log = get_list_session_object(request, log_ob[log_count-1])
         
     for flight_log in list_flight_log:
+        if flight_log.partial_nfr == "":
+            flight_log.partial_nfr = -1
         flight_log.save()
-
+    
+    return alert
 
 def home(request):
     if not is_login(request):
@@ -555,292 +446,9 @@ def home(request):
                                         constant.list_flight_log:LIST_FLIGHT_LOG,
                                         constant.announce_mess : announce_message})
     
-#TODO: my_log_pdf
-def my_log_pdf(log_id):
-    log_loc_list = Log_Location.objects.filter(log_id = log_id)
-    flight_table = LogSection.objects.filter(log = log_id)
-        
-    flight_leg_details = ['FLIGHT#','SLOT PURPOSE','FROM','OFF','FUEL','TO','ON','MANIFEST#','PASSENGERS',\
-                         'EMP BY','T/O W','CG','RANGE','CARGO WEIGHT','FUEL STATION','FUEL AMOUNT',\
-                         'AMOUNT','FLIGHT TIME','DAY','NIGHT','IFR','VFR','BLOCK TIME','PATIENTS']
-    
-    list_flight_log = []
-    dic_prop_order = {}
-    dic_slot = {}
-    dic_from = {}
-    dic_off = {}
-    dic_fuel = {}
-    dic_to = {}
-    dic_on = {}
-    dic_manifest = {}
-    dic_passengers = {}
-    dic_emp_by = {}
-    dic_tow = {}
-    dic_cg = {}
-    dic_range = {}
-    dic_cargo_weight = {}
-    dic_fuel_station = {}
-    dic_fuel_amount = {}
-    dic_amount = {}
-    dic_flight_time = {}
-    dic_day = {}
-    dic_night = {}
-    dic_ifr = {}
-    dic_vfr = {}
-    dic_block_time = {}
-    dic_patient = {}
-    dic_total = {}
-    
-    dic_prop_order['title'] =flight_leg_details[0]
-    dic_slot['title'] =flight_leg_details[1]
-    dic_from['title'] =flight_leg_details[2]
-    dic_off['title'] =flight_leg_details[3]
-    dic_fuel['title'] =flight_leg_details[4]
-    dic_to['title'] =flight_leg_details[5]
-    dic_on['title'] =flight_leg_details[6]
-    dic_manifest['title'] =flight_leg_details[7]
-    dic_passengers['title'] =flight_leg_details[8]
-    dic_emp_by['title'] =flight_leg_details[9]
-    dic_tow['title'] =flight_leg_details[10]
-    dic_cg['title'] =flight_leg_details[11]
-    dic_range['title'] =flight_leg_details[12]
-    dic_cargo_weight['title'] =flight_leg_details[13]
-    dic_fuel_station['title'] =flight_leg_details[14]
-    dic_fuel_amount['title'] =flight_leg_details[15]
-    dic_amount['title'] =flight_leg_details[16]
-    dic_flight_time['title'] =flight_leg_details[17]
-    dic_day['title'] =flight_leg_details[18]
-    dic_night['title'] =flight_leg_details[19]
-    dic_ifr['title'] =flight_leg_details[20]
-    dic_vfr['title'] =flight_leg_details[21]
-    dic_block_time['title'] =flight_leg_details[22]
-    dic_patient['title'] =flight_leg_details[23]
 
-    for i in range(11):
-        dic_prop_order[i] =  dic_prop_order['total']= None
-        dic_slot[i] =  dic_slot['total']= None
-        dic_from[i] =  dic_from['total']= None
-        dic_off[i] =  dic_off['total']= None
-        dic_fuel[i] =  dic_fuel['total']= None
-        dic_to[i] =  dic_to['total']= None
-        dic_on[i] =  dic_on['total']= None
-        dic_manifest[i] =  dic_manifest['total']= None
-        dic_passengers[i] =  dic_passengers['total']= None
-        dic_emp_by[i] = dic_emp_by['total']= None
-        dic_tow[i] = dic_tow['total']= None
-        dic_cg[i] = dic_cg['total']= None
-        dic_range[i] = dic_range['total']= None
-        dic_cargo_weight[i] = dic_cargo_weight['total']= None
-        dic_fuel_station[i] = dic_fuel_station['total']= None
-        dic_fuel_amount[i] = dic_fuel_amount['total']= None
-        dic_amount[i] = dic_amount['total']= None
-        dic_flight_time[i] = dic_flight_time['total']= None
-        dic_day[i] = dic_day['total']= None
-        dic_night[i] = dic_night['total']= None
-        dic_ifr[i] = dic_ifr['total']= None
-        dic_vfr[i] = dic_vfr['total']= None
-        dic_block_time[i] = dic_block_time['total']= None
-        dic_patient[i] = dic_patient['total']= None
-        dic_total[i] = dic_total['total'] =  None
-    
-    sum_flight_time = sum_cargo = sum_blocktime = sum_patient = sum_pax = 0
-    i = 0
-    
-    for flight_log in flight_table:
-        if flight_log.flight_time:
-            sum_flight_time = sum_flight_time +  flight_log.flight_time 
-        
-        if flight_log.flight_data_cargo_weight:
-            sum_cargo = sum_cargo + flight_log.flight_data_cargo_weight 
-        
-        if flight_log.flight_data_block_time:
-            sum_blocktime = sum_blocktime + flight_log.flight_data_block_time 
-        
-        if flight_log.flight_data_patient:
-            sum_patient = sum_patient + flight_log.flight_data_patient
-        if flight_log.passenger:
-            sum_pax = sum_pax + flight_log.passenger 
-        
-        dic_prop_order[i] = flight_log.order
-        
-        slot_purpose_name = from_location = to_location = flight_data_fuel_station= amount = None
-        vfr = False
-        
-        if flight_log.slot_purpose_id:
-            slot_purpose_name = Slot_Purpose.objects.get(id_slot_purpose = flight_log.slot_purpose_id.id_slot_purpose).slot_purpose_name
-        
-        dic_slot[i] = slot_purpose_name
-        
-        if flight_log.from_field:
-            from_location = Location.objects.get(id_location = flight_log.from_field.id_location).location_name
-            to_location = Location.objects.get(id_location = flight_log.from_field.id_location).location_name
-        dic_from[i] = from_location
-        
-        dic_off[i] = flight_log.off
-        dic_fuel[i] = flight_log.fuel_wheels_down
-        dic_to[i] = to_location
-        dic_on[i] = flight_log.on
-        dic_manifest[i] = flight_log.manifest_number
-        dic_passengers[i] = flight_log.passenger
-        dic_emp_by[i] = flight_log.emp_by
-        dic_tow[i] = flight_log.flight_data_tlo_w
-        dic_cg[i] = flight_log.flight_data_cg
-        dic_range[i] = flight_log.flight_data_range_to - flight_log.flight_data_range_from
-        dic_cargo_weight[i] = flight_log.flight_data_cargo_weight
-        
-        if flight_log.flight_data_fuel_station:
-            flight_data_fuel_station = Location.objects.get(id_location = flight_log.flight_data_fuel_station.id_location).location_name
-        dic_fuel_station[i] = flight_log.flight_data_fuel_station
-        
-        dic_fuel_amount[i] = flight_log.flight_data_fuel_amount
-        
-        if flight_log.flight_data_amount:
-            amount = flight_log.flight_data_amount
-        dic_amount[i] = amount
-        
-        dic_flight_time[i] = flight_log.flight_time
-        dic_day[i] = flight_log.day
-        dic_night[i] = flight_log.night
-        dic_ifr[i] = flight_log.all_ifr
-        
-        if flight_log.all_nfr:
-            vfr = True
-        dic_vfr[i] = vfr
-        
-        dic_block_time[i] = flight_log.flight_data_block_time
-        dic_patient[i] = flight_log.flight_data_patient
-        
-        i = i + 1
-    ## end for
-    
-    dic_flight_time['total'] = sum_flight_time if sum_flight_time > 0 else None
-    dic_cargo_weight['total'] = sum_cargo if sum_cargo > 0 else None
-    dic_block_time['total'] = sum_blocktime if sum_blocktime > 0 else None
-    dic_patient['total'] = sum_patient if sum_patient > 0 else None
-    dic_passengers['total'] = sum_pax if sum_pax > 0 else None
-        
-    list_flight_log.append(dic_prop_order)
-    list_flight_log.append(dic_slot)
-    list_flight_log.append(dic_from)
-    list_flight_log.append(dic_off)
-    list_flight_log.append(dic_fuel)
-    list_flight_log.append(dic_to)
-    list_flight_log.append(dic_on)
-    list_flight_log.append(dic_manifest)
-    list_flight_log.append(dic_passengers)
-    list_flight_log.append(dic_emp_by)
-    list_flight_log.append(dic_tow)
-    list_flight_log.append(dic_cg)
-    list_flight_log.append(dic_range)
-    list_flight_log.append(dic_cargo_weight)
-    list_flight_log.append(dic_fuel_station)
-    list_flight_log.append(dic_fuel_amount)
-    list_flight_log.append(dic_amount)
-    list_flight_log.append(dic_flight_time)
-    list_flight_log.append(dic_day)
-    list_flight_log.append(dic_night)
-    list_flight_log.append(dic_ifr)
-    list_flight_log.append(dic_vfr)
-    list_flight_log.append(dic_block_time)
-    list_flight_log.append(dic_patient)
-    
-    """ Reload data for LogForm Section and AirCraft """
-    log = Log.objects.get(id_log = log_id)
-    
-    a1c_name = A1C.objects.get(id_a1c = log.a1c.id_a1c)
-    id_model = a1c_name.model.id_model
-    model_name = Model.objects.get(id_model = id_model)
-    max_gross_weight = model_name.max_gross_weight
-    me_load_schedule_cg_range_from = model_name.me_load_schedule_cg_range_from
-    me_load_schedule_cg_range_to = model_name.me_load_schedule_cg_range_to
-    base_name = Base.objects.get(id_base = log.base.id_base)
-    contract1charter_name = customer_name = customer_id = None
-    if log.customer:
-        customer_name = Customer.objects.get(id_customer = log.customer.id_customer)
-        customer_id = customer_name.cus_name
-    if log.contract1charter:
-        contract1charter_name = Contract1Chater.objects.get(id_contract1chater = log.contract1charter.id_contract1chater)
-    log = log.__dict__
-    
-    PilotFormSet = formset_factory(form = PilotForm, 
-                                       max_num=10, extra = 0)
-    cur_login_user = LogEmployee.objects.filter(log=log_id).values()
-    formset_pilot = PilotFormSet(initial=cur_login_user, prefix='pilots')
-    
-    log['a1c_id'] = a1c_name.a1c_name
-    log['model_id'] = model_name.mo_name
-    log['base_id'] = base_name.base_name
-    log['customer_id'] = customer_id
-    log['contract1chater_id'] = contract1charter_name
-    log['max_gross_weight']=  max_gross_weight
-    log['payload_available'] = log['max_gross_weight'] - log['opterational_weight']
-    log['me_load_schedule_cg_range_from'] = me_load_schedule_cg_range_from
-    log['me_load_schedule_cg_range_to'] = me_load_schedule_cg_range_to
-       
-    c = {
-        'formset_pilot':formset_pilot,
-        'log': log,
-        'list_flight_log':list_flight_log,
-        "log_loc_list" : log_loc_list
-        }
-    return c
-
-
-# TODO: my_print
-def my_print(request, log_id):
-    if not log_id:
-        return render(request, "flights/pdf2.html", my_log_pdf(3))
-        return HttpResponse("<html><body>please select a flight log to print</body></html>")
-    # one file
-    if(log_id.find(',') == -1):
-        #return render(request, "flights/pdf.html", log_pdf(log_id))
-        log = Log.objects.get(id_log=log_id) or None
-        if not log:
-            return HttpResponse("<html><body>please select a flight log to print</body></html>")
-        return render_to_pdf_response("flights/pdf2.html", my_log_pdf(log_id), format6(log.log_number))
-    arr = log_id.split(',')
-    dirname = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) +'/../helicopters/static/media/pdf_export/'
-    pdf_files = []
-    for nu in arr:
-        print "-> getting Log id" , nu, datetime.now().strftime('%H:%M:%S')           
-        log = Log.objects.get(id_log=nu) or None
-        if not log:
-            continue
-        pdf_file = format6(log.log_number)
-        pdf_files.append(pdf_file)
-        try:
-            print "render_to_string ...", datetime.now().strftime('%H:%M:%S')             
-            pdf = render_to_string("flights/pdf2.html", my_log_pdf(nu))
-            print "converting HtmlToPdf ...", datetime.now().strftime('%H:%M:%S')
-            convertHtmlToPdf(pdf,dirname + pdf_file) 
-            print "end converting HtmlToPdf ...", datetime.now().strftime('%H:%M:%S')
-        except Exception as e:
-            print "---------error on pdf "
-            print e
-    
-    print "zipping ...", datetime.now().strftime('%H:%M:%S')
-    # zip all file to one
-    buffer = StringIO.StringIO()
-    zf = zipfile.ZipFile(buffer, mode='w')
-    for pdf_file in pdf_files:
-        try:
-            zf.write(dirname + pdf_file, pdf_file)
-        finally:
-            pass
-    zf.close()
-    buffer.seek(0)
-    response = HttpResponse(buffer.read())
-    today_str= datetime.now().strftime('%m_%d_%Y')
-    response['Content-Disposition'] = 'attachment; filename=Daily_Flight_Log_' + today_str + '.zip'
-    response['Content-Type'] = 'application/x-zip'
-    print "end zipping ..."
-    return response
-
-# TODO: print_pdf
 def print_pdf(request):
     log_id = request.GET.get('log_id', False)
-    ##return my_print(request, log_id)
-
     if not log_id:
         return render(request, "flights/pdf.html", log_pdf(3))
         return HttpResponse("<html><body>please select a flight log to print</body></html>")
@@ -851,7 +459,6 @@ def print_pdf(request):
         if not log:
             return HttpResponse("<html><body>please select a flight log to print</body></html>")
         return render_to_pdf_response("flights/pdf.html", log_pdf(log_id), format6(log.log_number))
-    
     arr = log_id.split(',')
     dirname = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) +'/../helicopters/static/media/pdf_export/'
     pdf_files = []
@@ -863,16 +470,16 @@ def print_pdf(request):
         pdf_file = format6(log.log_number)
         pdf_files.append(pdf_file)
         try:
-            print "render_to_string ...", datetime.now().strftime('%H:%M:%S')             
+            #print "render_to_string ...", datetime.now().strftime('%H:%M:%S')             
             pdf = render_to_string("flights/pdf.html", log_pdf(nu))
-            print "converting HtmlToPdf ...", datetime.now().strftime('%H:%M:%S')
+            #print "converting HtmlToPdf ...", datetime.now().strftime('%H:%M:%S')
             convertHtmlToPdf(pdf,dirname + pdf_file) 
-            print "end converting HtmlToPdf ...", datetime.now().strftime('%H:%M:%S')
+            #print "end converting HtmlToPdf ...", datetime.now().strftime('%H:%M:%S')
         except Exception as e:
             print "---------error on pdf "
             print e
     
-    print "zipping ...", datetime.now().strftime('%H:%M:%S')
+    #print "zipping ...", datetime.now().strftime('%H:%M:%S')
     # zip all file to one
     buffer = StringIO.StringIO()
     zf = zipfile.ZipFile(buffer, mode='w')
@@ -889,7 +496,6 @@ def print_pdf(request):
     response['Content-Type'] = 'application/x-zip'
     print "end zipping ..."
     return response
-
 
 def search (request):
     if not is_login(request):

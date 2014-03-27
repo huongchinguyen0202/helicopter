@@ -27,6 +27,7 @@ $(document).ready(function(){
 			jQuery('.err').css('display','block');
 			var tex1 = jQuery(this).parent().parent().parent().find('span').html();
 			tex1 = tex1.replace("<span class=\"star\">*</span>","");
+			tex1 = tex1.replace("<SPAN class=star>*</SPAN>","");
 			tex1 = tex1.replace("<span class=\"star\" style=\"display: inline;\">*</span>","");
 			if (id_com == "#err_id_co_pilot_employee_number"){
 				$(id_com).text('Co-Pilot Employee Number is required');
@@ -192,17 +193,5 @@ function pagging_function(pg,is_sub){
 		'model': $('#mod').val(), 
 		'date': $('#id_log_date_search').val(),
 		'ac': $('#id_a1c').val(), 'pg': pg, 'is_sub': is_sub});
-		
 }
-
-function check_log_number(){
-	alert ("goi ajax");
-	Dajaxice.flight_log.ajax_check_lognumber(check_lognumber, {'log_number': $('#num_hidden').val()});
-	return false;
-}
-
-function check_lognumber(data) {
-	alert(data.log_number);
-} 
-
 

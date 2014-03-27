@@ -22,7 +22,7 @@
 					<span class = "submitted_value">{{single_form.order.value|default_if_none:""}}</span>
 				</div>
 				<div class="per33">
-					<span>Load Schedule</span>
+					<span class = "check_box">Load Schedule</span>
 					{% if single_form.load_schedule.value %}
 						<span class = "submitted_value submitted_checkbox">
 							<input type="checkbox" checked = "checked" 
@@ -33,52 +33,119 @@
 							<input type="checkbox" disabled="disabled">
 						</span>
 					{% endif %} 
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
+						{{single_form.load_schedule.errors}}	
+					</div>
 				</div>
 				<div class="per33">
-					<span>Slot Purpose</span>
-					<span class = "submitted_value">{{single_form.slot_purpose_id.value|default_if_none:""}}</span>
+					<span>Slot Purpose<span class = "star">*</span></span>
+					<span class = "submitted_value">
+						{% for value, text in single_form.slot_purpose_id.field.choices %}
+						    {% if value == single_form.slot_purpose_id.value %}
+						        {{ text }}
+						    {% endif %}
+						{% endfor %}
+					</span>
+					<div class = "error_id_mess" id = "error_id_slot_purpose_id" 
+						style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
+						{{single_form.slot_purpose_id.errors}}	
+					</div>
 				</div>
 			</div>
 			<div class="clearthis min-32">
 				<div class="per33">
 					<span>Fuel</span>
 					<span class = "submitted_value">{{single_form.flight_data_fuel.value|default_if_none:""}}</span>
+					<div class = "error_id_mess" id = "error_id_flight_data_fuel" 
+						style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.flight_data_fuel.errors}}	
+					</div>	
 				</div>
 				<div class="per33">
-					<span>From</span>
-					<span class = "submitted_value">{{single_form.from_field.value|default_if_none:""}}</span>
+					<span>From<span class = "star">*</span></span>
+					<span class = "submitted_value">
+						{% for value, text in single_form.from_field.field.choices %}
+					    {% if value == single_form.from_field.value %}
+					        {{ text }}
+					    {% endif %}
+						{% endfor %}
+					</span>
+					<div class = "error_id_mess" id = "error_id_from_field" 
+						style = "color:red; display:inline; font-size: smaller;
+						margin: 0% 5% 0% 0%;">
+						{{single_form.from_field.errors}}	
+					</div>
 				</div>
 				<div class="per33">
-					<span>To</span>
-					<span class = "submitted_value">{{single_form.to.value|default_if_none:""}}</span>
+					<span>To<span class = "star">*</span></span>
+					<span class = "submitted_value">
+						{% for value, text in single_form.to.field.choices %}
+					    {% if value == single_form.to.value %}
+					        {{ text }}
+					    {% endif %}
+						{% endfor %}
+					</span>
+					<div class = "error_id_mess" id = "error_id_to"
+					 style = "color:red; display:inline; font-size: smaller;
+					 		margin: 0% 5% 0% 0%;">
+						{{single_form.to.errors}}	
+					</div>
 				</div>
 			</div>
 			<div class="clearthis min-32">
 				<div class="per33">
 					<span>Manifest#</span>
 					<span class = "submitted_value">{{single_form.manifest_number.value|default_if_none:""}}</span>
+					<div class = "error_id_mess" id = "error_id_manifest_number" 
+					style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
+						{{single_form.manifest_number.errors}}	
+					</div>
 				</div>
 				<div class="per33">
-					<span>Passengers</span>
+					<span>Passengers<span class = "star">*</span></span>
 					<span class = "submitted_value">{{single_form.passenger.value|default_if_none:""}}</span>
+					<div class = "error_id_mess" id = "error_id_passenger" 
+					style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
+					</div>
 				</div>		
 				<div class="per33">
 					<span>Emp By</span>
-					<span class = "submitted_value">{{single_form.emp_by.value|default_if_none:""}}</span>
+					<span class = "submitted_value">
+					{% for value, text in single_form.emp_by.field.choices %}
+					    {% if value == single_form.emp_by.value %}
+					        {{ text }}
+					    {% endif %}
+					{% endfor %}
+					</span>
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;margin: 0% 5% 0% 0%;">
+						{{single_form.emp_by.errors}}	
+					</div>
 				</div>
 			</div>
 			<div class="clearthis min-32">
 				<div class="per33">
-					<span>T/O W</span>
+					<span>T/O W<span class = "star">*</span></span>
 					<span class = "submitted_value">{{single_form.flight_data_tlo_w.value|default_if_none:""}}</span>
+					<div class = "error_id_mess" id = "error_id_flight_data_tlo_w" 
+						style = "color:red; display:inline; font-size: smaller;
+								margin: 0% 20% 0% 0%">
+						{{single_form.flight_data_tlo_w.errors}}	
+					</div>
 				</div>
 				<div class="per33">
-					<span>CG</span>
-					<span class = "submitted_value">{{single_form.flight_data_cg.value|default_if_none:""}}</span>	
+					<span>CG<span class = "star" style="display: inline;">*</span></span>
+					<span class = "submitted_value">{{single_form.flight_data_cg.value|default_if_none:""}}</span>
+					<div class="error_id_mess" id="error_id_flight_data_cg" 
+						style="color:red; display:none; font-size: smaller;
+						margin: 0% 5% 0% 0%;">
+						<ul class="errorlist">
+						<li>CG is required.</li>
+						</ul>
+					</div>			
 				</div>
 				<div class="per33">
 					<span>Range </span>
-					<span style="text-align: left;margin-left: 8%;"> 
+					<span style="text-align: left;margin-left: 5%;"> 
 						{{single_form.flight_data_range_from.value|default_if_none:""}}
 					</span>
 					<span style="width: 6%;margin-left: -26%;">To </span>
@@ -94,7 +161,13 @@
 				</div>
 				<div class="per33">
 					<span>Fuel Station</span>
-					<span class = "submitted_value">{{single_form.flight_data_fuel_station.value|default_if_none:""}}</span>
+					<span class = "submitted_value">
+						{% for value, text in single_form.from_field.field.choices %}
+					    {% if value == single_form.flight_data_fuel_station.value %}
+					        {{ text }}
+					    {% endif %}
+						{% endfor %}
+					</span>
 				</div>
 				<div class="per33">
 					<span>Fuel Amount</span>
@@ -121,59 +194,132 @@
 					<span class = "submitted_value">{{single_form.flight_time.value|default_if_none:""}}</span>
 				</div>
 			</div>
-			<div class="clearthis min-32">
+			<div class="clearthis min-32" id = "on_off_error_mess_div" 
+				style="min-height:12px; display:none;">
+				<div class="per33"></div>
 				<div class="per33">
-					<span>Fuel at Wheels Down</span>
-					<span class = "submitted_value">{{single_form.fuel_wheels_down.value|default_if_none:""}}</span>
+					<div id = "on_off_error_mess_div" 
+						class = "error_id_mess" style="font-size: smaller; padding-left: 43%; text-align: left; color: red; margin: -2% 5% 0% 0%">
+						"OFF and On" is required.
+					</div> 
 				</div>
-				<div class="per33">
-					<span>ALL VFR</span>
-					{% if single_form.all_nfr.value %}
-						<span class = "submitted_value submitted_checkbox">
-							<input type="checkbox" checked = "checked" disabled="disabled">
-						</span>
-					{% else %}
-						<span class = "submitted_value submitted_checkbox">
-							<input type="checkbox" disabled="disabled">
-						</span>
-					{% endif %} 
-				</div>
-				<div class="per33">
-					<span>All IFR</span>
-					{% if single_form.all_ifr.value %}
-						<span class = "submitted_value submitted_checkbox">
-							<input type="checkbox" checked = "checked" disabled="disabled">
-						</span>
-					{% else %}
-						<span class = "submitted_value submitted_checkbox">
-							<input type="checkbox" disabled="disabled">
-						</span>
-					{% endif %} 
-				</div>
+				<div class="per33"></div>
 			</div>
 			<div class="clearthis min-32">
+				<div class="per33">
+					<span>Fuel at Wheels Down<span class = "star">*</span></span>
+					<span class = "submitted_value">{{single_form.fuel_wheels_down.value|default_if_none:""}}</span>
+					<div class = "error_id_mess" id = "error_id_fuel_wheels_down"  
+					style = "color:red; display:inline; font-size: smaller;
+								margin: 0% 5% 0% 0%;">
+						{{single_form.fuel_wheels_down.errors}}	
+					</div>
+				</div>
+				<div class="per33">
+					<span class = "check_box">ALL VFR</span>
+						{% if single_form.all_nfr.value %}
+							<span class = "submitted_value submitted_checkbox">
+								<input type="checkbox" checked = "checked" 
+								disabled="disabled" style="width: auto;">
+							</span>
+						{% else %}
+							<span class = "submitted_value submitted_checkbox">
+								<input type="checkbox" disabled="disabled">
+							</span>
+						{% endif %}
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.all_nfr.errors}}	
+					</div>
+					<span class = "check_box" style="margin-left: 10%; width: 12%;">All IFR</span>
+						{% if single_form.all_ifr.value %}
+							<span class = "submitted_value submitted_checkbox">
+								<input type="checkbox" checked = "checked" 
+								disabled="disabled" style="width: auto;">
+							</span>
+						{% else %}
+							<span class = "submitted_value submitted_checkbox">
+								<input type="checkbox" disabled="disabled">
+							</span>
+						{% endif %}
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.all_ifr.errors}}	
+					</div>
+				</div>
 				<div class="per33">
 					<span>Partial VFR</span>
 					<span class = "submitted_value">
 						{% if single_form.partial_nfr.value > -1%}
 							{{single_form.partial_nfr.value}}
 						{% endif %}
-						
 					</span>
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.partial_nfr.errors}}	
+					</div>
+				</div>
+			</div>
+			<div class="clearthis min-32">
+				<div class="per33">
+					<span>Day<span class = "star">*</span></span>
+					<span class = "submitted_value">
+						{{single_form.day.value|default_if_none:""}}
+					</span>
+					<div class = "error_id_mess" id = "error_id_day"  
+					style = "color:red; display:inline; font-size: smaller;
+								margin: 0% 5% 0% 0%;">
+						{{single_form.day.errors}}	
+					</div>
+				</div>
+				<div class="per33">
+					<span class = "check_box">Night<span class = "star">*</span></span>
+					<span class = "submitted_value">
+						{{single_form.night.value|default_if_none:""}}
+					</span>
+					<div class = "error_id_mess" id = "error_id_night"  
+					style = "color:red; display:inline; font-size: smaller;
+								margin: 0% 5% 0% 0%;">
+						{{single_form.night.errors}}	
+					</div>
+				</div>
+				<div class="per33">
+					<span class = "check_box">Pilot NVG</span>
+					<span class = "submitted_value">
+						{{single_form.pilot_nvg.value|default_if_none:""}}
+					</span>
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.pilot_nvg.errors}}	
+					</div>
+				</div>
+			</div>
+			<div class="clearthis min-32">
+				<div class="per33">
+					<span>Co-Pilot NVG</span>
+					<span class = "submitted_value">
+						{{single_form.co_pilot_nvg.value|default_if_none:""}}
+					</span>
+					<div class = "error_id_mess" style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.co_pilot_nvg.errors}}	
+					</div>
 				</div>
 				<div class="per33">
 					<span>Block Time</span>
 					<span class = "submitted_value">
 						{{single_form.flight_data_block_time.value|default_if_none:""}}
 					</span>
+					<div class = "error_id_mess" id = "error_id_flight_data_block_time" 
+						style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.flight_data_block_time.errors}}	
+					</div>
 				</div>
 				<div class="per33">
 					<span>Patients</span>
 					<span class = "submitted_value">
 						{{single_form.flight_data_patient.value|default_if_none:""}}
 					</span>
+					<div class = "error_id_mess" id = "error_id_flight_data_patient" 
+						style = "color:red; display:inline; font-size: smaller;">
+						{{single_form.flight_data_patient.errors}}	
+					</div>
 				</div>
-			</div>
 		<div class="sub_form border_none" style="margin-right: 0;">
 		<div class="min-32">
 			<input class="btn_default_flight_log btn_close close_popup" type="button" value="Return" />
@@ -308,6 +454,7 @@
 				</div>
 				<div class="per33">
 					<input type="hidden" id = "before_fuel_location" value = "{{single_form.flight_data_fuel_station.value|default_if_none:""}}">
+					<input type="hidden" id = "before_amount" value = "{{single_form.flight_data_fuel_amount.value|default_if_none:""}}">
 					<span>Fuel Station</span>
 						{{ single_form.flight_data_fuel_station }}
 					
@@ -370,12 +517,7 @@
 				<div class="per33"></div>
 				<div class="per33">
 					<div id = "on_off_error_mess_div" 
-						class = "error_id_mess"
-						style = "position: absolute;
-									color: red;
-									display:block;
-									margin: -1% 0% 0% 13.9%;
-									font-size: smaller;">
+						class = "error_id_mess" style="font-size: smaller; padding-left: 43%; text-align: left; color: red; margin: -2% 5% 0% 0%">
 						"OFF and On" is required.
 					</div> 
 				</div>

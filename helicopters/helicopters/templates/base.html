@@ -73,15 +73,27 @@ $(document).ready(function() {
 </script>
 
 <script language="javascript" type="text/javascript">
-	var isIE10 = false;
 	/*@cc_on
-	    if (/^10/.test(@_jscript_version)) {
-	    	document.write('<style type="text/css">\
-		    	input {\
-		    		width: 40% !important;\
-		    	}\
-			</style>');
-	    }
+    if (/^10/.test(@_jscript_version)) {
+    	document.write('<style type="text/css">\
+	    	input {\
+	    		width: 40% !important;\
+	    	}\
+   			input[type=checkbox]{\
+	    		width: 30% !important;\
+	   			border: none !important;\
+	   			padding-left: 0px;\
+	   			margin-top: 0% !important;\
+    		}\
+    		.popup_main input{\
+    			width: 50% !important;\
+    			font-family: segoeui;\
+   			}\
+   			.popup_main #id_flight_data_range_from, .popup_main #id_flight_data_range_to{\
+   				width: 16.5% !important;\
+   			}\
+		</style>');
+    }
 	@*/
 	
 	if(navigator.userAgent.indexOf('Mac') > 0 && navigator.userAgent.indexOf('Firefox') > 0)

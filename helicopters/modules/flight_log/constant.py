@@ -124,3 +124,5 @@ announce_mess = "announce_mess"
 announce_mess_fuel_location_change = "This Fuel Station is being used in Fuel Expenses or Usage section. Please delete that record to continue."
 IS_EDIT = "is_edit"
 number_page = 10
+
+message_check = "message %s"
