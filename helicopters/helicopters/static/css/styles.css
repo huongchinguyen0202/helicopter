@@ -1064,9 +1064,11 @@ display: none;}*/
 }
 
 #announce_success {
-	color: blue;
+	color: green;
 	text-align: left;
 	padding-left: 1.7%;
+	font-family: Arial !important;
+	font-size: 13px !important;
 }
 
 #er_search {
@@ -1132,21 +1134,24 @@ input[type='checkbox'] {
 
 .attack_file {
 	border: none;
-	background: #dfdfdf;
+	background: #ebebeb;
 	text-align: center;
 	float: left;
-	margin: 0px 5px 5px 0px;
-	width: 23%;
+/* 	margin: 0px 5px 5px 0px; */
+	width: 37%;
+	color: #2a76b0;
+	font-weight: bold;
 	border-radius: 5px;
 }
-
+#form_email_popup .line  .attack_file input#attack_file_1 {width: 89% !important; margin-top: 0px;}
+.attack_file:hover{ color:#c2192b }
 thead {
 	line-height: 35px;
 }
 
 .close-attack {
 	float: right;
-	margin-top: 4%;
+	margin-top: 5px;
 	margin-right: 4%;
 	cursor: pointer;
 }

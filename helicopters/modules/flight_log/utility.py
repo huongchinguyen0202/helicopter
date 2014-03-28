@@ -13,7 +13,10 @@ from django_xhtml2pdf.utils import render_to_pdf_response, fetch_resources
 import ho.pisa as pisa
 from datetime import datetime
 def format6(org_log_number):
-    return "Daily_Flight_Log_%06d.pdf" % (org_log_number,)
+    #print "org_log_number type", type(org_log_number)
+    #org_log_number = long(org_log_number) #"%05d" % i
+    leading_zero =  str(org_log_number).zfill(6);
+    return "Daily_Flight_Log_" + leading_zero + ".pdf"
 # Utility function
 def convertHtmlToPdf(sourceHtml, outputFilename):
     pisa.showLogging()
@@ -86,15 +89,12 @@ def send_email(request):
                 msg = EmailMultiAlternatives(email_subject, email_content, email_from, to, cc=mcc, bcc=mbcc)
                 msg.content_subtype = constant.html
                 files = request.POST.get(constant.hiden_attack)
-                #print files
-                arr_files = files.split(',')
-                #print "splirt to: ", arr_files
-                for file_name in arr_files:
-                    if(file_name):
-                        if(os.path.isfile(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/' + file_name +'.pdf')):
-                            msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/' + file_name +'.pdf')
-                #msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/ThbaoTSCH1_2014.pdf')
-                #msg.attach_file(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/../helicopters/static/media/pdf_export/add.png')
+                if not ".zip" in files and not ".pdf" in files:
+                    files = files + ".pdf"
+                dirname = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) +'/../helicopters/static/media/pdf_export/'
+                pdf_path = dirname + files
+                if os.path.isfile(pdf_path):
+                    msg.attach_file(pdf_path)
                 try:
                     msg.send()
                 except:

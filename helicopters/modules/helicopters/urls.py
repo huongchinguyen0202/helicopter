@@ -25,5 +25,6 @@ urlpatterns = patterns('',
     url(r'^search/$', views.search),
     url(r'^search/print/$', views.print_pdf),
     url(r'^log/print/$', views.print_pdf),
+    url(r'^download/$', views.download),
 )
 

@@ -1,1 +1,147 @@
-<!doctype html>{% load static from staticfiles %}{% load list_tag %}<html><head><style type="text/css">body,p{border:0;margin:0;padding:0}body { font-size:10px;}table {width: 100%;margin:15px auto;border-collapse:collapse;border-spacing:0;}td { border: 1px solid #474644 ; padding: 2px;}tr span:first-child , #table2 tr:first-child, #table2 tr td:first-child, #table3 tr:first-child , #table3 #table3tr2, #table4 tr:first-child {font-weight: bold; text-align: center;}.contain {width: 94%;margin: 0px auto;}#table0 td {text-align: left;}#table1 td{text-align: center;}#table1 td > p:first-child {font-weight: bold;}#table1 td > p:last-child {margin-bottom:0px;font-weight: bold;}#table1 span {text-align: center;}#table2 tr td:first-child {width: 13%; font-weight: bold;text-align: left;}#table3, #table0 {table-layout:fixed;}#table4 {table-layout:fixed;}#head td{ border:0px;}#head td.address { width: 23%; margin-bottom: 5px; font-weight: bold; }#head td.page{ width: 15%; text-align:right; margin-bottom: 0px; }</style></head><body><div class="contain"><div class="header"><table id="head"><tr><td style="width:17%" ><img width="227px" height="76px" src="{% static 'img/logo2.png' %}"/></td><td class="address"> <p>P.O Box 6550</p><p>Lake Charles, LA 70606</p><p>Fax – (337) 474 - 3421</p></td><td style="width: 45%; font-weight: bold; font-size: 15px;"> DAILY FLIGHT LOG </td><td class="page"><p style="font-weight: bold;">{{ loglog.log_number| stringformat:"06d" }}</p><p>{{ loglog.log_date|date:"m/d/Y" }}</p><p>PAGE 1 OF 1</p></td></tr></table></div><table id="table0"><tr><td><span>CUSTOMER </span><span>{{ loglog.customer|default:"" }}</span></td><td><span>CONTRACT/CHARTER# </span><span>{{ loglog.contract1chater|default:"" }}</span></td></tr></table><table id="table1"><tr><td><p>MODEL</p><p>{{ loglog.a1c.model }}</p></td><td><p>A/C#</p><p>{{ loglog.a1c }}</p></td><td><p>BASE</p><p>{{ loglog.base }}</p></td><td><p>A/C EMPTY WEIGHT</p><p>{{ loglog.a1c_empty_weight }}</p></td><td><p>PILOT WEIGHT</p><p>{{ loglog.pilot_weight }}</p></td><td><p>CO-PILOT EMPLOYEE NUMBER</p><p>{{ loglog.co_pilot_employee_number_id }}</p></td><td><p>CO-PILOT WEIGHT</p><p>{{ loglog.co_pilot_weight }}</p></td></tr><tr><td><p>OPERATIONAL WEIGHT</p><p>{{ loglog.opterational_weight }}</p></td><td><p>MAX GROSS WEIGHT</p><p>{{ loglog.a1c.model.max_gross_weight }}</p></td><td><p>ALLOWABLE T/O WEIGHT</p><p>{{ loglog.allowable_takeoff_weight }}</p></td><td><p>PAYLOAD AVAILABLE</p><p>{{ payload_available }}</p></td><td colspan="2" style="border-right: none"><p>ME LOAD SCHEDULE C.G RANGE</p><p>{{ loglog.a1c.model.me_load_schedule_cg_range_from }}</p></td><td style="border-left: none"><p>TO</p><p>{{ loglog.a1c.model.me_load_schedule_cg_range_to }}</p></td></tr></table><table id="table2"><tr style = "font-weight: bold;"><td colspan="12" style="text-align: center;">FLIGHT DATA</td><td>TOTALS</td></tr>{% for index in len %}<tr><td>{{ flight_leg_details|value_at:index }}</td>{% for leg in list_legs %}<td>{% if index == 20 or index == 21 %}{% if leg|value_at:index %}<img width="10" height="10" src="{% static 'img/checked.png' %}"/>{% endif %}{% else %}{{ leg|value_at:index|default:"" }}{% endif %}</td>{% endfor %}{% for i in add_more %}<td></td>{%endfor%}<td>{{ total|value_at:index }}</td></tr>{% endfor %}</table><table id="table3"><tr><td colspan="4">FUEL EXPENSES OR USAGE</td></tr><tr id="table3tr2"><td>LOCATION</td><td>GALLONS</td><td>OWNER</td><td>AMOUNT</td></tr>{% for log_loc in log_loc_list %}<tr><td>{{log_loc.location_id}}</td><td>{{log_loc.gallons |default:""}}</td><td>{{log_loc.owner |default:""}}</td><td>{{log_loc.amount |default:""}}</td></tr>{% endfor %}</table><table id="table4"><tr><td>PILOT</td><td>FLIGHT TIME</td><td>DAY</td><td>NIGHT</td><td>VFR</td><td>IFR</td><td>NVG</td></tr>{{ formset_pilot.management_form }}{% for obj in formset_pilot %}<tr><td>{{obj.pilot.value | default_if_none:""}}</td>{%ifnotequal obj.pic.value None%}<td>{{ obj.pic.value | default_if_none:"" }}</td>{% else %}<td>{{ obj.sic.value | default_if_none:"" }}</td>{%endifnotequal%}<td>{{obj.day.value | default_if_none:""}}</td><td>{{obj.night.value | default_if_none:""}}</td><td>{{obj.vfr.value | default_if_none:""}}</td><td>{{obj.ifr.value | default_if_none:""}}</td><td>{{obj.nvg.value | default_if_none:""}}</td></tr>{% endfor%}</table></div></body></html>
+<!doctype html>
+{% load static from staticfiles %}
+{% load list_tag %}
+<html>
+<head>
+	<style type="text/css">
+body,p{border:0;margin:0;padding:0}
+body { font-size:10px;}
+table {width: 100%;margin:15px auto;border-collapse:collapse;border-spacing:0;}
+td { border: 1px solid #474644 ; padding: 2px;}
+tr span:first-child , #table2 tr:first-child, #table2 tr td:first-child, #table3 tr:first-child , #table3 #table3tr2, #table4 tr:first-child {font-weight: bold; text-align: center;}
+.contain {width: 94%;margin: 0px auto;}
+#table0 td {text-align: left;}
+#table1 td{text-align: center;}
+#table1 td > p:first-child {min-height:25px;font-weight: bold;}
+#table1 span {text-align: center;}
+#table2 tr td:first-child {width: 13%; font-weight: bold;text-align: left;}
+#table3, #table0 {table-layout:fixed;}
+#table4  {table-layout:fixed;}
+#head td{ border:0px;}
+#head td.address { width: 23%; margin-bottom: 5px; font-weight: bold; }
+#head td.page{ width: 15%; text-align:right; margin-bottom: 0px; }
+</style>
+</head>
+<body>
+	<div class="contain">
+		<div class="header">
+			
+			<table id="head">
+				<tr>
+					<td style="width:17%" ><img width="227px" height="76px" src="{% static 'img/logo2.png' %}"/></td>
+					<td class="address"> 
+						<p>P.O Box 6550</p>
+						<p>Lake Charles, LA 70606</p>
+						<p>Fax – (337) 474 - 3421</p>
+					</td>
+					<td style="width: 45%; font-weight: bold; font-size: 15px;"> DAILY FLIGHT LOG </td>
+					<td class="page">
+						<p style="font-weight: bold;">{{ loglog.log_number| stringformat:"06d" }}</p>
+						<p>{{ loglog.log_date|date:"m/d/Y" }}</p>
+						<p>PAGE 1 OF 1</p>
+					</td>
+				</tr>
+			</table>
+			
+		</div>
+		<table id="table0">
+			<tr>
+				<td><span>CUSTOMER </span><span>{{ loglog.customer|default:"" }}</span></td>
+				<td><span>CONTRACT/CHARTER# </span><span>{{ loglog.contract1charter|default:"" }}</span></td>
+			</tr>
+		</table>
+		<table id="table1">
+			<tr>
+				<td><p>MODEL</p><p>{{ loglog.a1c.model }}</p></td>
+				<td><p>A/C#</p><p>{{ loglog.a1c }}</p></td>
+				<td><p>BASE</p><p>{{ loglog.base }}</p></td>
+				<td><p>A/C EMPTY WEIGHT</p><p>{{ loglog.a1c_empty_weight }}</p></td>
+				<td><p>PILOT WEIGHT</p><p>{{ loglog.pilot_weight }}</p></td>
+				<td><p>CO-PILOT EMPLOYEE NUMBER</p><p>{{ loglog.co_pilot_employee_number_id }}</p></td>
+				<td><p>CO-PILOT WEIGHT</p><p>{{ loglog.co_pilot_weight }}</p></td>
+			</tr>
+			<tr>
+				<td><p>OPERATIONAL WEIGHT</p><p>{{ loglog.opterational_weight }}</p></td>
+				<td><p>MAX GROSS WEIGHT</p><p>{{ loglog.a1c.model.max_gross_weight }}</p></td>
+				<td><p>ALLOWABLE T/O WEIGHT</p><p>{{ loglog.allowable_takeoff_weight }}</p></td>
+				<td><p>PAYLOAD AVAILABLE</p><p>{{ payload_available }}</p></td>
+				<td colspan="2" style="border-right: none"><p>ME LOAD SCHEDULE C.G RANGE</p><p>{{ loglog.a1c.model.me_load_schedule_cg_range_from }}</p></td>
+				<td style="border-left: none"><p>TO</p><p>{{ loglog.a1c.model.me_load_schedule_cg_range_to }}</p></td>
+			</tr>
+		</table>
+		<table id="table2">
+			<tr style = "font-weight: bold;">
+				<td colspan="12" style="text-align: center;">FLIGHT DATA</td>
+				<td>TOTALS</td>
+			</tr>
+			{% for index in len %}
+			<tr>
+				<td>{{ flight_leg_details|value_at:index }}</td>
+				{% for leg in list_legs %}
+					<td>
+					{% if index == 20 or index == 21 %}
+						{% if leg|value_at:index %}
+						<img width="10" height="10" src="{% static 'img/checked.png' %}"/>
+						{% endif %}
+					{% else %}
+						{{ leg|value_at:index|default:"" }}
+					{% endif %}
+					</td>
+				{% endfor %}
+				{% for i in add_more %}<td></td>{%endfor%}
+				<td>{{ total|value_at:index }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<table id="table3">
+			<tr>
+				<td colspan="4">FUEL EXPENSES OR USAGE</td>
+			</tr>
+			<tr id="table3tr2">
+				<td>LOCATION</td>
+				<td>GALLONS</td>
+				<td>OWNER</td>
+				<td>AMOUNT</td>
+			</tr>
+			{% for log_loc in log_loc_list %}
+			<tr>
+				<td>{{log_loc.location_id}}</td>
+				<td>{{log_loc.gallons |default:""}}</td>
+				<td>{{log_loc.owner |default:""}}</td>
+				<td>{{log_loc.amount |default:""}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+
+		<table id="table4">
+			<tr>
+				<td>PILOT</td>
+				<td>FLIGHT TIME</td>
+				<td>DAY</td>
+				<td>NIGHT</td>
+				<td>VFR</td>
+				<td>IFR</td>
+				<td>NVG</td>
+			</tr>
+			{{ formset_pilot.management_form }}
+			{% for obj in formset_pilot %}
+				<tr>
+					<td>{{obj.pilot.value | default_if_none:""}}</td>
+					{%ifnotequal obj.pic.value None%}
+						<td>{{ obj.pic.value | default_if_none:"" }}</td>
+					{% else %}
+						<td>{{ obj.sic.value | default_if_none:"" }}</td>
+					{%endifnotequal%}
+					<td>{{obj.day.value | default_if_none:""}}</td>
+					<td>{{obj.night.value | default_if_none:""}}</td>
+					<td>{{obj.vfr.value | default_if_none:""}}</td>
+					<td>{{obj.ifr.value | default_if_none:""}}</td>
+					<td>{{obj.nvg.value | default_if_none:""}}</td>
+				</tr>
+			{% endfor%}
+		</table>
+		
+	</div>
+	
+</body></html>

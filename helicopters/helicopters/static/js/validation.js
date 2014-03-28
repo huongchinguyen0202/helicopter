@@ -175,7 +175,7 @@ function validateRegisterForm() {
 					var input = jQuery(this);
 					input.css('color', '#000');
 					if ((input.val() == ''
-							|| input.val() == 'This is request field' || input
+							|| input.val() == 'This is required field' || input
 							.val().indexOf('is required.') > 0)
 							&& input.attr('type') != 'password') {
 						var e_id = 'over_' + input.attr('id');
@@ -238,7 +238,7 @@ function validateLoginForm() {
 					var input = jQuery(this);
 					input.css('color', '#000');
 					if (input.val() == ''
-							|| input.val() == 'This is request field'
+							|| input.val() == 'This is required field'
 							|| input.val() == 'Employee Number is incorrrect.'
 							|| input.val() == 'Password is incorrect.'
 							|| input.val().indexOf('is required.') > 0) {
@@ -262,16 +262,18 @@ function validateLoginForm() {
 	}
 }
 function validate_email_form() {
-	var valu = '';
+	jQuery('.jqte_editor').css("color", "#000");
+	var ret = true;
+	/* var valu = '';
 	jQuery('input.attack_file').each(function() {
 		v = jQuery(this).val().replace('flight_log_', '');
 		valu = valu + ',' + v.replace('.pdf', '');
 	});
 	valu = valu.substring(1);
 	jQuery('.hiden_attack').val(valu);
-	var ret = true;
-	jQuery('.jqte_editor').css("color", "#000");
-	/*if (ret == true) {
+	
+	
+	if (ret == true) {
 		jQuery("form#form_email_popup input.request")
 				.each(
 						function() {
@@ -335,50 +337,46 @@ function validate_email_form() {
 				} 
 			}
 		}
+		if (ret == false) {
+			return false;
+		}
 	});
 	
 	jQuery("form#form_email_popup .m_email")
-			.each(
-					function() {
-						var em = jQuery(this);
-						var x = em.val();
-						if (x && em.css('display') == 'block') {
-							x.replace(";", ",");
-							x.replace(" ", "");
-							var array = x.split(',');
-							for (i = 0; i < array.length; i++) {
-								if(array[i] != "" && array[i].indexOf(" ") == -1){
-									var atpos = array[i].indexOf("@");
-									var dotpos = array[i].lastIndexOf(".");
-									if (atpos < 1 || dotpos < atpos + 2
-											|| dotpos + 2 >= array[i].length) {
-										em.css("color", "#c2192a");
-										em.val("Not a valid e-mail address");
-										ret = false;
-									}
-								} 
-							}
-							em
-									.on(
-											"focus",
-											function() {
-												if (em.val() == "This is required field"
-														|| em.val() == "Not a valid e-mail address") {
-													em.val("");
-													em.css("color", "#000");
-												}
-											})
-									.on(
-											"blur",
-											function() {
-												if (em.val() == "This is required field"
-														|| em.val() == "Not a valid e-mail address") {
-													em.val("");
-													em.css("color", "#000");
-												}
-											});
-						}
-					});
+		.each(function() {
+		var em = jQuery(this);
+		var x = em.val();
+		if (x && em.css('display') == 'block') {
+			x.replace(";", ",");
+			x.replace(" ", "");
+			var array = x.split(',');
+			for (i = 0; i < array.length; i++) {
+				if(array[i] != "" && array[i].indexOf(" ") == -1){
+					var atpos = array[i].indexOf("@");
+					var dotpos = array[i].lastIndexOf(".");
+					if (atpos < 1 || dotpos < atpos + 2
+							|| dotpos + 2 >= array[i].length) {
+						em.css("color", "#c2192a");
+						em.val("Not a valid e-mail address");
+						ret = false;
+					}
+				} 
+			}
+			em.on("focus",function() {
+				if (em.val() == "This is required field"
+							|| em.val() == "Not a valid e-mail address") {
+						em.val("");
+						em.css("color", "#000");
+					}
+				}).on( "blur", function() {
+					if (em.val() == "This is required field"
+							|| em.val() == "Not a valid e-mail address") {
+						em.val("");
+						em.css("color", "#000");
+					}
+				});
+			}
+		});
 	if (ret == false) {
 		return false;
 	}else{
@@ -394,6 +392,18 @@ function validate_email_form() {
 $(document).on('click', '#btn_send_email', function(){
 	if($("#email").val() != "Not a valid e-mail address"){
 		$(this).attr("type","submit");
+	}
+});
+
+/* foe ie8 email input focus not working :)*/
+$(document).on("focus", "form#form_email_popup input.request",function() {
+	//console.log("ocus form#form_email_popup input.request");
+	if ($(this).val() == "This is required field"
+			|| $(this).val() == "Not a valid e-mail address") {
+		$(this).val("");
+		//console.log("This is required field ok");
+		//setTimeout(function() {$(this).val("eeeeeeeeeee"); $(this).css("color", "#000");}, 1000);
+		
 	}
 });
 
@@ -487,6 +497,8 @@ function valid_date_search() {
 }
 
 $(document).ready(function() {
+	
+								
 	$("#id_log_number").change(function (e){
 		if(isNaN($("#id_log_number").val())){
 			$("#er_search").text("");

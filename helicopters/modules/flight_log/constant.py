@@ -68,7 +68,7 @@ pilot_section = "flights/pilot_section.html"
 pilot_form = "flights/pilot_form.html"
 
 #edit_delete
-flight_log_id = "flight_log_id"
+flight_log_id = "id"
 delete = 'delete'
 submit = 'submit'
 row_check = "row_check_"

@@ -213,7 +213,7 @@ def delete_flight_log(request, index, loc_temp, max_pax, list_fuel_location, co_
     for local_id, name in sorted_list_fuel_station:
         dajax.append('#hiddenff', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
         dajax.append('#fuel_tbl select', 'innerHTML', "<option value="+str(local_id)+">"+str(name)+"</option>")
-    load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax)
+    load_copilot_sub(request, co_pilot, id_log, dajax)
     dajax.script('load_combo();')
     dajax.script("jQuery('#result').val('" + str(loc_temp) + "');")
     dajax.script('change_location_del();')
@@ -264,7 +264,7 @@ def save_add_case(request, result):
 @dajaxice_register
 def save_flight_log(request, forms, max_pax, partial_range, 
                     before_fuel_location, list_fuel_location,
-                    is_edit, co_pilot, id_log, all_vfr, all_ifr):
+                    is_edit, co_pilot, id_log):
     dajax = Dajax()
     
     ''' Remove all errors message in popup '''
@@ -387,7 +387,7 @@ def save_flight_log(request, forms, max_pax, partial_range,
     pour_fuel_station_popup(dajax)
     
     ''' Reload pilot section'''
-    load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax)
+    load_copilot_sub(request, co_pilot, id_log, dajax)
     return dajax.json()
 
 
@@ -557,11 +557,11 @@ def pour_fuel_station_popup(dajax):
 @dajaxice_register(method=constant.GET)
 def load_copilot(request, co_pilot, id_log, all_vfr, all_ifr):
     dajax = Dajax()
-    load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax)
+    load_copilot_sub(request, co_pilot, id_log, dajax)
     '''Return'''
     return dajax.json()
 
-def load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax):
+def load_copilot_sub(request, co_pilot, id_log, dajax):
     '''Create formset'''
     PilotFormSet = formset_factory( form = PilotForm, 
                                        max_num=10, extra = 0)
@@ -571,30 +571,25 @@ def load_copilot_sub(request, co_pilot, id_log, all_vfr, all_ifr, dajax):
     lst_flight_log = get_list_session_object(request)
     sic = pic = night = day = vfr = ifr = nvg = co_nvg = 0
     
-    flight_time = 0 
-    into_partial = 0
     for flight in lst_flight_log:
         sic = sic + flight.flight_time
         pic = pic + flight.flight_time
         day = day + flight.day
         night = night + flight.night
-        flight_time = flight_time + flight.flight_time
         if flight.pilot_nvg:
             nvg = nvg + flight.pilot_nvg
         if flight.co_pilot_nvg:
             co_nvg = co_nvg + flight.co_pilot_nvg
         if flight.partial_nfr != -1 and type(flight.partial_nfr) != unicode:
-            into_partial = into_partial + 1
             vfr = vfr + flight.partial_nfr
+            ifr = ifr + flight.flight_time - flight.partial_nfr
         else:
-            if all_vfr:
+            if flight.all_nfr:
                 vfr = vfr + flight.flight_time
                 ifr = ifr + 0
-            if all_ifr:
+            if flight.all_ifr:
                 ifr = ifr + flight.flight_time
                 vfr = vfr + 0
-    if into_partial != 0:
-        ifr = flight_time - vfr
     
     pilot = LogEmployee()
     pilot.pic = pic

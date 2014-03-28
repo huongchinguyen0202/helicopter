@@ -250,7 +250,6 @@ function val_print_pdf(is_checked,id){
 	$("input:not(:hidden)[name^='row_check_']").each(function(){
 		if($(this).is(':checked')) {// if exist one  untick
 			is_checked = true;
-			console.log($(this).parent());
 			j = j + ',' + $(this).closest('tr').find('input.log_id').val();
 			//j[i] = $(this).attr("name").replace('row_check_','');
 			// break from each loop
@@ -502,21 +501,19 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('#id_a1c_empty_weight, #id_pilot_weight, #id_co_pilot_weight').on('change paste', function(e){
+	$('#id_a1c_empty_weight, #id_pilot_weight, #id_co_pilot_weight').on('change', function(e){
 		var opt_weight = 0.0;
 		opt_weight += get_float_value('#id_a1c_empty_weight');
 		opt_weight += get_float_value('#id_pilot_weight');
 		opt_weight += get_float_value('#id_co_pilot_weight');
 		if (opt_weight <= 0.0)
 			opt_weight = "";
-		console.log(opt_weight);
 		$("#id_opterational_weight").val(opt_weight).change(); //.trigger("change");
 		validate_operational_weight();
 	});
-	$('#id_opterational_weight, #mass_gross').on('change paste', function(e){
+	$('#id_opterational_weight, #mass_gross').on('change', function(e){
 //		alert("this ok");
 		var mass_gross_value = parseFloat( $('#mass_gross').text() );
-		console.log(mass_gross_value);
 		if (isNaN(mass_gross_value)) {
 //				alert("isNaN(mass_gross_value)");
 			return;
@@ -734,21 +731,11 @@ $(document).ready(function() {
 			var max_pax = $("#max_pax").val();
 			var co_pilot = $("#id_co_pilot_employee_number").val(); 
 			var id_log = $("#id_id_log").val();
-			var all_vfr = false;
-			var all_ifr = false;
-			if ($('#id_all_nfr').attr('disabled') == "disabled"){
-				all_ifr = true;
-			}
-			else if ($('#id_all_ifr').attr('disabled') == "disabled"){
-				all_vfr = true;
-			}
 		    Dajaxice.flight_log.delete_flight_log(call_back_delete, {'index':index, 'loc_temp':loc_temp,
 		    														'max_pax':max_pax,
 		    														'co_pilot':co_pilot,
 		    														'id_log':id_log,
-		    														'list_fuel_location':list_fuel_location,
-		    														'all_vfr':all_vfr,
-		    														'all_ifr':all_ifr});
+		    														'list_fuel_location':list_fuel_location});
 		}
 	});
 	
@@ -770,14 +757,6 @@ $(document).ready(function() {
 			var is_edit = $("#is_edit").val();
 			var co_pilot = $("#id_co_pilot_employee_number option:selected").text();
 			var id_log = $("#id_id_log").val();
-			var all_vfr = false;
-			var all_ifr = false;
-			if ($('#id_all_nfr').attr('disabled') == "disabled"){
-				all_ifr = true;
-			}
-			else if ($('#id_all_ifr').attr('disabled') == "disabled"){
-				all_vfr = true;
-			}
 			Dajaxice.flight_log.save_flight_log(js_callback, 
 					{'forms':$('#popup_add_flight_log').serialize(),
 					 'max_pax':max_pax,
@@ -786,9 +765,7 @@ $(document).ready(function() {
 					 'before_fuel_location':before_fuel_location,
 					 'list_fuel_location':list_fuel_location,
 					 'co_pilot':co_pilot,
-					 'id_log':id_log,
-					 'all_vfr':all_vfr,
-					 'all_ifr':all_ifr});
+					 'id_log':id_log});
 		}
 		
 	});
@@ -839,7 +816,7 @@ $(document).ready(function() {
 	
 	jQuery.fn.center_email = function () {
 	    this.css("position","absolute");
-	    this.css("top",  $(window).scrollTop() + 100 + "px");
+	    this.css("top",  $(window).scrollTop() + 100 + "0px");
 	    //this.css("top", Math.max(200, ($(window).innerHeight()/2 - $(this).outerHeight()) + $(window).scrollTop()) + "px")
 	    this.css("height", "auto");
 	    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
@@ -1124,14 +1101,6 @@ $(document).ready(function() {
 		var co_pilot = $("#id_co_pilot_employee_number option:selected").text();
 		var vfr_disable = $('#id_all_vfr').attr('disabled');
 		var ifr_disable = $('#id_all_vfr').attr('disabled');
-		var all_vfr = false;
-		var all_ifr = false;
-		if ($('#id_all_nfr').attr('disabled') == "disabled"){
-			all_ifr = true;
-		}
-		else if ($('#id_all_ifr').attr('disabled') == "disabled"){
-			all_vfr = true;
-		}
 			
 		if (emp_number == co_pilot){
 			alert("The selected pilot is duplicated. Please select another pilot");
@@ -1145,7 +1114,6 @@ $(document).ready(function() {
 		$("#pre-co-pilot").html($(this).val());
 		var id_log = $("#id_id_log").val();
 		Dajaxice.flight_log.load_copilot(Dajax.process, 
-				{'co_pilot':co_pilot, 'id_log':id_log,
-				'all_vfr':all_vfr, 'all_ifr':all_ifr});
+				{'co_pilot':co_pilot, 'id_log':id_log});
 	});
 });

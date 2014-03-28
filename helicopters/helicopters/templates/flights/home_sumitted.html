@@ -154,7 +154,7 @@
 		</div>		
 	</div>
 	<div id="send_email" class="login-popup">
-		<form method="post" class="" onsubmit="return (validate_email_form())" 
+		<form method="post" class="" onsubmit="return validate_email_form()" 
 			action="/send_email/" id="form_email_popup">
 			{% csrf_token %}
         </form>

@@ -144,12 +144,12 @@ INSTALLED_APPS = (
     'dajax',
     'django_like',
     'django_xhtml2pdf',
-    'PyPDF2',
 #     'formset_demo',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    'mytag',
     'ho',
+    'sx',
+    'mytag',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

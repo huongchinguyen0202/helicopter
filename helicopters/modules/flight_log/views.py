@@ -8,7 +8,7 @@ from flight_log.models import LogSection, Location, Customer, Employee,\
     Contract1Chater
 from django.http import HttpResponseRedirect
 import json
-from orca.dbusserver import obj
+# from orca.dbusserver import obj
 import constant
 from django.http.response import HttpResponse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -269,7 +269,7 @@ def log_pdf(log_id):
         leg.append(flight_log.slot_purpose_id)
         leg.append(flight_log.from_field)
         leg.append(flight_log.off)
-        leg.append(flight_log.fuel_wheels_down)
+        leg.append(flight_log.flight_data_fuel)
         leg.append(flight_log.to)
         leg.append(flight_log.on)
         leg.append(flight_log.manifest_number)
@@ -310,6 +310,7 @@ def log_pdf(log_id):
     log_loc_list = Log_Location.objects.filter(log_id = log_id)
     #table0 and  #table1
     loglog = Log.objects.get(id_log = log_id)
+#     print "loglog.contract1charter", loglog.contract1charter
     payload_available = loglog.a1c.model.max_gross_weight - loglog.opterational_weight
     
     c = {
@@ -338,8 +339,10 @@ def save_data_form_grid(request, pk_id, form, formset, formset_pilot, log_number
     else:
         form = form.save(commit = False)
         check_lognumber = Log.objects.filter(log_number = log_number)
+        o = Log.objects.order_by('log_number').all()
+        c = o.count()
         if check_lognumber:
-            new_log_num = int(log_number) + 1
+            new_log_num = o[c-1].log_number + 1
             form.log_number = new_log_num
             alert = "The log number has been used. Your log number changes to %06d" % new_log_num
             
@@ -397,6 +400,7 @@ def home(request):
     if request.method == constant.POST:
         data = request.POST
         
+        print data
         list_log_id = []
         delete = None
         
@@ -405,7 +409,7 @@ def home(request):
             delete = data[constant.delete]
         except:
             pass
-        
+        print list_log_id
         for id in list_log_id:
             try:
                 if data[constant.row_check + id]:
@@ -446,11 +450,63 @@ def home(request):
                                         constant.list_flight_log:LIST_FLIGHT_LOG,
                                         constant.announce_mess : announce_message})
     
+def download(request):
+    file = request.GET.get('file', False)
+    dirname = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) +'/../helicopters/static/media/pdf_export/'
+    ext = 'pdf' if 'pdf' in file else 'zip'
+    response = HttpResponse(open(dirname + file, 'rb').read(),content_type='application/' + ext)
+    response['Content-Disposition'] = 'attachment; filename=' + file
+    return response
+    '''
+    #buffer = StringIO.StringIO()
+    if 'pdf' in file:
+        response = HttpResponse(open(dirname + file, 'rb').read(),content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=' + file
+        return response
+        
+        with open(dirname + file , 'r') as pdf:
+            response = HttpResponse(pdf.read(), mimetype='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename=' + file
+            return response
+        pdf.closed
+        
+        import io
+        f = io.open(dirname + file, "r")
+        f.read(buffer)
+        f.close()
+        buffer.seek(0)
+        response = HttpResponse(buffer.read())
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=' + file
+        
+    else:
+        response = HttpResponse(open(dirname + file, 'rb').read(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=' + file
+        return response
+    
+        with open(dirname + file , 'r') as pdf:
+            response = HttpResponse(pdf.read(), mimetype='application/x-zip')
+            response['Content-Disposition'] = 'attachment; filename=' + file
+            return response
+        pdf.closed
+        
+        
+        zf = zipfile.ZipFile(dirname + file, mode='r')
+        try:
+            zf.read(buffer)
+        finally:
+            pass
+        zf.close()
+        buffer.seek(0)
+        response = HttpResponse(buffer.read())
+        response['Content-Type'] = 'application/x-zip'
+        response['Content-Disposition'] = 'attachment; filename=' + file
+        '''
 
 def print_pdf(request):
     log_id = request.GET.get('log_id', False)
     if not log_id:
-        return render(request, "flights/pdf.html", log_pdf(3))
+        return render(request, "flights/pdf.html", log_pdf(4))
         return HttpResponse("<html><body>please select a flight log to print</body></html>")
     # one file
     if(log_id.find(',') == -1):
@@ -494,7 +550,7 @@ def print_pdf(request):
     today_str= datetime.now().strftime('%m_%d_%Y')
     response['Content-Disposition'] = 'attachment; filename=Daily_Flight_Log_' + today_str + '.zip'
     response['Content-Type'] = 'application/x-zip'
-    print "end zipping ..."
+    #print "end zipping ..."
     return response
 
 def search (request):
